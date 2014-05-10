@@ -1,0 +1,38 @@
+---
+title: Home
+---
+
+<h2>Welcome</h2>
+
+<img src="/images/haskell-logo.png" style="float: right; margin: 10px;" />
+
+<p>
+	This an experimental site I will use to provide access to my HTML slides and
+	to references to anything usefull I figure out. The slides are for talks that
+	I give at my functional programming users group.
+</p>
+
+<p>This is very much an exploritive work in progress.</p>
+
+<!--
+<h2>Posts</h2>
+$$partial("templates/post-list.html")$$
+-->
+
+<h2>Posts</h2>
+<ul>
+    $for(posts)$
+        <li>
+            <a href="$url$">$title$</a> - $date$
+        </li>
+    $endfor$
+</ul>
+<h2>Slides</h2>
+<ul>
+    $for(slides)$
+        <li>
+            <a href="$url$">$title$</a> - $date$
+        </li>
+    $endfor$
+</ul>
+
