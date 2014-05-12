@@ -1,11 +1,10 @@
 ---
 title: A Practical Haskell Retrospective: Using Parsec REST and Pandoc to Scrape Jira
-pagetitle: A Practical Haskell Retrospective: Using Parsec REST and Pandoc to Scrape Jira
 author: Handré Stolp
 date: May 12, 2014
 ---
 
-Introduction
+Introduction (Work in progress!!!)
 ========================================
 This post is in preparation for a talk that I will be giving at my local functional programming 
 users group. It is a retrospective on the first bit of practical Haskell code I wrote. It is a

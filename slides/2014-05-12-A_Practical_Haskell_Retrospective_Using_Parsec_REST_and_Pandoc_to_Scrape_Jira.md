@@ -1,6 +1,5 @@
 ---
 title: A Practical Haskell Retrospective: Using Parsec REST and Pandoc to Scrape Jira
-pagetitle: A Practical Haskell Retrospective: Using Parsec REST and Pandoc to Scrape Jira
 author: Handré Stolp
 date: May 12, 2014
 slideLevel: 2
@@ -14,26 +13,26 @@ Me and the talk
 -----------------------------------------------
 
 * Post related to slides <http://hanstolpo.github.io/TalksAndStuff/posts/2014-05-12-A_Practical_Haskell_Retrospective_Using_Parsec_REST_and_Pandoc_to_Scrape_Jira.html>
-* For links see the post.
-* Retrospective about internal "tool" to generate specification documents from Jira.
-* The first practical Haskell code I wrote.
+* For links see the post
+* Retrospective about internal "tool" to generate specification documents from Jira
+* The first practical Haskell code I wrote
 * I come from an imperitive background
     * 10 years advanced C++ and some Lua
     * Essentially game engine development
     * No advanced mathematics background
     * Zero exposure to functional languages
-* Haskell is not that hard you just have to get used to it.
+* Haskell is not that hard you just have to get used to it
 
 
 Background
 ---------------------------------------
 
-* We make training simulators.
+* We make training simulators
 * Our issue tracking system is Jira
-* Some clients require official, configured, OKed hardcopy documents.
-* We want one place to track and define our requirements.
-* We want to generate the documents from Jira.
-* Didn't find a tool to exactly meet our needs.
+* Some clients require official, configured, OKed hardcopy documents
+* We want one place to track and define our requirements
+* We want to generate the documents from Jira
+* Didn't find a tool to exactly meet our needs
 * Lets write one :)
 
 Background
@@ -42,18 +41,18 @@ Background
 * Had just read 
     * **Learn You a Haskell for Great Good!**
     * **Real World Haskell**
-* Oppertunity to *actually* learn Haskell by writing a tool.
+* Opportunity to *actually* learn Haskell by writing a tool
 * Had scouted the lay of the land
     * Jira exposed RESTful HTTP interface
     * HTTP-Conduit like CURL in Haskell (Talk to Jira)
     * All powerful Pandoc (any format to any format, sortof)
-    * Parser are easy just use Parsec (lots of tears)
+    * Parsers are easy just use Parsec (lots of tears)
 
 What the tool had to do
 ----------------------------------
 
-* Issue organized hierarchically using Structure plug-in
-* Hierarchy defines document outline.
+* Issues organized hierarchically using Structure plug-in
+* Hierarchy defines document outline
 * Heading: issue key with issue summary
 * Content: issue description
 * Talk to Jira over HTTP
@@ -68,11 +67,11 @@ Talking to Jira
 Jira's RESTlike Interface
 --------------------------------------
 * Access Jira over HTTP using the Jira REST APIs 
-    * Is the API is 100% RESTful? I have no clue.
+    * Is the API 100% RESTful? I have no clue.
 * REST = representational state transfer 
     * architectural style described by Roy Fielding in 2000 
     * REST internet buzz word 
-        * A lot of APIs claim RESTful but technically aren't
+        * A lot of APIs claim to be RESTful but technically aren't
         * Its not SOAP so its REST
 * Let's not offend anyone and call it RESTlike
 
@@ -93,7 +92,7 @@ RESTlike - incomplete, incorrect, over simplified
 
 RESTlike - incomplete, incorrect, over simplified
 ------------------------------------------------
-* One resources multiple representation (e.g. HTML, XML, JSON, etc)
+* One resource multiple representation (e.g. HTML, XML, JSON, etc)
 * Interface constrained to the standard methods of the protocol. 
     * HTTP you use GET, POST, PUT and DELETE.
     * GET query and safe
@@ -474,4 +473,35 @@ type MyParser = Parsec String ParseState
 traceM' :: String -> MyParser ()
 traceM' msg = getState >>= (\s -> return $! trace ('\n' : msg) s) >>= setState
 ```
+Wrapping up
+========================================
 
+The tool
+----------------------------------------
+* The tool can be found here <https://github.com/HanStolpo/JiraStructureToDocx>
+* Quality of code is low (just good enough for us to use internally)
+* The same goes for the non existent documentation
+
+Some Links
+------------------------------------------
+* Jira: <https://www.atlassian.com/software/jira>
+* Pandoc: <http://johnmacfarlane.net/pandoc/>
+* http-conduit: <https://hackage.haskell.org/package/http-conduit>
+* Real World Haskell: <http://book.realworldhaskell.org/>
+* Learn You a Haskell for Great Good!: <http://learnyouahaskell.com/>
+* Parsec: <http://hackage.haskell.org/package/parsec>
+* Jira markup: <https://jira.atlassian.com/secure/WikiRendererHelpAction.jspa?section=all>
+* Structure: <http://almworks.com/structure/overview.html>
+* Pandoc AST: <http://hackage.haskell.org/package/pandoc-types-1.12.3.3/docs/Text-Pandoc-Definition.html>
+* Jira REST API: <https://developer.atlassian.com/display/JIRADEV/JIRA+REST+APIs>
+* Roy Fielding: <http://en.wikipedia.org/wiki/Roy_Fielding>
+* REST_Thesis: <http://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm>
+* REST APIs must be hypertext-driven: <http://roy.gbiv.com/untangled/2008/rest-apis-must-be-hypertext-driven>
+* What exactly is RESTful programming?: <http://stackoverflow.com/questions/671118/what-exactly-is-restful-programming>
+* REST applied to web services: <http://en.wikipedia.org/wiki/Representational_State_Transfer#Applied_to_web_services>
+* REST constraints: <http://en.wikipedia.org/wiki/Representational_State_Transfer#Architectural_constraints>
+* aeson: <http://hackage.haskell.org/package/aeson>
+* YAML: <http://hackage.haskell.org/package/yaml-0.8.8.2>
+
+END
+=====================
