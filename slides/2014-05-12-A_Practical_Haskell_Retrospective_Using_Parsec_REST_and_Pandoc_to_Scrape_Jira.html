@@ -13,9 +13,9 @@
 <h1>Me and the talk</h1>
 <ul>
 <li>Post related to slides <a href="http://hanstolpo.github.io/TalksAndStuff/posts/2014-05-12-A_Practical_Haskell_Retrospective_Using_Parsec_REST_and_Pandoc_to_Scrape_Jira.html">http://hanstolpo.github.io/TalksAndStuff/posts/2014-05-12-A_Practical_Haskell_Retrospective_Using_Parsec_REST_and_Pandoc_to_Scrape_Jira.html</a></li>
-<li>For links see the post.</li>
-<li>Retrospective about internal “tool” to generate specification documents from Jira.</li>
-<li>The first practical Haskell code I wrote.</li>
+<li>For links see the post</li>
+<li>Retrospective about internal “tool” to generate specification documents from Jira</li>
+<li>The first practical Haskell code I wrote</li>
 <li>I come from an imperitive background
 <ul>
 <li>10 years advanced C++ and some Lua</li>
@@ -23,17 +23,17 @@
 <li>No advanced mathematics background</li>
 <li>Zero exposure to functional languages</li>
 </ul></li>
-<li>Haskell is not that hard you just have to get used to it.</li>
+<li>Haskell is not that hard you just have to get used to it</li>
 </ul>
 </div><div id="background" class="slide section level2">
 <h1>Background</h1>
 <ul>
-<li>We make training simulators.</li>
+<li>We make training simulators</li>
 <li>Our issue tracking system is Jira</li>
-<li>Some clients require official, configured, OKed hardcopy documents.</li>
-<li>We want one place to track and define our requirements.</li>
-<li>We want to generate the documents from Jira.</li>
-<li>Didn’t find a tool to exactly meet our needs.</li>
+<li>Some clients require official, configured, OKed hardcopy documents</li>
+<li>We want one place to track and define our requirements</li>
+<li>We want to generate the documents from Jira</li>
+<li>Didn’t find a tool to exactly meet our needs</li>
 <li>Lets write one :)</li>
 </ul>
 </div><div id="background-1" class="slide section level2">
@@ -44,20 +44,20 @@
 <li><strong>Learn You a Haskell for Great Good!</strong></li>
 <li><strong>Real World Haskell</strong></li>
 </ul></li>
-<li>Oppertunity to <em>actually</em> learn Haskell by writing a tool.</li>
+<li>Opportunity to <em>actually</em> learn Haskell by writing a tool</li>
 <li>Had scouted the lay of the land
 <ul>
 <li>Jira exposed RESTful HTTP interface</li>
 <li>HTTP-Conduit like CURL in Haskell (Talk to Jira)</li>
 <li>All powerful Pandoc (any format to any format, sortof)</li>
-<li>Parser are easy just use Parsec (lots of tears)</li>
+<li>Parsers are easy just use Parsec (lots of tears)</li>
 </ul></li>
 </ul>
 </div><div id="what-the-tool-had-to-do" class="slide section level2">
 <h1>What the tool had to do</h1>
 <ul>
-<li>Issue organized hierarchically using Structure plug-in</li>
-<li>Hierarchy defines document outline.</li>
+<li>Issues organized hierarchically using Structure plug-in</li>
+<li>Hierarchy defines document outline</li>
 <li>Heading: issue key with issue summary</li>
 <li>Content: issue description</li>
 <li>Talk to Jira over HTTP</li>
@@ -74,14 +74,14 @@
 <ul>
 <li>Access Jira over HTTP using the Jira REST APIs
 <ul>
-<li>Is the API is 100% RESTful? I have no clue.</li>
+<li>Is the API 100% RESTful? I have no clue.</li>
 </ul></li>
 <li>REST = representational state transfer
 <ul>
 <li>architectural style described by Roy Fielding in 2000</li>
 <li>REST internet buzz word
 <ul>
-<li>A lot of APIs claim RESTful but technically aren’t</li>
+<li>A lot of APIs claim to be RESTful but technically aren’t</li>
 <li>Its not SOAP so its REST</li>
 </ul></li>
 </ul></li>
@@ -109,7 +109,7 @@
 </div><div id="restlike---incomplete-incorrect-over-simplified-1" class="slide section level2">
 <h1>RESTlike - incomplete, incorrect, over simplified</h1>
 <ul>
-<li>One resources multiple representation (e.g. HTML, XML, JSON, etc)</li>
+<li>One resource multiple representation (e.g. HTML, XML, JSON, etc)</li>
 <li>Interface constrained to the standard methods of the protocol.
 <ul>
 <li>HTTP you use GET, POST, PUT and DELETE.</li>
@@ -514,5 +514,36 @@ main <span class="fu">=</span> <span class="kw">do</span>
 <span class="ot">traceM' ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">MyParser</span> ()
 traceM' msg <span class="fu">=</span> getState <span class="fu">&gt;&gt;=</span> (\s <span class="ot">-&gt;</span> return <span class="fu">$!</span> trace (<span class="ch">'\n'</span> <span class="fu">:</span> msg) s) <span class="fu">&gt;&gt;=</span> setState</code></pre>
 </div>
+<div id="wrapping-up" class="titleslide slide section level1"><h1>Wrapping up</h1></div><div id="the-tool" class="slide section level2">
+<h1>The tool</h1>
+<ul>
+<li>The tool can be found here <a href="https://github.com/HanStolpo/JiraStructureToDocx">https://github.com/HanStolpo/JiraStructureToDocx</a></li>
+<li>Quality of code is low (just good enough for us to use internally)</li>
+<li>The same goes for the non existent documentation</li>
+</ul>
+</div><div id="some-links" class="slide section level2">
+<h1>Some Links</h1>
+<ul>
+<li>Jira: <a href="https://www.atlassian.com/software/jira">https://www.atlassian.com/software/jira</a></li>
+<li>Pandoc: <a href="http://johnmacfarlane.net/pandoc/">http://johnmacfarlane.net/pandoc/</a></li>
+<li>http-conduit: <a href="https://hackage.haskell.org/package/http-conduit">https://hackage.haskell.org/package/http-conduit</a></li>
+<li>Real World Haskell: <a href="http://book.realworldhaskell.org/">http://book.realworldhaskell.org/</a></li>
+<li>Learn You a Haskell for Great Good!: <a href="http://learnyouahaskell.com/">http://learnyouahaskell.com/</a></li>
+<li>Parsec: <a href="http://hackage.haskell.org/package/parsec">http://hackage.haskell.org/package/parsec</a></li>
+<li>Jira markup: <a href="https://jira.atlassian.com/secure/WikiRendererHelpAction.jspa?section=all">https://jira.atlassian.com/secure/WikiRendererHelpAction.jspa?section=all</a></li>
+<li>Structure: <a href="http://almworks.com/structure/overview.html">http://almworks.com/structure/overview.html</a></li>
+<li>Pandoc AST: <a href="http://hackage.haskell.org/package/pandoc-types-1.12.3.3/docs/Text-Pandoc-Definition.html">http://hackage.haskell.org/package/pandoc-types-1.12.3.3/docs/Text-Pandoc-Definition.html</a></li>
+<li>Jira REST API: <a href="https://developer.atlassian.com/display/JIRADEV/JIRA+REST+APIs">https://developer.atlassian.com/display/JIRADEV/JIRA+REST+APIs</a></li>
+<li>Roy Fielding: <a href="http://en.wikipedia.org/wiki/Roy_Fielding">http://en.wikipedia.org/wiki/Roy_Fielding</a></li>
+<li>REST_Thesis: <a href="http://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm">http://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm</a></li>
+<li>REST APIs must be hypertext-driven: <a href="http://roy.gbiv.com/untangled/2008/rest-apis-must-be-hypertext-driven">http://roy.gbiv.com/untangled/2008/rest-apis-must-be-hypertext-driven</a></li>
+<li>What exactly is RESTful programming?: <a href="http://stackoverflow.com/questions/671118/what-exactly-is-restful-programming">http://stackoverflow.com/questions/671118/what-exactly-is-restful-programming</a></li>
+<li>REST applied to web services: <a href="http://en.wikipedia.org/wiki/Representational_State_Transfer#Applied_to_web_services">http://en.wikipedia.org/wiki/Representational_State_Transfer#Applied_to_web_services</a></li>
+<li>REST constraints: <a href="http://en.wikipedia.org/wiki/Representational_State_Transfer#Architectural_constraints">http://en.wikipedia.org/wiki/Representational_State_Transfer#Architectural_constraints</a></li>
+<li>aeson: <a href="http://hackage.haskell.org/package/aeson">http://hackage.haskell.org/package/aeson</a></li>
+<li>YAML: <a href="http://hackage.haskell.org/package/yaml-0.8.8.2">http://hackage.haskell.org/package/yaml-0.8.8.2</a></li>
+</ul>
+</div>
+<div id="end" class="titleslide slide section level1"><h1>END</h1></div>
 </body>
 </html>
