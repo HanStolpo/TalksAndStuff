@@ -30,8 +30,330 @@
     
 </div>
 
-<h2 id="work-in-progress">Work in progress</h2>
-<p>Work in progress</p>
+<h1 id="introduction">Introduction</h1>
+<p>This post is in preparation for a talk that I will be giving at my local functional programming users group. It is a retrospective on the first bit of practical Haskell code I wrote. It is a “tool” that we use internally to generate official specification documents from our issue tracker <a href="https://www.atlassian.com/software/jira">Jira</a>.</p>
+<p>The post is partly about the technologies that I used and partly about my journey learning Haskell. My background going into this is 10 years of advanced C++ and some Lua in connection with essentially game engine development. I don’t have a background in advanced mathematics nor had I had exposure to any functional languages.</p>
+<h2 id="background">Background</h2>
+<p>I work for a company that makes training simulators and we use <a href="https://www.atlassian.com/software/jira">Jira</a> as our issue tracking system. Some of our clients require official specification documents that need to be configured and signed off on. We wanted to keep <a href="https://www.atlassian.com/software/jira">Jira</a> as the one place where we track everything and we also wanted the generation of the official specification documents to be as automated as possible. I could not find a <a href="https://www.atlassian.com/software/jira">Jira</a> plug-in or tool that fit our needs exactly so I decided to write something myself.</p>
+<p>The truth is I had recently read <a href="http://learnyouahaskell.com/">Learn You a Haskell for Great Good!</a> and <a href="http://book.realworldhaskell.org/">Real World Haskell</a>, and I thought, here is an opportunity to, <em>actually</em>, learn Haskell by writing a tool. I wasn’t naive enough to think I could write such a tool from scratch, I first scouted the landscape to see what was possible.</p>
+<p>I knew <a href="https://www.atlassian.com/software/jira">Jira</a> exposed a RESTful HTTP interface, not that I knew exactly what REST was, and found I could talk to it using the Haskell package <a href="https://hackage.haskell.org/package/http-conduit">http-conduit</a>. I had consulted the oracle Google and discovered I could use the all powerful <a href="http://johnmacfarlane.net/pandoc/">Pandoc</a> to convert almost any format to any other; well sort of, but good enough for me. <a href="http://johnmacfarlane.net/pandoc/">Pandoc</a> did not have a parser for <a href="https://jira.atlassian.com/secure/WikiRendererHelpAction.jspa?section=all">Jira markup</a> but I remembered that Haskell has the mighty weapon <a href="http://hackage.haskell.org/package/parsec">Parsec</a> which would make the job of writing my own parser a breeze.</p>
+<h2 id="what-the-tool-had-to-do">What the tool had to do</h2>
+<p>We organized our issues in <a href="https://www.atlassian.com/software/jira">Jira</a> hierarchically using the <a href="http://almworks.com/structure/overview.html">Structure</a> plug-in. This issue hierarchy then defines the outline of our specification document. The headings in the document would be the issue ID along with the summary and the content would be the issue description.</p>
+<p>So the tool had to talk <a href="https://www.atlassian.com/software/jira">Jira</a> using HTTP requests to get the issues and the hierarchy. It then had to parse the descriptions and generate a <a href="http://hackage.haskell.org/package/pandoc-types-1.12.3.3/docs/Text-Pandoc-Definition.html">Pandoc AST</a>. The <a href="http://hackage.haskell.org/package/pandoc-types-1.12.3.3/docs/Text-Pandoc-Definition.html">Pandoc AST</a> would then be used to generate a MS Word document. It essentially only had to glue together several libraries with the only significant work being the <a href="https://jira.atlassian.com/secure/WikiRendererHelpAction.jspa?section=all">Jira markup</a> parser.</p>
+<h1 id="talking-to-jira">Talking to Jira</h1>
+<h2 id="jiras-restlike-interface">Jira’s RESTlike Interface</h2>
+<p>You can talk to Jira with the HTTP protocol using the [Jira REST APIs]. Whether the API is 100% RESTful, I am not actually clued up enough to say. REST stands for representational state transfer and is an architectural style described by <a href="http://en.wikipedia.org/wiki/Roy_Fielding">Roy Fielding</a> in 2000 in his doctoral <a href="http://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm">thesis</a>. REST has become an internet buzz word and a lot of HTTP-based interfaces call themselves RESTful even though they technically aren’t (<a href="http://roy.gbiv.com/untangled/2008/rest-apis-must-be-hypertext-driven">REST APIs must be hypertext-driven</a>).</p>
+<p>You can have a look at this layman’s example on stack overflow <a href="http://stackoverflow.com/questions/671118/what-exactly-is-restful-programming">What exactly is RESTful programming?</a>. My probably incorrect take how RESTful the [Jira REST APIs] are, is that they fall short by using the URI hierarchy as part of the protocol instead of the media-type. I guess what can be done with a resource should be self described by the data returned as part of a request and its media-type. It seems a lot of HTTP-based web-service interfaces which aren’t SOAP based are called RESTful but how RESTful they are is up for debate.</p>
+<p>So lets just call these web-service interfaces RESTlike and give an incomplete, incorrect and simplified overview of what is involved (But look at the Wikipedia entry about <a href="http://en.wikipedia.org/wiki/Representational_State_Transfer#Architectural_constraints">REST constraints</a>).</p>
+<ul>
+<li>It is client server based.</li>
+<li>Client server communication is stateless. State is held on the client side and every request contains all the information required to service the request. Messages are self descriptive.</li>
+<li>All resources are addressable through a URI.
+<ul>
+<li>As an example from the URL <code>http://blah.com/blahs/132</code>;</li>
+<li>we know the protocol is <code>HTTP</code> (how to communicate);</li>
+<li>we know the host is <code>blah.com</code>;</li>
+<li>we know the path to the resource <code>/blahs/132</code>;</li>
+</ul></li>
+<li>Resources may have multiple representation (e.g. HTML, XML, JSON, etc)</li>
+<li>Resources are manipulated through these representation.</li>
+<li>The interface is constrained to the standard methods of the protocol. So for HTTP you use GET, POST, PUT and DELETE. Where:
+<ul>
+<li>GET queries things and is a safe method, i.e. calling it produces no side effects.</li>
+<li>DELETE removes things and is an idempotent method, i.e. multiple identical requests should have the same effect as a single request.</li>
+<li>PUT updates/creates things and is an idempotent method.</li>
+<li>POST adds things and is a non-idempotent method (anything goes).</li>
+<li><p>Example matrix from <a href="http://en.wikipedia.org/wiki/Representational_State_Transfer#Applied_to_web_services">Wikipedia</a></p>
+<table>
+<colgroup>
+<col width="25%" />
+<col width="18%" />
+<col width="18%" />
+<col width="21%" />
+<col width="16%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Resource</th>
+<th align="left">GET</th>
+<th align="left">PUT</th>
+<th align="left">POST</th>
+<th align="left">DELETE</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><p>Collection</p>
+<p>http://eg.com/resources</p></td>
+<td align="left"><p>List the URIs and other details of elements.</p></td>
+<td align="left"><p>Replace the entire collection.</p></td>
+<td align="left"><p>Add a new entry to the collection. URI is assigned automatically.</p></td>
+<td align="left"><p>Delete the entire collection.</p></td>
+</tr>
+<tr class="even">
+<td align="left"><p>Element</p>
+<p>http://eg.com/resources/item17</p></td>
+<td align="left"><p>Retrieve addressed element expressed in appropriate media type</p></td>
+<td align="left"><p>Replace element or if it does not exist the create it.</p></td>
+<td align="left"><p>Not generally used. Treat element as collection and create new entry</p></td>
+<td align="left"><p>Delete the item from the colleciton.</p></td>
+</tr>
+</tbody>
+</table></li>
+</ul></li>
+<li>There is actually lots more.</li>
+</ul>
+<h2 id="http-conduit">HTTP-Conduit</h2>
+<p>In order to pick the Jira server’s brain about all the little issues it has we need to send and receive HTTP requests. Luckily we do not have to do this manually, there is a very easy to use Haskell library called <a href="https://hackage.haskell.org/package/http-conduit">http-conduit</a>. It has nice examples in its documentation so I will show an example using it to get an issue from Jira.</p>
+<pre class="sourceCode Haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Network.HTTP.Conduit</span>
+<span class="kw">import </span><span class="dt">Network.HTTP.Types.Header</span>
+<span class="kw">import </span><span class="dt">Network.Connection</span> (<span class="dt">TLSSettings</span> (..))
+<span class="kw">import </span><span class="dt">Network.Socket</span>(withSocketsDo)
+<span class="kw">import qualified</span> <span class="dt">Data.ByteString.Lazy.Char8</span> <span class="kw">as</span> <span class="dt">B</span>
+
+<span class="ot">fetchTestIssue ::</span> <span class="dt">IO</span> ()
+fetchTestIssue <span class="fu">=</span> <span class="kw">do</span>
+        <span class="co">-- We use a demo instance of Jira available on the web</span>
+   <span class="kw">let</span>  _host <span class="fu">=</span>  <span class="st">&quot;https://jira.atlassian.com&quot;</span>
+        <span class="co">-- We use the latest version of REST API to select one of the issues</span>
+        <span class="co">-- and we limit the returned fields to be the summary and description only</span>
+        uri  <span class="fu">=</span> _host <span class="fu">++</span> <span class="st">&quot;/rest/api/latest/issue/DEMO-3083?fields=summary,description&quot;</span>
+        <span class="co">-- This is just to ignore the failure of the security certificate</span>
+        settings <span class="fu">=</span> mkManagerSettings (<span class="dt">TLSSettingsSimple</span> <span class="dt">True</span> <span class="dt">False</span> <span class="dt">False</span>) <span class="dt">Nothing</span> 
+   <span class="co">-- We make the request by parsing the URL, the request method by default is get</span>
+   request  <span class="ot">&lt;-</span> parseUrl uri
+   <span class="co">-- We do the request and receive the response</span>
+   response <span class="ot">&lt;-</span> withSocketsDo <span class="fu">$</span> withManagerSettings settings <span class="fu">$</span> httpLbs request
+        <span class="co">-- We select some of the headers of the response</span>
+   <span class="kw">let</span>  hdr <span class="fu">=</span> filter g <span class="fu">.</span> responseHeaders <span class="fu">$</span> response
+        g (h, _) <span class="fu">|</span> h <span class="fu">==</span> hContentType <span class="fu">=</span> <span class="dt">True</span>
+        g (h, _) <span class="fu">|</span> h <span class="fu">==</span> hServer      <span class="fu">=</span> <span class="dt">True</span>
+        g _                          <span class="fu">=</span> <span class="dt">False</span>
+        <span class="co">-- We get the response body</span>
+        bdy <span class="fu">=</span> responseBody response
+   <span class="co">-- print the selected headers and response body</span>
+   putStrLn <span class="fu">$</span> <span class="st">&quot;Response headers = \n&quot;</span> <span class="fu">++</span> show hdr
+   putStrLn <span class="st">&quot;Response body = &quot;</span>
+   B.putStrLn bdy </code></pre>
+<p>And this is the response we get:</p>
+<pre><code>Response headers = 
+[(&quot;Server&quot;,&quot;nginx&quot;),(&quot;Content-Type&quot;,&quot;application/json;charset=UTF-8&quot;)]
+Response body = 
+{&quot;expand&quot;:&quot;renderedFields,names,schema,transitions,operations,editmeta,changelog&quot;,
+&quot;id&quot;:&quot;333132&quot;,
+&quot;self&quot;:&quot;https://jira.atlassian.com/rest/api/latest/issue/333132&quot;,
+&quot;key&quot;:&quot;DEMO-3083&quot;,
+&quot;fields&quot;:{&quot;summary&quot;:&quot;Backspace to delete zero to enter your dosage &quot;,
+&quot;description&quot;:&quot;You have to delete zero first before you can put in your Dosage&quot;}}</code></pre>
+<p>We see that the content type is <code>application/json</code> and that the response body has some extra information along with the fields that were requested. There is a convenient library for serializing and deserializing JSON encoded data called <a href="http://hackage.haskell.org/package/aeson">aeson</a>.</p>
+<h2 id="aeson">Aeson</h2>
+<p><a href="http://hackage.haskell.org/package/aeson">Aeson</a> was the farther of Jason in Greek mythology and this library is the big daddy of JSON parsing. <a href="http://hackage.haskell.org/package/aeson">Aeson</a> allows you to specify how to encode and decode Haskell types to and from JSON. As an added bonus the <a href="http://hackage.haskell.org/package/yaml-0.8.8.2">YAML</a> package uses the exact same type classes to encode and decode to and from YAML.</p>
+<p>In order for your type to be encoded as JSON it must be a member of the <code>ToJSON</code> type class and if you want to turn some JSON into your type then you need a <code>FromJSON</code> instance. With the <code>DeriveGeneric</code> GHC extension these instances can automatically be derived for your types. Of course the JSON you receive will not always match the structure of the types you want to use internally, and in this case you would manually define how to map from JSON to your type.</p>
+<p>Even when you have to manually define the mapping from JSON to your type it is quite easy to do with very little overhead. It usually involves using only a few parser combinators that act on Aeson’s representation of JSON values. A useful trick to use when decoding a specific JSON response to your type, is to wrap your type in a <code>newtype</code>, and then define the <code>FromJSON</code> instance for the wrapper type. Below is an example decoding the response from Jira to an internal type and then encoding it to YAML before printing it out again.</p>
+<pre class="sourceCode Haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE OverloadedStrings, DeriveGeneric #-}</span>
+<span class="kw">import           </span><span class="dt">Network.HTTP.Conduit</span>
+<span class="kw">import           </span><span class="dt">Network.Connection</span> (<span class="dt">TLSSettings</span> (..))
+<span class="kw">import           </span><span class="dt">Network.Socket</span>(withSocketsDo)
+<span class="kw">import           </span><span class="dt">Control.Applicative</span>
+<span class="kw">import qualified</span> <span class="dt">Data.Aeson</span> <span class="kw">as</span> <span class="dt">AS</span>
+<span class="kw">import           </span><span class="dt">Data.Aeson</span> ((.:), (.:?), (.!=))
+<span class="kw">import qualified</span> <span class="dt">Data.Aeson.Types</span> <span class="kw">as</span> <span class="dt">AS</span> (typeMismatch)
+<span class="kw">import qualified</span> <span class="dt">Data.Yaml</span> <span class="kw">as</span> <span class="dt">YAML</span>
+<span class="kw">import qualified</span> <span class="dt">Data.ByteString.Char8</span> <span class="kw">as</span> <span class="dt">B</span>
+<span class="kw">import           </span><span class="dt">GHC.Generics</span>
+
+
+<span class="co">-- The data type that will represent our issue</span>
+<span class="kw">data</span> <span class="dt">Issue</span> <span class="fu">=</span> <span class="dt">Issue</span> {<span class="ot">issueId ::</span> <span class="dt">Int</span>, issueKey, issueSummary,<span class="ot"> issueDescription ::</span> <span class="dt">String</span>} 
+             <span class="kw">deriving</span> (<span class="dt">Eq</span>, <span class="dt">Show</span>, <span class="dt">Read</span>, <span class="dt">Generic</span>)
+<span class="co">-- Automatically derive instances for our issue type allowing is to encode/decode</span>
+<span class="co">-- to and from JSON and YAML. </span>
+<span class="kw">instance</span> <span class="dt">AS.ToJSON</span> <span class="dt">Issue</span> 
+<span class="kw">instance</span> <span class="dt">AS.FromJSON</span> <span class="dt">Issue</span> 
+
+<span class="co">-- The newtype wrapper used to decode the JSON response body received</span>
+<span class="co">-- from the Jira server</span>
+<span class="kw">newtype</span> <span class="dt">IssueResponse</span> <span class="fu">=</span> <span class="dt">IssueResponse</span> {<span class="ot">issueFromResponse ::</span> <span class="dt">Issue</span>}
+
+<span class="co">-- Manually define how to turn a JSON representation into a IssueResponse</span>
+<span class="kw">instance</span> <span class="dt">AS.FromJSON</span> <span class="dt">IssueResponse</span> <span class="kw">where</span>
+    parseJSON (<span class="dt">AS.Object</span> v) <span class="fu">=</span> <span class="kw">do</span>                <span class="co">-- v is the parsed JSON object</span>
+        fields <span class="ot">&lt;-</span> v <span class="fu">.:</span> <span class="st">&quot;fields&quot;</span>                 <span class="co">-- select the fields member</span>
+        <span class="co">-- Lift the Issue constructor into the parsing monad and</span>
+        <span class="co">-- apply it to the results of looking up values in the JSON object</span>
+        <span class="dt">Issue</span> <span class="fu">&lt;$&gt;</span> (read <span class="fu">&lt;$&gt;</span> v <span class="fu">.:</span> <span class="st">&quot;id&quot;</span>)          <span class="co">-- select id member as an Int</span>
+              <span class="fu">&lt;*&gt;</span> v <span class="fu">.:</span> <span class="st">&quot;key&quot;</span>                    <span class="co">-- select key member</span>
+              <span class="fu">&lt;*&gt;</span> fields <span class="fu">.:</span> <span class="st">&quot;summary&quot;</span>           <span class="co">-- select summary from the fields</span>
+              <span class="fu">&lt;*&gt;</span> fields <span class="fu">.:?</span> <span class="st">&quot;description&quot;</span>      <span class="co">-- optionally select description</span>
+                                                <span class="co">-- from the fields.</span>
+                         <span class="fu">.!=</span> <span class="st">&quot;No description&quot;</span>   <span class="co">-- if it is not present then this</span>
+                                                <span class="co">-- will be the default value</span>
+        <span class="co">-- Wrap the result type in IssueResponse</span>
+        <span class="fu">&gt;&gt;=</span> pure <span class="fu">.</span> <span class="dt">IssueResponse</span>                
+    <span class="co">-- Error message on parse failure</span>
+    parseJSON a <span class="fu">=</span> AS.typeMismatch <span class="st">&quot;Expecting JSON object for Issue&quot;</span> a
+
+<span class="ot">fetchTestIssue ::</span> <span class="dt">IO</span> ()
+fetchTestIssue <span class="fu">=</span> <span class="kw">do</span>
+        <span class="co">-- We use a demo instance of Jira available on the web</span>
+   <span class="kw">let</span>  _host <span class="fu">=</span>  <span class="st">&quot;https://jira.atlassian.com&quot;</span>
+        <span class="co">-- We use the latest version of REST API to select one of the issues</span>
+        <span class="co">-- and we limit the returned fields to be the summary and description only</span>
+        uri  <span class="fu">=</span> _host <span class="fu">++</span> <span class="st">&quot;/rest/api/latest/issue/DEMO-3083?fields=summary,description&quot;</span>
+        <span class="co">-- This is just to ignore the failure of the security certificate</span>
+        settings <span class="fu">=</span> mkManagerSettings (<span class="dt">TLSSettingsSimple</span> <span class="dt">True</span> <span class="dt">False</span> <span class="dt">False</span>) <span class="dt">Nothing</span> 
+   <span class="co">-- We make the request by parsing the URL</span>
+   request  <span class="ot">&lt;-</span> parseUrl uri
+   <span class="co">-- do the request</span>
+   response <span class="ot">&lt;-</span> withSocketsDo <span class="fu">$</span> withManagerSettings settings <span class="fu">$</span> httpLbs request
+   <span class="co">-- Get the response body. </span>
+   <span class="co">-- Decode it as IssueResponse type possibly failing</span>
+   <span class="co">-- If decoding was successful turn the result into an Issue type</span>
+   <span class="co">-- Encode the whole result (possibly failed) as YAML</span>
+   <span class="co">-- Print the resultant ByteString to the console </span>
+   B.putStrLn <span class="fu">.</span> YAML.encode <span class="fu">.</span> fmap issueFromResponse <span class="fu">.</span> AS.decode <span class="fu">.</span> responseBody <span class="fu">$</span> response</code></pre>
+<p>The result printed out would look like this:</p>
+<pre class="sourceCode YAML"><code class="sourceCode yaml"><span class="fu">issueDescription:</span> You have to delete zero first before you can put in your Dosage
+<span class="fu">issueId:</span> 333132
+<span class="fu">issueKey:</span> DEMO-3083
+<span class="fu">issueSummary:</span> ! 'Backspace to delete zero to enter your dosage '</code></pre>
+<h1 id="creating-the-document">Creating the document</h1>
+<h2 id="pandoc">Pandoc</h2>
+<p><a href="http://johnmacfarlane.net/pandoc/">Pandoc</a> is a Haskell library and command line utility that allows you to read several markup formats and write several markup/document formats.</p>
+<p>It can read the following:</p>
+<ul>
+<li>Markdown</li>
+<li>reStructuredText</li>
+<li>Textile</li>
+<li>HTML</li>
+<li>DocBook</li>
+<li>LaTeX</li>
+<li>MediaWiki markup</li>
+<li>OPML</li>
+<li>Emacs Org-Mode</li>
+<li>Haddock markup</li>
+</ul>
+<p>and it can write the following:</p>
+<ul>
+<li>HTML formats: XHTML, HTML5</li>
+<li>HTML slide shows: Slidy, reveal.js, Slideous, S5, DZSlides</li>
+<li>Microsoft Word docx</li>
+<li>OpenOffice/LibreOffice ODT</li>
+<li>OpenDocument XML</li>
+<li>EPUB</li>
+<li>FictionBook2</li>
+<li>DocBook</li>
+<li>GNU TexInfo</li>
+<li>Groff man pages</li>
+<li>Haddock markup</li>
+<li>InDesign ICML</li>
+<li>OPML</li>
+<li>LaTeX, ConTeXt and LaTeX Beamer slides</li>
+<li>PDF</li>
+<li>Markdown</li>
+<li>reStructuredText</li>
+<li>AsciiDoc</li>
+<li>MediaWiki markup</li>
+<li>Emacs Org-Mode</li>
+<li>Textile</li>
+</ul>
+<p>All the readers parse to the same <a href="http://hackage.haskell.org/package/pandoc-types-1.12.3.3/docs/Text-Pandoc-Definition.html">abstract representation</a> and all the writers consume this abstract representation. So it is very modular since all you have to do to support a new input format is add a reader and it can output as any of the writer formats and similarly the other way around. The <a href="http://hackage.haskell.org/package/pandoc-types-1.12.3.3/docs/Text-Pandoc-Definition.html">abstract representation</a> of Pandoc is also ideal when you want to programmatically generate documents which is exactly what we want to do.</p>
+<p>Here is an example of programmatically generating a Pandoc document and then writing it out as Pandoc markdown and HTML.</p>
+<pre class="sourceCode Haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Text.Pandoc</span>
+<span class="kw">import </span><span class="dt">Text.Pandoc.Builder</span> <span class="kw">hiding</span> (space)
+<span class="kw">import </span><span class="dt">Text.Blaze.Renderer.String</span>
+<span class="kw">import qualified</span> <span class="dt">Data.Map</span> <span class="kw">as</span> <span class="dt">M</span>
+
+
+<span class="co">-- We use the helpers to construct an AST for a table with some text in it</span>
+<span class="ot">aTable ::</span> [<span class="dt">Block</span>]
+aTable <span class="fu">=</span> toList <span class="fu">$</span> <span class="co">-- convert the builder type to the AST type</span>
+            <span class="co">-- Create a 2 column table without a caption a aligned left</span>
+            table (str <span class="st">&quot;&quot;</span>) (replicate <span class="dv">2</span> (<span class="dt">AlignLeft</span>,<span class="dv">0</span>)) 
+                <span class="co">-- The header row for the table</span>
+                [ para <span class="fu">.</span> str <span class="fu">$</span> <span class="st">&quot;Gordon&quot;</span>, para <span class="fu">.</span> str <span class="fu">$</span> <span class="st">&quot;Ramsy&quot;</span>]
+                <span class="co">-- The rows of the table</span>
+                [ [para <span class="fu">.</span> str <span class="fu">$</span> <span class="st">&quot;Sally&quot;</span>, para <span class="fu">.</span> str <span class="fu">$</span> <span class="st">&quot;Storm&quot;</span>]
+                , [para <span class="fu">.</span> str <span class="fu">$</span> <span class="st">&quot;Blah&quot;</span>,  para <span class="fu">.</span> str <span class="fu">$</span> <span class="st">&quot;Bleh&quot;</span>]
+                ]
+
+<span class="co">-- Create our document along with its meta data</span>
+<span class="ot">myDoc ::</span> <span class="dt">Pandoc</span>
+myDoc <span class="fu">=</span> <span class="dt">Pandoc</span> (<span class="dt">Meta</span> M.empty) aTable
+
+<span class="ot">main ::</span> <span class="dt">IO</span> ()
+main <span class="fu">=</span> <span class="kw">do</span>
+    <span class="co">-- render as Pandoc Markdown</span>
+    putStrLn <span class="fu">$</span> writeMarkdown def myDoc
+    <span class="co">-- render as HTML</span>
+    putStrLn <span class="fu">$</span> renderMarkup <span class="fu">$</span> writeHtml def myDoc</code></pre>
+<p>The output is:</p>
+<pre><code>$ ../test/PandocEx.exe
+  Gordon   Ramsy
+  -------- -------
+  Sally    Storm
+  Blah     Bleh
+
+  :
+
+
+&lt;table&gt;
+&lt;caption&gt;&lt;/caption&gt;
+&lt;thead&gt;
+&lt;tr class=&quot;header&quot;&gt;
+&lt;th align=&quot;left&quot;&gt;&lt;p&gt;Gordon&lt;/p&gt;&lt;/th&gt;
+&lt;th align=&quot;left&quot;&gt;&lt;p&gt;Ramsy&lt;/p&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&quot;odd&quot;&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;p&gt;Sally&lt;/p&gt;&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;p&gt;Storm&lt;/p&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&quot;even&quot;&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;p&gt;Blah&lt;/p&gt;&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;p&gt;Bleh&lt;/p&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;</code></pre>
+<h2 id="parsing-jira-markup-with-parsec">Parsing Jira markup with Parsec</h2>
+<p>The description of a Jira issue is formatted using <a href="https://jira.atlassian.com/secure/WikiRendererHelpAction.jspa?section=all">Jira markup</a> and we wanted to have the same formatting that you saw in Jira in the generated document. Unfortunately there is no reader that can convert from <a href="https://jira.atlassian.com/secure/WikiRendererHelpAction.jspa?section=all">Jira markup</a> to <a href="http://hackage.haskell.org/package/pandoc-types-1.12.3.3/docs/Text-Pandoc-Definition.html">Pandoc’s AST</a>. This meant that I had to write parser for <a href="https://jira.atlassian.com/secure/WikiRendererHelpAction.jspa?section=all">Jira markup</a>. Writing parsers is well supported in Haskell and the library to use is usually <a href="http://hackage.haskell.org/package/parsec">Parsec</a> or one of its variants.</p>
+<p>From the <a href="http://www.haskell.org/haskellwiki/Parsec">Haskell wiki</a> we get the following “Parsec is a monadic parser combinator library and it can parse context-sensitive, infinite look-ahead grammars but performs best on predictive (LL[1]) grammars.”</p>
+<p>You build more complex parser by combining smaller parser using the provided parser combinators. Your final parser is run against some input and it produces some values. For more complex parsers you can pass in user state to be used while parsing. Below is an example of a simple search and replace parser.</p>
+<pre class="sourceCode Haskell"><code class="sourceCode haskell"><span class="kw">import           </span><span class="dt">Text.Parsec.Char</span>
+<span class="kw">import           </span><span class="dt">Text.Parsec.String</span> (<span class="dt">Parser</span>)
+<span class="kw">import           </span><span class="dt">Text.Parsec.Prim</span> <span class="kw">hiding</span> ((&lt;|&gt;))
+<span class="kw">import           </span><span class="dt">Text.Parsec.Combinator</span>
+<span class="kw">import           </span><span class="dt">Control.Applicative</span>
+<span class="kw">import           </span><span class="dt">Control.Monad</span>
+<span class="kw">import qualified</span> <span class="dt">Data.Map</span> <span class="kw">as</span> <span class="dt">M</span>
+<span class="kw">import           </span><span class="dt">Data.Maybe</span>
+
+<span class="co">-- Parse an issue description and replace the issue references</span>
+<span class="ot">replaceIssueRefs ::</span> <span class="dt">M.Map</span> <span class="dt">String</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Parser</span> <span class="dt">String</span>
+                     <span class="co">-- multiple times parse either a link or normal text</span>
+                     <span class="co">-- and then concatenate it all into a single string</span>
+replaceIssueRefs m <span class="fu">=</span> concat <span class="fu">&lt;$&gt;</span> (many1 <span class="fu">.</span> choice <span class="fu">$</span> [issue_ref, normal_text])
+    <span class="kw">where</span>
+        <span class="co">-- normal text is any character until we reach an issue reference or end of file</span>
+        normal_text <span class="fu">=</span> manyTill anyChar (lookAhead (void issue_ref <span class="fu">&lt;|&gt;</span> eof)) 
+                      <span class="co">-- check that this parse does not except empty text</span>
+                      <span class="fu">&gt;&gt;=</span> \txt' <span class="ot">-&gt;</span> <span class="kw">if</span> null txt' <span class="kw">then</span> fail <span class="st">&quot;&quot;</span> <span class="kw">else</span> return txt'
+        <span class="co">-- match the string DEMO- followed by at least 1 digit</span>
+        <span class="co">-- lookup the matched string in the map replacing it</span>
+        <span class="co">-- if the parser fails consume no input</span>
+        issue_ref <span class="fu">=</span> try <span class="fu">$</span> fromJust <span class="fu">.</span> (<span class="ot">`M.lookup`</span> m) <span class="fu">&lt;$&gt;</span> ((<span class="fu">++</span>) <span class="fu">&lt;$&gt;</span> string <span class="st">&quot;DEMO-&quot;</span> <span class="fu">&lt;*&gt;</span> many1 digit)
+
+<span class="ot">main ::</span> <span class="dt">IO</span> ()
+main <span class="fu">=</span> <span class="kw">do</span>
+        <span class="co">-- The map of issue references to replace</span>
+    <span class="kw">let</span> m <span class="fu">=</span> M.fromList [(<span class="st">&quot;DEMO-132&quot;</span>, <span class="st">&quot;OMED-457&quot;</span>), (<span class="st">&quot;DEMO-987&quot;</span>, <span class="st">&quot;OMED-765&quot;</span>)]
+        <span class="co">-- The input issue description text</span>
+        s <span class="fu">=</span> <span class="st">&quot;See issue DEMO-132 for more information related the bug listed in DEMO-987&quot;</span>
+    <span class="co">-- parse the issue description using the replaceIssueRefs parser</span>
+    <span class="kw">case</span> parse (replaceIssueRefs m) <span class="st">&quot;&quot;</span> s <span class="kw">of</span>               
+                        <span class="dt">Left</span> e <span class="ot">-&gt;</span> print e       <span class="co">-- on failure print error</span>
+                        <span class="dt">Right</span> rs <span class="ot">-&gt;</span> putStrLn rs <span class="co">-- on success print out:</span>
+    <span class="co">-- See issue OMED-457 for more information related the bug listed in OMED-765</span></code></pre>
 
         </div>
         <div id="footer">
