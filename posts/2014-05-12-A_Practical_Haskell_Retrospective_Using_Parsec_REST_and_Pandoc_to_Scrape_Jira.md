@@ -269,4 +269,171 @@ issueSummary: ! 'Backspace to delete zero to enter your dosage '
 
 [YAML]: http://hackage.haskell.org/package/yaml-0.8.8.2
 
+Creating the document
+===========================================
 
+Pandoc
+-------------------------------------------
+[Pandoc] is a Haskell library and command line utility that allows you to read several markup formats and write several 
+markup/document formats. 
+
+It can read the following:
+
+* Markdown
+* reStructuredText
+* Textile
+* HTML
+* DocBook
+* LaTeX
+* MediaWiki markup
+* OPML
+* Emacs Org-Mode
+* Haddock markup
+
+and it can write the following:
+
+* HTML formats: XHTML, HTML5
+* HTML slide shows: Slidy, reveal.js, Slideous, S5, DZSlides
+* Microsoft Word docx
+* OpenOffice/LibreOffice ODT
+* OpenDocument XML
+* EPUB
+* FictionBook2
+* DocBook
+* GNU TexInfo
+* Groff man pages
+* Haddock markup
+* InDesign ICML
+* OPML
+* LaTeX, ConTeXt and LaTeX Beamer slides
+* PDF
+* Markdown
+* reStructuredText
+* AsciiDoc
+* MediaWiki markup
+* Emacs Org-Mode
+* Textile
+
+All the readers parse to the same [abstract representation][Pandoc AST] and all the writers consume this abstract representation. So it is
+very modular since all you have to do to support a new input format is add a reader and it can output as any of the writer formats and
+similarly the other way around. The [abstract representation][Pandoc AST] of Pandoc is also ideal when you want to programmatically
+generate documents which is exactly what we want to do.
+
+Here is an example of programmatically generating a Pandoc document and then writing it out as Pandoc markdown and HTML.
+
+```Haskell
+import Text.Pandoc
+import Text.Pandoc.Builder hiding (space)
+import Text.Blaze.Renderer.String
+import qualified Data.Map as M
+
+
+-- We use the helpers to construct an AST for a table with some text in it
+aTable :: [Block]
+aTable = toList $ -- convert the builder type to the AST type
+            -- Create a 2 column table without a caption a aligned left
+            table (str "") (replicate 2 (AlignLeft,0)) 
+                -- The header row for the table
+                [ para . str $ "Gordon", para . str $ "Ramsy"]
+                -- The rows of the table
+                [ [para . str $ "Sally", para . str $ "Storm"]
+                , [para . str $ "Blah",  para . str $ "Bleh"]
+                ]
+
+-- Create our document along with its meta data
+myDoc :: Pandoc
+myDoc = Pandoc (Meta M.empty) aTable
+
+main :: IO ()
+main = do
+    -- render as Pandoc Markdown
+    putStrLn $ writeMarkdown def myDoc
+    -- render as HTML
+    putStrLn $ renderMarkup $ writeHtml def myDoc
+```
+
+The output is:
+
+```
+$ ../test/PandocEx.exe
+  Gordon   Ramsy
+  -------- -------
+  Sally    Storm
+  Blah     Bleh
+
+  :
+
+
+<table>
+<caption></caption>
+<thead>
+<tr class="header">
+<th align="left"><p>Gordon</p></th>
+<th align="left"><p>Ramsy</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><p>Sally</p></td>
+<td align="left"><p>Storm</p></td>
+</tr>
+<tr class="even">
+<td align="left"><p>Blah</p></td>
+<td align="left"><p>Bleh</p></td>
+</tr>
+</tbody>
+```
+
+Parsing Jira markup with Parsec
+----------------------------------------
+The description of a Jira issue is formatted using [Jira markup] and we wanted to have the same formatting that you saw in Jira in the 
+generated document. Unfortunately there is no reader that can convert from [Jira markup] to [Pandoc's AST][Pandoc AST]. This meant that
+I had to write parser for [Jira markup]. Writing parsers is well supported in Haskell and the library to use is usually [Parsec] or one of
+its variants.
+
+From the [Haskell wiki][Parsec wiki] we get the following "Parsec is a monadic parser combinator library and it can parse context-sensitive, 
+infinite look-ahead grammars but performs best on predictive (LL[1]) grammars."
+
+You build more complex parser by combining smaller parser using the provided parser combinators. Your final parser is run against some input
+and it produces some values. For more complex parsers you can pass in user state to be used while parsing. Below is an example of a simple
+search and replace parser.
+
+```Haskell
+import           Text.Parsec.Char
+import           Text.Parsec.String (Parser)
+import           Text.Parsec.Prim hiding ((<|>))
+import           Text.Parsec.Combinator
+import           Control.Applicative
+import           Control.Monad
+import qualified Data.Map as M
+import           Data.Maybe
+
+-- Parse an issue description and replace the issue references
+replaceIssueRefs :: M.Map String String -> Parser String
+                     -- multiple times parse either a link or normal text
+                     -- and then concatenate it all into a single string
+replaceIssueRefs m = concat <$> (many1 . choice $ [issue_ref, normal_text])
+    where
+        -- normal text is any character until we reach an issue reference or end of file
+        normal_text = manyTill anyChar (lookAhead (void issue_ref <|> eof)) 
+                      -- check that this parse does not except empty text
+                      >>= \txt' -> if null txt' then fail "" else return txt'
+        -- match the string DEMO- followed by at least 1 digit
+        -- lookup the matched string in the map replacing it
+        -- if the parser fails consume no input
+        issue_ref = try $ fromJust . (`M.lookup` m) <$> ((++) <$> string "DEMO-" <*> many1 digit)
+
+main :: IO ()
+main = do
+        -- The map of issue references to replace
+    let m = M.fromList [("DEMO-132", "OMED-457"), ("DEMO-987", "OMED-765")]
+        -- The input issue description text
+        s = "See issue DEMO-132 for more information related the bug listed in DEMO-987"
+    -- parse the issue description using the replaceIssueRefs parser
+    case parse (replaceIssueRefs m) "" s of               
+                        Left e -> print e       -- on failure print error
+                        Right rs -> putStrLn rs -- on success print out:
+    -- See issue OMED-457 for more information related the bug listed in OMED-765
+```
+
+[Parsec wiki]: http://www.haskell.org/haskellwiki/Parsec
