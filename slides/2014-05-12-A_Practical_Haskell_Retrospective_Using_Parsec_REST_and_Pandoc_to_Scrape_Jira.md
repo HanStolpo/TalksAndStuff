@@ -51,76 +51,71 @@ Background
 
 What the tool had to do
 ----------------------------------
-We organized our issues in [Jira] hierarchically using the [Structure] plug-in. This issue 
-hierarchy then defines the outline of our specification document. The headings in the document
-would be the issue ID along with the summary and the content would be the issue description. 
 
-So the tool had to talk [Jira] using HTTP requests to get the issues and the hierarchy. It then
-had to parse the descriptions and generate a [Pandoc AST]. The [Pandoc AST] would then be used
-to generate a MS Word document. It essentially only had to glue together several libraries with
-the only significant work being the [Jira markup] parser.
-
-[Structure]: http://almworks.com/structure/overview.html
-[Pandoc AST]: http://hackage.haskell.org/package/pandoc-types-1.12.3.3/docs/Text-Pandoc-Definition.html
+* We issue hierarchically using Structure plug-in
+* Hierarchy defines document outline.
+* Headings issue key with issue summary
+* Content issue description
+* Talk to Jira over HTTP to get issue hierarchy
+* Parse descriptions and generate Pandoc AST
+* Use Pandoc to generate MS Word document
+* Only had to glue libraries together
+    * Except for the parser
 
 Talking to Jira
 ======================================
 
 Jira's RESTlike Interface
 --------------------------------------
-You can talk to Jira with the HTTP protocol using the [Jira REST APIs]. Whether the API is 100% RESTful, 
-I am not actually clued up enough to say. REST stands for representational state transfer and is an 
-architectural style described by [Roy Fielding] in 2000 in his doctoral [thesis][REST_Thesis]. REST has
-become an internet buzz word and a lot of HTTP-based interfaces call themselves RESTful even though they
-technically aren't ([REST APIs must be hypertext-driven]). 
+* Access Jira over HTTP using the Jira REST APIs 
+    * Is the API is 100% RESTful? I have no clue.
+* REST = representational state transfer 
+    * architectural style described by [Roy Fielding] in 2000 
+    * REST internet buzz word 
+    * A lot of APIs claim RESTful but technically arent
+        * Its not SOAP so its REST
+* Let's not offend anyone and call it RESTlike
 
-You can have a look at this layman's example on stack overflow [What exactly is RESTful programming?]. My 
-probably incorrect take how RESTful the [Jira REST APIs] are, is that they fall short by using the URI
-hierarchy as part of the protocol instead of the media-type. I guess what can be done with a resource should
-be self described by the data returned as part of a request and its media-type. It seems a lot of HTTP-based
-web-service interfaces which aren't SOAP based are called RESTful but how RESTful they are is up for debate. 
 
-So lets just call these web-service interfaces RESTlike and give an incomplete, incorrect and simplified 
-overview of what is involved (But look at the Wikipedia entry about [REST constraints]).
+RESTlike - incomplete, incorrect over simplified
+------------------------------------------------
+Don't quote me but here is some pointers.
 
 * It is client server based.
-* Client server communication is stateless. State is held on the client side and every request contains all the
-  information required to service the request. Messages are self descriptive.
-* All resources are addressable through a URI.
-    * As an example from the URL ``http://blah.com/blahs/132``;
-    * we know the protocol is ``HTTP`` (how to communicate);
-    * we know the host is ``blah.com``;
-    * we know the path to the resource ``/blahs/132``;
-* Resources may have multiple representation (e.g. HTML, XML, JSON, etc)
-* Resources are manipulated through these representation.
-* The interface is constrained to the standard methods of the protocol. So for HTTP you use GET, POST, PUT and DELETE. Where:
-    * GET queries things and is a safe method, i.e. calling it produces no side effects.
-    * DELETE removes things and is an idempotent method, i.e. multiple identical requests should have the same effect as a single request.
-    * PUT updates/creates things and is an idempotent method.
-    * POST adds things and is a non-idempotent method (anything goes).
-    * Example matrix from [Wikipedia][REST applied to web services]
-
-        +--------------------------------+-----------------------+-----------------------+----------------------------+---------------------+
-        | Resource                       | GET                   | PUT                   | POST                       | DELETE              |
-        +================================+=======================+=======================+============================+=====================+
-        | Collection                     | List the URIs and     | Replace the entire    | Add a new entry to the     | Delete the entire   |
-        |                                | other details of      | collection.           | collection. URI is         | collection.         |
-        | http://eg.com/resources        | elements.             |                       | assigned automatically.    |                     |
-        +--------------------------------+-----------------------+-----------------------+----------------------------+---------------------+
-        | Element                        | Retrieve addressed    | Replace element or if | Not generally used.        | Delete the item     |
-        |                                | element expressed in  | it does not exist the | Treat element as collection| from the colleciton.|
-        | http://eg.com/resources/item17 | appropriate media type| create it.            | and create new entry       |                     |
-        +--------------------------------+-----------------------+-----------------------+----------------------------+---------------------+
-
+* Communication is stateless. 
+    * State held on client side and 
+    * Every request contains all the data
+    * Messages should be self describing
+* Interact with resources
+* Resources identifiable by URI
+    * URL ``http://blah.com/blahs/132``
+    * Protocol is ``HTTP``
+    * Host is ``blah.com``
+    * Path to the resource ``/blahs/132``
+* One resources multiple representation (e.g. HTML, XML, JSON, etc)
+* Interface constrained to the standard methods of the protocol. 
+    * HTTP you use GET, POST, PUT and DELETE.
+    * GET query and safe
+    * DELETE removes and is idempotent
+    * PUT updates/creates and is idempotent
+    * POST adds and is a non-idempotent (anything goes).
 * There is actually lots more. 
 
-[Jira REST API]: https://developer.atlassian.com/display/JIRADEV/JIRA+REST+APIs
-[Roy Fielding]: http://en.wikipedia.org/wiki/Roy_Fielding
-[REST_Thesis]: http://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm
-[REST APIs must be hypertext-driven]: http://roy.gbiv.com/untangled/2008/rest-apis-must-be-hypertext-driven 
-[What exactly is RESTful programming?]: http://stackoverflow.com/questions/671118/what-exactly-is-restful-programming
-[REST applied to web services]: http://en.wikipedia.org/wiki/Representational_State_Transfer#Applied_to_web_services
-[REST constraints]: http://en.wikipedia.org/wiki/Representational_State_Transfer#Architectural_constraints
+RESTlike - incomplete, incorrect over simplified
+------------------------------------------------
+* Example matrix from [Wikipedia]
+
+    +--------------------------------+-----------------------+-----------------------+----------------------------+---------------------+
+    | Resource                       | GET                   | PUT                   | POST                       | DELETE              |
+    +================================+=======================+=======================+============================+=====================+
+    | Collection                     | List the URIs and     | Replace the entire    | Add a new entry to the     | Delete the entire   |
+    |                                | other details of      | collection.           | collection. URI is         | collection.         |
+    | http://eg.com/resources        | elements.             |                       | assigned automatically.    |                     |
+    +--------------------------------+-----------------------+-----------------------+----------------------------+---------------------+
+    | Element                        | Retrieve addressed    | Replace element or if | Not generally used.        | Delete the item     |
+    |                                | element expressed in  | it does not exist the | Treat element as collection| from the colleciton.|
+    | http://eg.com/resources/item17 | appropriate media type| create it.            | and create new entry       |                     |
+    +--------------------------------+-----------------------+-----------------------+----------------------------+---------------------+
 
 HTTP-Conduit
 ------------------------------------
