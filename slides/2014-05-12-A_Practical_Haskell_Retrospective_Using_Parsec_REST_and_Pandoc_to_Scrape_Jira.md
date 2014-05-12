@@ -52,11 +52,11 @@ Background
 What the tool had to do
 ----------------------------------
 
-* We issue hierarchically using Structure plug-in
+* Issue organized hierarchically using Structure plug-in
 * Hierarchy defines document outline.
-* Headings issue key with issue summary
-* Content issue description
-* Talk to Jira over HTTP to get issue hierarchy
+* Heading: issue key with issue summary
+* Content: issue description
+* Talk to Jira over HTTP
 * Parse descriptions and generate Pandoc AST
 * Use Pandoc to generate MS Word document
 * Only had to glue libraries together
@@ -70,20 +70,18 @@ Jira's RESTlike Interface
 * Access Jira over HTTP using the Jira REST APIs 
     * Is the API is 100% RESTful? I have no clue.
 * REST = representational state transfer 
-    * architectural style described by [Roy Fielding] in 2000 
+    * architectural style described by Roy Fielding in 2000 
     * REST internet buzz word 
-    * A lot of APIs claim RESTful but technically arent
+        * A lot of APIs claim RESTful but technically aren't
         * Its not SOAP so its REST
 * Let's not offend anyone and call it RESTlike
 
 
-RESTlike - incomplete, incorrect over simplified
+RESTlike - incomplete, incorrect, over simplified
 ------------------------------------------------
-Don't quote me but here is some pointers.
-
 * It is client server based.
 * Communication is stateless. 
-    * State held on client side and 
+    * State held on client side 
     * Every request contains all the data
     * Messages should be self describing
 * Interact with resources
@@ -92,6 +90,9 @@ Don't quote me but here is some pointers.
     * Protocol is ``HTTP``
     * Host is ``blah.com``
     * Path to the resource ``/blahs/132``
+
+RESTlike - incomplete, incorrect, over simplified
+------------------------------------------------
 * One resources multiple representation (e.g. HTML, XML, JSON, etc)
 * Interface constrained to the standard methods of the protocol. 
     * HTTP you use GET, POST, PUT and DELETE.
@@ -101,27 +102,24 @@ Don't quote me but here is some pointers.
     * POST adds and is a non-idempotent (anything goes).
 * There is actually lots more. 
 
-RESTlike - incomplete, incorrect over simplified
+RESTlike - incomplete, incorrect, over simplified
 ------------------------------------------------
-* Example matrix from [Wikipedia]
+Example matrix from Wikipedia
 
-    +--------------------------------+-----------------------+-----------------------+----------------------------+---------------------+
-    | Resource                       | GET                   | PUT                   | POST                       | DELETE              |
-    +================================+=======================+=======================+============================+=====================+
-    | Collection                     | List the URIs and     | Replace the entire    | Add a new entry to the     | Delete the entire   |
-    |                                | other details of      | collection.           | collection. URI is         | collection.         |
-    | http://eg.com/resources        | elements.             |                       | assigned automatically.    |                     |
-    +--------------------------------+-----------------------+-----------------------+----------------------------+---------------------+
-    | Element                        | Retrieve addressed    | Replace element or if | Not generally used.        | Delete the item     |
-    |                                | element expressed in  | it does not exist the | Treat element as collection| from the colleciton.|
-    | http://eg.com/resources/item17 | appropriate media type| create it.            | and create new entry       |                     |
-    +--------------------------------+-----------------------+-----------------------+----------------------------+---------------------+
++--------------------------------+-----------------------+-----------------------+----------------------------+---------------------+
+| Resource                       | GET                   | PUT                   | POST                       | DELETE              |
++================================+=======================+=======================+============================+=====================+
+| Collection                     | List the URIs and     | Replace the entire    | Add a new entry to the     | Delete the entire   |
+|                                | other details of      | collection.           | collection. URI is         | collection.         |
+| http://eg.com/resources        | elements.             |                       | assigned automatically.    |                     |
++--------------------------------+-----------------------+-----------------------+----------------------------+---------------------+
+| Element                        | Retrieve addressed    | Replace element or if | Not generally used.        | Delete the item     |
+|                                | element expressed in  | it does not exist the | Treat element as collection| from the collection.|
+| http://eg.com/resources/item17 | appropriate media type| create it.            | and create new entry       |                     |
++--------------------------------+-----------------------+-----------------------+----------------------------+---------------------+
 
-HTTP-Conduit
+HTTP-Conduit example
 ------------------------------------
-In order to pick the Jira server's brain about all the little issues it has we need to send and receive HTTP requests. Luckily we
-do not have to do this manually, there is a very easy to use Haskell library called [http-conduit]. It has nice examples
-in its documentation so I will show an example using it to get an issue from Jira.
 
 ```Haskell
 import Network.HTTP.Conduit
@@ -156,7 +154,8 @@ fetchTestIssue = do
    B.putStrLn bdy 
 ```
 
-And this is the response we get:
+HTTP-Conduit example response
+------------------------------------
 
 ```
 Response headers = 
@@ -170,28 +169,34 @@ Response body =
 "description":"You have to delete zero first before you can put in your Dosage"}}
 ```
 
-We see that the content type is `application/json` and that the response body has some extra information along with the fields that
-were requested. There is a convenient library for serializing and deserializing JSON encoded data called [aeson].
+HTTP-Conduit
+------------------------------------
+* Has good documentation and examples
+* Really easy to use
+* Basically build URIs to Jira resources and fetch
+* Response is JSON
+* No need to manually parse JSON just use Aeson
 
-[aeson]: http://hackage.haskell.org/package/aeson
 
 Aeson
 -----------------------------------
-[Aeson] was the farther of Jason in Greek mythology and this library is the big daddy of JSON parsing. [Aeson] allows you
-to specify how to encode and decode Haskell types to and from JSON. As an added bonus the [YAML] package uses the exact
-same type classes to encode and decode to and from YAML.
+* Aeson was the farther of Jason in Greek mythology 
+* Aeson is the big daddy of JSON parsing 
+* Encode and decode Haskell types to and from JSON 
+* Added bonus you get YAML support 
+* Have to define `FromJSON` and `ToJSON` instances for your type.
+    * Automatic with `DeriveGeneric` GHC extension 
+* If JSON response doesn't match type then manually define
+    * Still very little overhead
+    * Few parser combinators
+    * Trick, wrap desired type in `newtype` 
+* Example:
+    * Decode response from Jira
+    * Encode it as YAML
+    * Print it out
 
-In order for your type to be encoded as JSON it must be a member of the `ToJSON` type class and if you want to turn some
-JSON into your type then you need a `FromJSON` instance. With the `DeriveGeneric` GHC extension these instances can 
-automatically be derived for your types. Of course the JSON you receive will not always match the structure of the types 
-you want to use internally, and in this case you would manually define how to map from JSON to your type.
-
-Even when you have to manually define the mapping from JSON to your type it is quite easy to do with very little overhead.
-It usually involves using only a few parser combinators that act on Aeson's representation of JSON values. A useful trick
-to use when decoding a specific JSON response to your type, is to wrap your type in a `newtype`, and then define the `FromJSON`
-instance for the wrapper type. Below is an example decoding the response from Jira to an internal type and then encoding it
-to YAML before printing it out again.
-
+Aeson example
+-----------------------------------
 
 ```Haskell
 {-# LANGUAGE OverloadedStrings, DeriveGeneric #-}
@@ -236,7 +241,12 @@ instance AS.FromJSON IssueResponse where
         >>= pure . IssueResponse                
     -- Error message on parse failure
     parseJSON a = AS.typeMismatch "Expecting JSON object for Issue" a
+```
 
+Aeson example
+-----------------------------------
+
+```Haskell
 fetchTestIssue :: IO ()
 fetchTestIssue = do
         -- We use a demo instance of Jira available on the web
@@ -258,7 +268,8 @@ fetchTestIssue = do
    B.putStrLn . YAML.encode . fmap issueFromResponse . AS.decode . responseBody $ response
 ```
 
-The result printed out would look like this:
+Aeson example output
+-----------------------------------
 
 ```YAML
 issueDescription: You have to delete zero first before you can put in your Dosage
@@ -267,59 +278,28 @@ issueKey: DEMO-3083
 issueSummary: ! 'Backspace to delete zero to enter your dosage '
 ```
 
-[YAML]: http://hackage.haskell.org/package/yaml-0.8.8.2
-
 Creating the document
 ===========================================
 
 Pandoc
 -------------------------------------------
-[Pandoc] is a Haskell library and command line utility that allows you to read several markup formats and write several 
-markup/document formats. 
+* Haskell library and command line utility
+* Read several markup formats
+    * Markdown, reStructuredText, Textile, HTML, DocBook, LaTeX, MediaWiki markup, OPML,  Emacs Org-Mode,  Haddock markup
+* Write several markup / document formats
+    * HTML (XHTML, HTML5), HTML Slides (Slidy, reveal.js, Slideous, S5, DZSlides), Microsoft Word docx, OpenOffice/LibreOffice ODT,
+      OpenDocument XML, EPUB, FictionBook2, DocBook, GNU TexInfo, Groff man pages, Haddock markup, InDesign ICML, OPML, LaTeX, ConTeXt,  
+      LaTeX Beamer Slides, PDF, Markdown, reStructuredText, AsciiDoc, MediaWiki markup, Emacs Org-Mode, Textile
+* Modular
+    * All readers parse to same AST
+    * All writers consume same AST
+* The AST is ideal for programmatically generating documents.
+* Example programmatically generate doc
+    * Write out as Pandoc Markdown
+    * Write out as HTML
 
-It can read the following:
-
-* Markdown
-* reStructuredText
-* Textile
-* HTML
-* DocBook
-* LaTeX
-* MediaWiki markup
-* OPML
-* Emacs Org-Mode
-* Haddock markup
-
-and it can write the following:
-
-* HTML formats: XHTML, HTML5
-* HTML slide shows: Slidy, reveal.js, Slideous, S5, DZSlides
-* Microsoft Word docx
-* OpenOffice/LibreOffice ODT
-* OpenDocument XML
-* EPUB
-* FictionBook2
-* DocBook
-* GNU TexInfo
-* Groff man pages
-* Haddock markup
-* InDesign ICML
-* OPML
-* LaTeX, ConTeXt and LaTeX Beamer slides
-* PDF
-* Markdown
-* reStructuredText
-* AsciiDoc
-* MediaWiki markup
-* Emacs Org-Mode
-* Textile
-
-All the readers parse to the same [abstract representation][Pandoc AST] and all the writers consume this abstract representation. So it is
-very modular since all you have to do to support a new input format is add a reader and it can output as any of the writer formats and
-similarly the other way around. The [abstract representation][Pandoc AST] of Pandoc is also ideal when you want to programmatically
-generate documents which is exactly what we want to do.
-
-Here is an example of programmatically generating a Pandoc document and then writing it out as Pandoc markdown and HTML.
+Pandoc example
+-------------------------------------------
 
 ```Haskell
 import Text.Pandoc
@@ -352,10 +332,10 @@ main = do
     putStrLn $ renderMarkup $ writeHtml def myDoc
 ```
 
-The output is:
+Pandoc example output
+-------------------------------------------
 
 ```
-$ ../test/PandocEx.exe
   Gordon   Ramsy
   -------- -------
   Sally    Storm
@@ -386,17 +366,17 @@ $ ../test/PandocEx.exe
 
 Parsing Jira markup with Parsec
 ----------------------------------------
-The description of a Jira issue is formatted using [Jira markup] and we wanted to have the same formatting that you saw in Jira in the 
-generated document. Unfortunately there is no reader that can convert from [Jira markup] to [Pandoc's AST][Pandoc AST]. This meant that
-I had to write parser for [Jira markup]. Writing parsers is well supported in Haskell and the library to use is usually [Parsec] or one of
-its variants.
+* Issue description formatted as Jira markup 
+* Preserve formatting in generated document
+* No Pandoc reader for Jira Markup
+* Haskell is good at parsing use Parsec
+    * Monadic parser combinator library 
+    * Parse context-sensitive, infinite look-ahead grammars 
+    * Performs best on predictive (LL[1]) grammars
+* Example using parsec to transform some text
 
-From the [Haskell wiki][Parsec wiki] we get the following "Parsec is a monadic parser combinator library and it can parse context-sensitive, 
-infinite look-ahead grammars but performs best on predictive (LL[1]) grammars."
-
-You build more complex parser by combining smaller parser using the provided parser combinators. Your final parser is run against some input
-and it produces some values. For more complex parsers you can pass in user state to be used while parsing. Below is an example of a simple
-search and replace parser.
+Parsec example
+-----------------------------------------------------
 
 ```Haskell
 import           Text.Parsec.Char
@@ -436,4 +416,62 @@ main = do
     -- See issue OMED-457 for more information related the bug listed in OMED-765
 ```
 
-[Parsec wiki]: http://www.haskell.org/haskellwiki/Parsec
+My experience
+=========================================================
+
+Overview of experience
+---------------------------------------------------------
+* A lot of Haskell code is declarative
+    * Can get far just gluing things together
+    * Type system guides the gluing
+    * No need to solve anything functionally
+* Eventually had to solve functionally
+    * Early hurdle due to imperative background
+    * Difficult to explore flawed thinking (where is my `printf` and debugger)
+    * Maybe `Debug.Trace` ? No still difficult. Lazy and declarative.
+    * Runtime failures not very helpful
+* At least Haskell is very consistent
+    * A few idioms and operators to learn
+    * Used the same everywhere and you know what to expect
+    * Libraries seem convergent
+* Most libraries are very composable
+* Code is succinct
+* Type system gives you confidence
+    * No you can't do that because you are an idiot
+
+Error reporting
+-----------------------------------------------------------
+* I like the idea of let it break
+* Problem in Haskell; no stack trace
+* Actually a difficult problem in Haskell
+    * Semantic stack and execution stack not usually the same
+    * Code is Lazy
+    * Code is higher order
+    * Code gets optimized (i.e. reorganized)
+* There are somethings you can do
+    * Recompile with profiling (won't help in rare production crash)
+    * See Simon Marlow's talk [HIW 2012. Simon Marlow: Why can't I get a stack trace](http://www.youtube.com/watch?v=J0c4L-AURDQ)
+* Probably better to explicitly handle failure.
+
+Printf with Debug.Trace
+-------------------------------------------------------------
+* `Debug.Trace` is a `printf` escape hatch for pure code
+* Only emits when statement is evaluated
+* Since Haskell is lazy, often never emits
+* Trying to debug the parser was a pain
+    * Probably should have written it better
+* Hacked my parser to force evaluation
+    * Allowed me to see what was happening in Parsec
+    * Helped me understand all my misconceptions
+
+```Haskell
+-- ......
+type MyParser = Parsec String ParseState
+-- .....
+-- Really gross but worked.
+-- Force trace to emit by requiring subsequent parser actions
+-- to access the parse state through my trace message
+traceM' :: String -> MyParser ()
+traceM' msg = getState >>= (\s -> return $! trace ('\n' : msg) s) >>= setState
+```
+
