@@ -4,14 +4,14 @@ author: Handré Stolp
 date: May 12, 2014
 ---
 
-Introduction (Work in progress!!!)
+Introduction
 ========================================
 This post is in preparation for a talk that I will be giving at my local functional programming 
 users group. It is a retrospective on the first bit of practical Haskell code I wrote. It is a
 "tool" that we use internally to generate official specification documents from our issue 
 tracker [Jira]. 
 
-The post is partly about the technologies that I used and partly about my journey learning Haskell.
+The post is gives introductions to some of the technologies that I used on my journey learning Haskell.
 My background going into this is 10 years of advanced C++ and some Lua in connection with essentially
 game engine development. I don't have a background in advanced mathematics nor had I had exposure
 to any functional languages. 
@@ -66,13 +66,13 @@ You can talk to Jira with the HTTP protocol using the [Jira REST APIs]. Whether 
 I am not actually clued up enough to say. REST stands for representational state transfer and is an 
 architectural style described by [Roy Fielding] in 2000 in his doctoral [thesis][REST_Thesis]. REST has
 become an internet buzz word and a lot of HTTP-based interfaces call themselves RESTful even though they
-technically aren't ([REST APIs must be hypertext-driven]). 
+technically aren't ([REST APIs must be hypertext-driven]). It seems a lot of HTTP-based
+web-service interfaces which aren't SOAP based are called RESTful but how RESTful they are is up for debate.
 
-You can have a look at this layman's example on stack overflow [What exactly is RESTful programming?]. My 
-probably incorrect take how RESTful the [Jira REST APIs] are, is that they fall short by using the URI
+You can have a look at this layman's example on stack overflow "[What exactly is RESTful programming?]". My 
+probably incorrect take on how RESTful the [Jira REST APIs] are, is that they fall short by using the URI
 hierarchy as part of the protocol instead of the media-type. I guess what can be done with a resource should
-be self described by the data returned as part of a request and its media-type. It seems a lot of HTTP-based
-web-service interfaces which aren't SOAP based are called RESTful but how RESTful they are is up for debate. 
+be self described by the data returned as part of a request and its media-type.
 
 So lets just call these web-service interfaces RESTlike and give an incomplete, incorrect and simplified 
 overview of what is involved (But look at the Wikipedia entry about [REST constraints]).
@@ -108,7 +108,7 @@ overview of what is involved (But look at the Wikipedia entry about [REST constr
 
 * There is actually lots more. 
 
-[Jira REST API]: https://developer.atlassian.com/display/JIRADEV/JIRA+REST+APIs
+[Jira REST APIs]: https://developer.atlassian.com/display/JIRADEV/JIRA+REST+APIs
 [Roy Fielding]: http://en.wikipedia.org/wiki/Roy_Fielding
 [REST_Thesis]: http://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm
 [REST APIs must be hypertext-driven]: http://roy.gbiv.com/untangled/2008/rest-apis-must-be-hypertext-driven 
@@ -118,7 +118,7 @@ overview of what is involved (But look at the Wikipedia entry about [REST constr
 
 HTTP-Conduit
 ------------------------------------
-In order to pick the Jira server's brain about all the little issues it has we need to send and receive HTTP requests. Luckily we
+In order to pick the Jira server's brain about all the little issues it has, we need to send and receive HTTP requests. Luckily we
 do not have to do this manually, there is a very easy to use Haskell library called [http-conduit]. It has nice examples
 in its documentation so I will show an example using it to get an issue from Jira.
 
@@ -314,9 +314,9 @@ and it can write the following:
 * Textile
 
 All the readers parse to the same [abstract representation][Pandoc AST] and all the writers consume this abstract representation. So it is
-very modular since all you have to do to support a new input format is add a reader and it can output as any of the writer formats and
+very modular, since all you have to do to support a new input format is add a reader and it can output as any of the writer formats, and
 similarly the other way around. The [abstract representation][Pandoc AST] of Pandoc is also ideal when you want to programmatically
-generate documents which is exactly what we want to do.
+generate documents, which is exactly what we want to do.
 
 Here is an example of programmatically generating a Pandoc document and then writing it out as Pandoc markdown and HTML.
 
@@ -387,7 +387,7 @@ Parsing Jira markup with Parsec
 ----------------------------------------
 The description of a Jira issue is formatted using [Jira markup] and we wanted to have the same formatting that you saw in Jira in the 
 generated document. Unfortunately there is no reader that can convert from [Jira markup] to [Pandoc's AST][Pandoc AST]. This meant that
-I had to write parser for [Jira markup]. Writing parsers is well supported in Haskell and the library to use is usually [Parsec] or one of
+I had to write parser for [Jira markup]. Writing parsers are well supported in Haskell and the library to use is usually [Parsec] or one of
 its variants.
 
 From the [Haskell wiki][Parsec wiki] we get the following "Parsec is a monadic parser combinator library and it can parse context-sensitive, 
@@ -436,3 +436,66 @@ main = do
 ```
 
 [Parsec wiki]: http://www.haskell.org/haskellwiki/Parsec
+
+My Experience
+======================
+
+Initially avoiding having to think
+-------------------------------------------
+In my experience the fact that a lot of Haskell code is declaritive allows you to get quite far just gluing things together
+without necessarily having to solve anything in a functional paradigm. You are helped along in this by the type system which
+acts like safety rails guiding you to compose things together correctly.
+
+Of course eventually you have to solve something, you actually have to think, and because of my imperitive background this was a
+hurdle in the beginning. I remember having to do something simple but being stuck not knowing how to go forward. I had to adjust
+my perspective a bit, but this is normal for anything new that one learns. I did mis having access to a `printf` or a debugger while
+I was trying to readjust my world view. I did discover `Debug.Trace` but because of Haskell's lazyness this didn't always help that
+much and I found that the runtime errors were left wanting.
+
+Error reporting
+--------------------------------------------
+I like the idea of let it break; make your assumptions; assert on them; run the whole tooty; and see where you were mistaken. This
+is actually a problem in Haskell, because you do not have a stack trace, your runtime error is not very helpful. I can appreciate
+why it is a problem in Haskell, because your semantic stack is not usually the same as you execution stack. You have a lot of higher
+order programming going on along with lazyness and optimizations that will reoder your code. That said there are somethings you can
+do like recompiling with profiling on, but I imagine this won't really help you in production. Simon Marlow gave a good talk about 
+this that you can catch on youtube "[HIW 2012. Simon Marlow: Why can’t I get a stack trace](http://www.youtube.com/watch?v=J0c4L-AURDQ)".
+
+In the end I guess in Haskell you should explicitly code for your failure conditions and generally just think about what you are doing,
+which is probably not a bad thing.
+
+Printf with Debug.Trace
+--------------------------------------------
+`Debug.Trace` is a `printf` escape hatch for your pure code in Haskell. So for someone like me, that sounded like the best thing since
+sliced bread. The problem is that `trace` only emits when the statement that involves it is evaluated, and since Haskell is lazy
+it often never emits. It was a pain trying to debug my parser, which I should probably have written better and tested with quick check.
+
+I ended up using a very ugle dirty hack to force the printing of my debug strings. I forced the evaluation of my `trace` by stringing
+my parser state through it. Even though this was a dirty hack it did actually help me to understand all my misconceptions. 
+
+```haskell
+-- ......
+type MyParser = Parsec String ParseState
+-- .....
+-- Really gross but worked.
+-- Force trace to emit by requiring subsequent parser actions
+-- to access the parse state through my trace message
+traceM' :: String -> MyParser ()
+traceM' msg = getState >>= (\s -> return $! trace ('\n' : msg) s) >>= setState 
+```
+
+In the end I actually really like Haskell
+------------------------------------------
+Minor gripes asside my feelings about Haskell are very positive. Some people are scared off by the operators and strange sounding 
+typeclasses but I found Haskell to be very consitent. There are only a few idioms and oprators to learn and they are used all over
+the place, in the same way, and you can expect the same behaviour. The libraries seem to be very composable and that they converge
+on convention and style. Combine the succint code with a type system that gives you confidence and in my book you have a winner.
+
+The source
+-------------------------
+If anyone is interested the source code for the tool can be found here <https://github.com/HanStolpo/JiraStructureToDocx> but be warned
+the quality is very poor. It is just good enough as an internal dev tool for us and, it was a learning experience.
+
+The slides for the talk
+---------------------------
+The slides for the talk can be found here [Slides](../Slides/2014-05-12-A_Practical_Haskell_Retrospective_Using_Parsec_REST_and_Pandoc_to_Scrape_Jira.html)
