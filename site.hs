@@ -32,7 +32,7 @@ main = hakyll $ do
             >>= loadAndApplyTemplate "templates/default.html" defaultContext
             >>= relativizeUrls
 
-    match "posts/*" $ do
+    match posts $ do
         route $ setExtension "html"
         compile $ _pandocReader
             >>= _pandocWriterPosts
@@ -40,7 +40,7 @@ main = hakyll $ do
             >>= loadAndApplyTemplate "templates/default.html" postCtx
             >>= relativizeUrls
 
-    match "slides/*" $ do
+    match slides $ do
         route $ setExtension "html"
         compile $ _pandocReader
             >>= _pandocWriterSlides
@@ -50,10 +50,10 @@ main = hakyll $ do
     create ["archive.html"] $ do
         route idRoute
         compile $ do
-            slides <- recentFirst =<< loadAll "slides/*"
-            posts <- recentFirst =<< loadAll "posts/*"
-            let archiveCtx  = listField "slides" postCtx (return slides)
-                            <> listField "posts" postCtx (return posts)
+            slides' <- pure . take 5 =<< recentFirst =<< loadAll slides
+            posts'  <- pure . take 5 =<< recentFirst =<< loadAll posts
+            let archiveCtx  = listField "slides" postCtx (return slides')
+                            <> listField "posts" postCtx (return posts')
                             <> constField "title" "Archives"
                             <> defaultContext
             makeItem ""
@@ -65,10 +65,10 @@ main = hakyll $ do
     match "index.html" $ do
         route idRoute
         compile $ do
-            slides <- recentFirst =<< loadAll "slides/*"
-            posts <- recentFirst =<< loadAll "posts/*"
-            let indexCtx    = listField "slides" postCtx (return slides)
-                            <> listField "posts" postCtx (return posts)
+            slides' <- recentFirst =<< loadAll slides
+            posts' <- recentFirst =<< loadAll posts
+            let indexCtx    = listField "slides" postCtx (return slides')
+                            <> listField "posts" postCtx (return posts')
                             <> constField "title" "Home"
                             <> defaultContext
             getResourceBody
@@ -82,6 +82,10 @@ main = hakyll $ do
 --------------------------------------------------------------------------------
 postCtx :: Context String
 postCtx = metadataField <> dateField "date" "%B %e, %Y" <> defaultContext
+
+slides, posts :: Pattern
+slides = "slides/*.md" .||. "slides/*.lhs"
+posts =  "posts/*.md" .||. "posts/*.lhs"
 
 
 _pandocReader :: Compiler (Item Pandoc)
