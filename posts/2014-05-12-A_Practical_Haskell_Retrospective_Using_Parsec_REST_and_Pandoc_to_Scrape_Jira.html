@@ -30,9 +30,9 @@
     
 </div>
 
-<h1 id="introduction-work-in-progress">Introduction (Work in progress!!!)</h1>
+<h1 id="introduction">Introduction</h1>
 <p>This post is in preparation for a talk that I will be giving at my local functional programming users group. It is a retrospective on the first bit of practical Haskell code I wrote. It is a “tool” that we use internally to generate official specification documents from our issue tracker <a href="https://www.atlassian.com/software/jira">Jira</a>.</p>
-<p>The post is partly about the technologies that I used and partly about my journey learning Haskell. My background going into this is 10 years of advanced C++ and some Lua in connection with essentially game engine development. I don’t have a background in advanced mathematics nor had I had exposure to any functional languages.</p>
+<p>The post is gives introductions to some of the technologies that I used on my journey learning Haskell. My background going into this is 10 years of advanced C++ and some Lua in connection with essentially game engine development. I don’t have a background in advanced mathematics nor had I had exposure to any functional languages.</p>
 <h2 id="background">Background</h2>
 <p>I work for a company that makes training simulators and we use <a href="https://www.atlassian.com/software/jira">Jira</a> as our issue tracking system. Some of our clients require official specification documents that need to be configured and signed off on. We wanted to keep <a href="https://www.atlassian.com/software/jira">Jira</a> as the one place where we track everything and we also wanted the generation of the official specification documents to be as automated as possible. I could not find a <a href="https://www.atlassian.com/software/jira">Jira</a> plug-in or tool that fit our needs exactly so I decided to write something myself.</p>
 <p>The truth is I had recently read <a href="http://learnyouahaskell.com/">Learn You a Haskell for Great Good!</a> and <a href="http://book.realworldhaskell.org/">Real World Haskell</a>, and I thought, here is an opportunity to, <em>actually</em>, learn Haskell by writing a tool. I wasn’t naive enough to think I could write such a tool from scratch, I first scouted the landscape to see what was possible.</p>
@@ -42,8 +42,8 @@
 <p>So the tool had to talk <a href="https://www.atlassian.com/software/jira">Jira</a> using HTTP requests to get the issues and the hierarchy. It then had to parse the descriptions and generate a <a href="http://hackage.haskell.org/package/pandoc-types-1.12.3.3/docs/Text-Pandoc-Definition.html">Pandoc AST</a>. The <a href="http://hackage.haskell.org/package/pandoc-types-1.12.3.3/docs/Text-Pandoc-Definition.html">Pandoc AST</a> would then be used to generate a MS Word document. It essentially only had to glue together several libraries with the only significant work being the <a href="https://jira.atlassian.com/secure/WikiRendererHelpAction.jspa?section=all">Jira markup</a> parser.</p>
 <h1 id="talking-to-jira">Talking to Jira</h1>
 <h2 id="jiras-restlike-interface">Jira’s RESTlike Interface</h2>
-<p>You can talk to Jira with the HTTP protocol using the [Jira REST APIs]. Whether the API is 100% RESTful, I am not actually clued up enough to say. REST stands for representational state transfer and is an architectural style described by <a href="http://en.wikipedia.org/wiki/Roy_Fielding">Roy Fielding</a> in 2000 in his doctoral <a href="http://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm">thesis</a>. REST has become an internet buzz word and a lot of HTTP-based interfaces call themselves RESTful even though they technically aren’t (<a href="http://roy.gbiv.com/untangled/2008/rest-apis-must-be-hypertext-driven">REST APIs must be hypertext-driven</a>).</p>
-<p>You can have a look at this layman’s example on stack overflow <a href="http://stackoverflow.com/questions/671118/what-exactly-is-restful-programming">What exactly is RESTful programming?</a>. My probably incorrect take how RESTful the [Jira REST APIs] are, is that they fall short by using the URI hierarchy as part of the protocol instead of the media-type. I guess what can be done with a resource should be self described by the data returned as part of a request and its media-type. It seems a lot of HTTP-based web-service interfaces which aren’t SOAP based are called RESTful but how RESTful they are is up for debate.</p>
+<p>You can talk to Jira with the HTTP protocol using the <a href="https://developer.atlassian.com/display/JIRADEV/JIRA+REST+APIs">Jira REST APIs</a>. Whether the API is 100% RESTful, I am not actually clued up enough to say. REST stands for representational state transfer and is an architectural style described by <a href="http://en.wikipedia.org/wiki/Roy_Fielding">Roy Fielding</a> in 2000 in his doctoral <a href="http://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm">thesis</a>. REST has become an internet buzz word and a lot of HTTP-based interfaces call themselves RESTful even though they technically aren’t (<a href="http://roy.gbiv.com/untangled/2008/rest-apis-must-be-hypertext-driven">REST APIs must be hypertext-driven</a>). It seems a lot of HTTP-based web-service interfaces which aren’t SOAP based are called RESTful but how RESTful they are is up for debate.</p>
+<p>You can have a look at this layman’s example on stack overflow “<a href="http://stackoverflow.com/questions/671118/what-exactly-is-restful-programming">What exactly is RESTful programming?</a>”. My probably incorrect take on how RESTful the <a href="https://developer.atlassian.com/display/JIRADEV/JIRA+REST+APIs">Jira REST APIs</a> are, is that they fall short by using the URI hierarchy as part of the protocol instead of the media-type. I guess what can be done with a resource should be self described by the data returned as part of a request and its media-type.</p>
 <p>So lets just call these web-service interfaces RESTlike and give an incomplete, incorrect and simplified overview of what is involved (But look at the Wikipedia entry about <a href="http://en.wikipedia.org/wiki/Representational_State_Transfer#Architectural_constraints">REST constraints</a>).</p>
 <ul>
 <li>It is client server based.</li>
@@ -65,13 +65,11 @@
 <li>POST adds things and is a non-idempotent method (anything goes).</li>
 <li><p>Example matrix from <a href="http://en.wikipedia.org/wiki/Representational_State_Transfer#Applied_to_web_services">Wikipedia</a></p>
 <table>
-<colgroup>
 <col width="25%" />
 <col width="18%" />
 <col width="18%" />
 <col width="21%" />
 <col width="16%" />
-</colgroup>
 <thead>
 <tr class="header">
 <th align="left">Resource</th>
@@ -104,7 +102,7 @@
 <li>There is actually lots more.</li>
 </ul>
 <h2 id="http-conduit">HTTP-Conduit</h2>
-<p>In order to pick the Jira server’s brain about all the little issues it has we need to send and receive HTTP requests. Luckily we do not have to do this manually, there is a very easy to use Haskell library called <a href="https://hackage.haskell.org/package/http-conduit">http-conduit</a>. It has nice examples in its documentation so I will show an example using it to get an issue from Jira.</p>
+<p>In order to pick the Jira server’s brain about all the little issues it has, we need to send and receive HTTP requests. Luckily we do not have to do this manually, there is a very easy to use Haskell library called <a href="https://hackage.haskell.org/package/http-conduit">http-conduit</a>. It has nice examples in its documentation so I will show an example using it to get an issue from Jira.</p>
 <pre class="sourceCode Haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Network.HTTP.Conduit</span>
 <span class="kw">import </span><span class="dt">Network.HTTP.Types.Header</span>
 <span class="kw">import </span><span class="dt">Network.Connection</span> (<span class="dt">TLSSettings</span> (..))
@@ -257,7 +255,7 @@ fetchTestIssue <span class="fu">=</span> <span class="kw">do</span>
 <li>Emacs Org-Mode</li>
 <li>Textile</li>
 </ul>
-<p>All the readers parse to the same <a href="http://hackage.haskell.org/package/pandoc-types-1.12.3.3/docs/Text-Pandoc-Definition.html">abstract representation</a> and all the writers consume this abstract representation. So it is very modular since all you have to do to support a new input format is add a reader and it can output as any of the writer formats and similarly the other way around. The <a href="http://hackage.haskell.org/package/pandoc-types-1.12.3.3/docs/Text-Pandoc-Definition.html">abstract representation</a> of Pandoc is also ideal when you want to programmatically generate documents which is exactly what we want to do.</p>
+<p>All the readers parse to the same <a href="http://hackage.haskell.org/package/pandoc-types-1.12.3.3/docs/Text-Pandoc-Definition.html">abstract representation</a> and all the writers consume this abstract representation. So it is very modular, since all you have to do to support a new input format is add a reader and it can output as any of the writer formats, and similarly the other way around. The <a href="http://hackage.haskell.org/package/pandoc-types-1.12.3.3/docs/Text-Pandoc-Definition.html">abstract representation</a> of Pandoc is also ideal when you want to programmatically generate documents, which is exactly what we want to do.</p>
 <p>Here is an example of programmatically generating a Pandoc document and then writing it out as Pandoc markdown and HTML.</p>
 <pre class="sourceCode Haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Text.Pandoc</span>
 <span class="kw">import </span><span class="dt">Text.Pandoc.Builder</span> <span class="kw">hiding</span> (space)
@@ -316,7 +314,7 @@ main <span class="fu">=</span> <span class="kw">do</span>
 &lt;/tr&gt;
 &lt;/tbody&gt;</code></pre>
 <h2 id="parsing-jira-markup-with-parsec">Parsing Jira markup with Parsec</h2>
-<p>The description of a Jira issue is formatted using <a href="https://jira.atlassian.com/secure/WikiRendererHelpAction.jspa?section=all">Jira markup</a> and we wanted to have the same formatting that you saw in Jira in the generated document. Unfortunately there is no reader that can convert from <a href="https://jira.atlassian.com/secure/WikiRendererHelpAction.jspa?section=all">Jira markup</a> to <a href="http://hackage.haskell.org/package/pandoc-types-1.12.3.3/docs/Text-Pandoc-Definition.html">Pandoc’s AST</a>. This meant that I had to write parser for <a href="https://jira.atlassian.com/secure/WikiRendererHelpAction.jspa?section=all">Jira markup</a>. Writing parsers is well supported in Haskell and the library to use is usually <a href="http://hackage.haskell.org/package/parsec">Parsec</a> or one of its variants.</p>
+<p>The description of a Jira issue is formatted using <a href="https://jira.atlassian.com/secure/WikiRendererHelpAction.jspa?section=all">Jira markup</a> and we wanted to have the same formatting that you saw in Jira in the generated document. Unfortunately there is no reader that can convert from <a href="https://jira.atlassian.com/secure/WikiRendererHelpAction.jspa?section=all">Jira markup</a> to <a href="http://hackage.haskell.org/package/pandoc-types-1.12.3.3/docs/Text-Pandoc-Definition.html">Pandoc’s AST</a>. This meant that I had to write parser for <a href="https://jira.atlassian.com/secure/WikiRendererHelpAction.jspa?section=all">Jira markup</a>. Writing parsers are well supported in Haskell and the library to use is usually <a href="http://hackage.haskell.org/package/parsec">Parsec</a> or one of its variants.</p>
 <p>From the <a href="http://www.haskell.org/haskellwiki/Parsec">Haskell wiki</a> we get the following “Parsec is a monadic parser combinator library and it can parse context-sensitive, infinite look-ahead grammars but performs best on predictive (LL[1]) grammars.”</p>
 <p>You build more complex parser by combining smaller parser using the provided parser combinators. Your final parser is run against some input and it produces some values. For more complex parsers you can pass in user state to be used while parsing. Below is an example of a simple search and replace parser.</p>
 <pre class="sourceCode Haskell"><code class="sourceCode haskell"><span class="kw">import           </span><span class="dt">Text.Parsec.Char</span>
@@ -354,6 +352,30 @@ main <span class="fu">=</span> <span class="kw">do</span>
                         <span class="dt">Left</span> e <span class="ot">-&gt;</span> print e       <span class="co">-- on failure print error</span>
                         <span class="dt">Right</span> rs <span class="ot">-&gt;</span> putStrLn rs <span class="co">-- on success print out:</span>
     <span class="co">-- See issue OMED-457 for more information related the bug listed in OMED-765</span></code></pre>
+<h1 id="my-experience">My Experience</h1>
+<h2 id="initially-avoiding-having-to-think">Initially avoiding having to think</h2>
+<p>In my experience the fact that a lot of Haskell code is declaritive allows you to get quite far just gluing things together without necessarily having to solve anything in a functional paradigm. You are helped along in this by the type system which acts like safety rails guiding you to compose things together correctly.</p>
+<p>Of course eventually you have to solve something, you actually have to think, and because of my imperitive background this was a hurdle in the beginning. I remember having to do something simple but being stuck not knowing how to go forward. I had to adjust my perspective a bit, but this is normal for anything new that one learns. I did mis having access to a <code>printf</code> or a debugger while I was trying to readjust my world view. I did discover <code>Debug.Trace</code> but because of Haskell’s lazyness this didn’t always help that much and I found that the runtime errors were left wanting.</p>
+<h2 id="error-reporting">Error reporting</h2>
+<p>I like the idea of let it break; make your assumptions; assert on them; run the whole tooty; and see where you were mistaken. This is actually a problem in Haskell, because you do not have a stack trace, your runtime error is not very helpful. I can appreciate why it is a problem in Haskell, because your semantic stack is not usually the same as you execution stack. You have a lot of higher order programming going on along with lazyness and optimizations that will reoder your code. That said there are somethings you can do like recompiling with profiling on, but I imagine this won’t really help you in production. Simon Marlow gave a good talk about this that you can catch on youtube “<a href="http://www.youtube.com/watch?v=J0c4L-AURDQ">HIW 2012. Simon Marlow: Why can’t I get a stack trace</a>”.</p>
+<p>In the end I guess in Haskell you should explicitly code for your failure conditions and generally just think about what you are doing, which is probably not a bad thing.</p>
+<h2 id="printf-with-debug.trace">Printf with Debug.Trace</h2>
+<p><code>Debug.Trace</code> is a <code>printf</code> escape hatch for your pure code in Haskell. So for someone like me, that sounded like the best thing since sliced bread. The problem is that <code>trace</code> only emits when the statement that involves it is evaluated, and since Haskell is lazy it often never emits. It was a pain trying to debug my parser, which I should probably have written better and tested with quick check.</p>
+<p>I ended up using a very ugle dirty hack to force the printing of my debug strings. I forced the evaluation of my <code>trace</code> by stringing my parser state through it. Even though this was a dirty hack it did actually help me to understand all my misconceptions.</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- ......</span>
+<span class="kw">type</span> <span class="dt">MyParser</span> <span class="fu">=</span> <span class="dt">Parsec</span> <span class="dt">String</span> <span class="dt">ParseState</span>
+<span class="co">-- .....</span>
+<span class="co">-- Really gross but worked.</span>
+<span class="co">-- Force trace to emit by requiring subsequent parser actions</span>
+<span class="co">-- to access the parse state through my trace message</span>
+<span class="ot">traceM' ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">MyParser</span> ()
+traceM' msg <span class="fu">=</span> getState <span class="fu">&gt;&gt;=</span> (\s <span class="ot">-&gt;</span> return <span class="fu">$!</span> trace (<span class="ch">'\n'</span> <span class="fu">:</span> msg) s) <span class="fu">&gt;&gt;=</span> setState </code></pre>
+<h2 id="in-the-end-i-actually-really-like-haskell">In the end I actually really like Haskell</h2>
+<p>Minor gripes asside my feelings about Haskell are very positive. Some people are scared off by the operators and strange sounding typeclasses but I found Haskell to be very consitent. There are only a few idioms and oprators to learn and they are used all over the place, in the same way, and you can expect the same behaviour. The libraries seem to be very composable and that they converge on convention and style. Combine the succint code with a type system that gives you confidence and in my book you have a winner.</p>
+<h2 id="the-source">The source</h2>
+<p>If anyone is interested the source code for the tool can be found here <a href="https://github.com/HanStolpo/JiraStructureToDocx">https://github.com/HanStolpo/JiraStructureToDocx</a> but be warned the quality is very poor. It is just good enough as an internal dev tool for us and, it was a learning experience.</p>
+<h2 id="the-slides-for-the-talk">The slides for the talk</h2>
+<p>The slides for the talk can be found here <a href="../Slides/2014-05-12-A_Practical_Haskell_Retrospective_Using_Parsec_REST_and_Pandoc_to_Scrape_Jira.html">Slides</a></p>
 
         </div>
         <div id="footer">
