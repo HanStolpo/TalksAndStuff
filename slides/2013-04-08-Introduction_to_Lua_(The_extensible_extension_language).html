@@ -162,7 +162,7 @@ e <span class="ot">=</span> a <span class="kw">or</span> b          <span class=
 e <span class="ot">=</span> <span class="kw">not</span> a           <span class="co">-- if a false then true else false</span>
 <span class="co">-- using and and or for conditional assignment</span>
 e <span class="ot">=</span> IAmNotDefined <span class="kw">or</span> <span class="st">'So default value'</span> <span class="co">-- result is the string</span>
-e <span class="ot">=</span> e <span class="kw">and</span> IAmNotDefinedButDoesntMatter  <span class="co">-- result is e </span></code></pre></li>
+e <span class="ot">=</span> IamNotDefined <span class="kw">and</span> IamNotDefined<span class="ot">()</span>   <span class="co">-- this does not crash </span></code></pre></li>
 </ul>
 </div><div id="types" class="slide section level2">
 <h1>Types</h1>
@@ -220,8 +220,8 @@ e <span class="ot">=</span> e <span class="kw">and</span> IAmNotDefinedButDoesnt
 <ul>
 <li>Escaped strings
 <ul>
-<li><code>'Some\n &quot;blah&quot; string' don't need to escape&quot;</code></li>
-<li><code>&quot;Some\n 'blah' string&quot; don't need to escape '</code></li>
+<li><code>'Some\n &quot;blah&quot; string\' don't need to escape\''</code></li>
+<li><code>&quot;Some\n 'blah' string\&quot; don't need to escape \&quot;&quot;</code></li>
 </ul></li>
 <li><p>Literal strings</p>
 <pre class="sourceCode lua"><code class="sourceCode lua"><span class="kw">local</span> someString <span class="ot">=</span> <span class="st">[[</span>
