@@ -151,7 +151,7 @@ Statements continued
     e = not a           -- if a false then true else false
     -- using and and or for conditional assignment
     e = IAmNotDefined or 'So default value' -- result is the string
-    e = e and IAmNotDefinedButDoesntMatter  -- result is e 
+    e = IamNotDefined and IamNotDefined()   -- this does not crash 
     ```
 
 Types
@@ -191,8 +191,8 @@ table
 Strings
 ---------------------------------------
 * Escaped strings
-    * `'Some\n "blah" string' don't need to escape"`
-    * `"Some\n 'blah' string" don't need to escape '`
+    * `'Some\n "blah" string\' don't need to escape\''`
+    * `"Some\n 'blah' string\" don't need to escape \""`
 * Literal strings
 
     ```lua
