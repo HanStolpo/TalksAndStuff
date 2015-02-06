@@ -19,6 +19,14 @@ div#logo a {
     text-decoration: none;
 }
 
+div#page_logo {
+    color: black;
+    float: left;
+    font-size: 18px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
 div#header #navigation {
     text-align: right;
 }
