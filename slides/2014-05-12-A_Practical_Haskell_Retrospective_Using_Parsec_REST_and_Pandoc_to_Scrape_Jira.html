@@ -1,15 +1,45 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"> 
-<head> 
-  <title>Slide Shows in XHTML</title> 
-  <link rel="stylesheet" type="text/css" media="screen, projection, print" href="http://www.w3.org/Talks/Tools/Slidy2/styles/slidy.css" /> 
-  <link rel="stylesheet" type="text/css" href="../css/highlighting.css" />
-  <script src="http://www.w3.org/Talks/Tools/Slidy2/scripts/slidy.js" charset="utf-8" type="text/javascript">
-  </script> 
-</head>
-<body>
-	<div id="introduction" class="titleslide slide section level1"><h1>Introduction</h1></div><div id="me-and-the-talk" class="slide section level2">
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>reveal.js - The HTML Presentation Framework</title>
+
+		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+		<meta name="author" content="Hakim El Hattab">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="../css/reveal.css">
+		<link rel="stylesheet" href="../css/theme/moon.css" id="theme">
+		<link rel="stylesheet" type="text/css" href="../css/highlighting.css" />
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="../lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? '../css/print/pdf.css' : '../css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="../lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+			<div class="slides">
+<section><section id="introduction" class="titleslide slide level1"><h1>Introduction</h1></section><section id="me-and-the-talk" class="slide level2">
 <h1>Me and the talk</h1>
 <ul>
 <li>Post related to slides <a href="http://hanstolpo.github.io/TalksAndStuff/posts/2014-05-12-A_Practical_Haskell_Retrospective_Using_Parsec_REST_and_Pandoc_to_Scrape_Jira.html">http://hanstolpo.github.io/TalksAndStuff/posts/2014-05-12-A_Practical_Haskell_Retrospective_Using_Parsec_REST_and_Pandoc_to_Scrape_Jira.html</a></li>
@@ -25,7 +55,7 @@
 </ul></li>
 <li>Haskell is not that hard you just have to get used to it</li>
 </ul>
-</div><div id="background" class="slide section level2">
+</section><section id="background" class="slide level2">
 <h1>Background</h1>
 <ul>
 <li>We make training simulators</li>
@@ -36,7 +66,7 @@
 <li>Didn’t find a tool to exactly meet our needs</li>
 <li>Lets write one :)</li>
 </ul>
-</div><div id="background-1" class="slide section level2">
+</section><section id="background-1" class="slide level2">
 <h1>Background</h1>
 <ul>
 <li>Had just read
@@ -53,7 +83,7 @@
 <li>Parsers are easy just use Parsec (lots of tears)</li>
 </ul></li>
 </ul>
-</div><div id="what-the-tool-had-to-do" class="slide section level2">
+</section><section id="what-the-tool-had-to-do" class="slide level2">
 <h1>What the tool had to do</h1>
 <ul>
 <li>Issues organized hierarchically using Structure plug-in</li>
@@ -68,8 +98,8 @@
 <li>Except for the parser</li>
 </ul></li>
 </ul>
-</div>
-<div id="talking-to-jira" class="titleslide slide section level1"><h1>Talking to Jira</h1></div><div id="jiras-restlike-interface" class="slide section level2">
+</section></section>
+<section><section id="talking-to-jira" class="titleslide slide level1"><h1>Talking to Jira</h1></section><section id="jiras-restlike-interface" class="slide level2">
 <h1>Jira’s RESTlike Interface</h1>
 <ul>
 <li>Access Jira over HTTP using the Jira REST APIs
@@ -87,7 +117,7 @@
 </ul></li>
 <li>Let’s not offend anyone and call it RESTlike</li>
 </ul>
-</div><div id="restlike---incomplete-incorrect-over-simplified" class="slide section level2">
+</section><section id="restlike---incomplete-incorrect-over-simplified" class="slide level2">
 <h1>RESTlike - incomplete, incorrect, over simplified</h1>
 <ul>
 <li>It is client server based.</li>
@@ -106,7 +136,7 @@
 <li>Path to the resource <code>/blahs/132</code></li>
 </ul></li>
 </ul>
-</div><div id="restlike---incomplete-incorrect-over-simplified-1" class="slide section level2">
+</section><section id="restlike---incomplete-incorrect-over-simplified-1" class="slide level2">
 <h1>RESTlike - incomplete, incorrect, over simplified</h1>
 <ul>
 <li>One resource multiple representation (e.g. HTML, XML, JSON, etc)</li>
@@ -120,46 +150,48 @@
 </ul></li>
 <li>There is actually lots more.</li>
 </ul>
-</div><div id="restlike---incomplete-incorrect-over-simplified-2" class="slide section level2">
+</section><section id="restlike---incomplete-incorrect-over-simplified-2" class="slide level2">
 <h1>RESTlike - incomplete, incorrect, over simplified</h1>
 <p>Example matrix from Wikipedia</p>
 <table>
-<col width="25%" />
-<col width="18%" />
-<col width="18%" />
-<col width="21%" />
-<col width="16%" />
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 18%" />
+<col style="width: 18%" />
+<col style="width: 21%" />
+<col style="width: 16%" />
+</colgroup>
 <thead>
 <tr class="header">
-<th align="left">Resource</th>
-<th align="left">GET</th>
-<th align="left">PUT</th>
-<th align="left">POST</th>
-<th align="left">DELETE</th>
+<th style="text-align: left;">Resource</th>
+<th style="text-align: left;">GET</th>
+<th style="text-align: left;">PUT</th>
+<th style="text-align: left;">POST</th>
+<th style="text-align: left;">DELETE</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left"><p>Collection</p>
+<td style="text-align: left;"><p>Collection</p>
 <p>http://eg.com/resources</p></td>
-<td align="left"><p>List the URIs and other details of elements.</p></td>
-<td align="left"><p>Replace the entire collection.</p></td>
-<td align="left"><p>Add a new entry to the collection. URI is assigned automatically.</p></td>
-<td align="left"><p>Delete the entire collection.</p></td>
+<td style="text-align: left;"><p>List the URIs and other details of elements.</p></td>
+<td style="text-align: left;"><p>Replace the entire collection.</p></td>
+<td style="text-align: left;"><p>Add a new entry to the collection. URI is assigned automatically.</p></td>
+<td style="text-align: left;"><p>Delete the entire collection.</p></td>
 </tr>
 <tr class="even">
-<td align="left"><p>Element</p>
+<td style="text-align: left;"><p>Element</p>
 <p>http://eg.com/resources/item17</p></td>
-<td align="left"><p>Retrieve addressed element expressed in appropriate media type</p></td>
-<td align="left"><p>Replace element or if it does not exist the create it.</p></td>
-<td align="left"><p>Not generally used. Treat element as collection and create new entry</p></td>
-<td align="left"><p>Delete the item from the collection.</p></td>
+<td style="text-align: left;"><p>Retrieve addressed element expressed in appropriate media type</p></td>
+<td style="text-align: left;"><p>Replace element or if it does not exist the create it.</p></td>
+<td style="text-align: left;"><p>Not generally used. Treat element as collection and create new entry</p></td>
+<td style="text-align: left;"><p>Delete the item from the collection.</p></td>
 </tr>
 </tbody>
 </table>
-</div><div id="http-conduit-example" class="slide section level2">
+</section><section id="http-conduit-example" class="slide level2">
 <h1>HTTP-Conduit example</h1>
-<pre class="sourceCode Haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Network.HTTP.Conduit</span>
+<pre class="sourceCode stretch Haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Network.HTTP.Conduit</span>
 <span class="kw">import </span><span class="dt">Network.HTTP.Types.Header</span>
 <span class="kw">import </span><span class="dt">Network.Connection</span> (<span class="dt">TLSSettings</span> (..))
 <span class="kw">import </span><span class="dt">Network.Socket</span>(withSocketsDo)
@@ -189,9 +221,9 @@ fetchTestIssue <span class="fu">=</span> <span class="kw">do</span>
    putStrLn <span class="fu">$</span> <span class="st">&quot;Response headers = \n&quot;</span> <span class="fu">++</span> show hdr
    putStrLn <span class="st">&quot;Response body = &quot;</span>
    B.putStrLn bdy </code></pre>
-</div><div id="http-conduit-example-response" class="slide section level2">
+</section><section id="http-conduit-example-response" class="slide level2">
 <h1>HTTP-Conduit example response</h1>
-<pre><code>Response headers = 
+<pre class="stretch"><code>Response headers = 
 [(&quot;Server&quot;,&quot;nginx&quot;),(&quot;Content-Type&quot;,&quot;application/json;charset=UTF-8&quot;)]
 Response body = 
 {&quot;expand&quot;:&quot;renderedFields,names,schema,transitions,operations,editmeta,changelog&quot;,
@@ -200,7 +232,7 @@ Response body =
 &quot;key&quot;:&quot;DEMO-3083&quot;,
 &quot;fields&quot;:{&quot;summary&quot;:&quot;Backspace to delete zero to enter your dosage &quot;,
 &quot;description&quot;:&quot;You have to delete zero first before you can put in your Dosage&quot;}}</code></pre>
-</div><div id="http-conduit" class="slide section level2">
+</section><section id="http-conduit" class="slide level2">
 <h1>HTTP-Conduit</h1>
 <ul>
 <li>Has good documentation and examples</li>
@@ -209,7 +241,7 @@ Response body =
 <li>Response is JSON</li>
 <li>No need to manually parse JSON just use Aeson</li>
 </ul>
-</div><div id="aeson" class="slide section level2">
+</section><section id="aeson" class="slide level2">
 <h1>Aeson</h1>
 <ul>
 <li>Aeson was the farther of Jason in Greek mythology</li>
@@ -233,9 +265,9 @@ Response body =
 <li>Print it out</li>
 </ul></li>
 </ul>
-</div><div id="aeson-example" class="slide section level2">
+</section><section id="aeson-example" class="slide level2">
 <h1>Aeson example</h1>
-<pre class="sourceCode Haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE OverloadedStrings, DeriveGeneric #-}</span>
+<pre class="sourceCode stretch Haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE OverloadedStrings, DeriveGeneric #-}</span>
 <span class="kw">import           </span><span class="dt">Network.HTTP.Conduit</span>
 <span class="kw">import           </span><span class="dt">Network.Connection</span> (<span class="dt">TLSSettings</span> (..))
 <span class="kw">import           </span><span class="dt">Network.Socket</span>(withSocketsDo)
@@ -277,9 +309,9 @@ Response body =
         <span class="fu">&gt;&gt;=</span> pure <span class="fu">.</span> <span class="dt">IssueResponse</span>                
     <span class="co">-- Error message on parse failure</span>
     parseJSON a <span class="fu">=</span> AS.typeMismatch <span class="st">&quot;Expecting JSON object for Issue&quot;</span> a</code></pre>
-</div><div id="aeson-example-1" class="slide section level2">
+</section><section id="aeson-example-1" class="slide level2">
 <h1>Aeson example</h1>
-<pre class="sourceCode Haskell"><code class="sourceCode haskell"><span class="ot">fetchTestIssue ::</span> <span class="dt">IO</span> ()
+<pre class="sourceCode stretch Haskell"><code class="sourceCode haskell"><span class="ot">fetchTestIssue ::</span> <span class="dt">IO</span> ()
 fetchTestIssue <span class="fu">=</span> <span class="kw">do</span>
         <span class="co">-- We use a demo instance of Jira available on the web</span>
    <span class="kw">let</span>  _host <span class="fu">=</span>  <span class="st">&quot;https://jira.atlassian.com&quot;</span>
@@ -298,14 +330,14 @@ fetchTestIssue <span class="fu">=</span> <span class="kw">do</span>
    <span class="co">-- Encode the whole result (possibly failed) as YAML</span>
    <span class="co">-- Print the resultant ByteString to the console </span>
    B.putStrLn <span class="fu">.</span> YAML.encode <span class="fu">.</span> fmap issueFromResponse <span class="fu">.</span> AS.decode <span class="fu">.</span> responseBody <span class="fu">$</span> response</code></pre>
-</div><div id="aeson-example-output" class="slide section level2">
+</section><section id="aeson-example-output" class="slide level2">
 <h1>Aeson example output</h1>
-<pre class="sourceCode YAML"><code class="sourceCode yaml"><span class="fu">issueDescription:</span> You have to delete zero first before you can put in your Dosage
+<pre class="sourceCode stretch YAML"><code class="sourceCode yaml"><span class="fu">issueDescription:</span> You have to delete zero first before you can put in your Dosage
 <span class="fu">issueId:</span> 333132
 <span class="fu">issueKey:</span> DEMO-3083
 <span class="fu">issueSummary:</span> ! 'Backspace to delete zero to enter your dosage '</code></pre>
-</div>
-<div id="creating-the-document" class="titleslide slide section level1"><h1>Creating the document</h1></div><div id="pandoc" class="slide section level2">
+</section></section>
+<section><section id="creating-the-document" class="titleslide slide level1"><h1>Creating the document</h1></section><section id="pandoc" class="slide level2">
 <h1>Pandoc</h1>
 <ul>
 <li>Haskell library and command line utility</li>
@@ -329,9 +361,9 @@ fetchTestIssue <span class="fu">=</span> <span class="kw">do</span>
 <li>Write out as HTML</li>
 </ul></li>
 </ul>
-</div><div id="pandoc-example" class="slide section level2">
+</section><section id="pandoc-example" class="slide level2">
 <h1>Pandoc example</h1>
-<pre class="sourceCode Haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Text.Pandoc</span>
+<pre class="sourceCode stretch Haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Text.Pandoc</span>
 <span class="kw">import </span><span class="dt">Text.Pandoc.Builder</span> <span class="kw">hiding</span> (space)
 <span class="kw">import </span><span class="dt">Text.Blaze.Renderer.String</span>
 <span class="kw">import qualified</span> <span class="dt">Data.Map</span> <span class="kw">as</span> <span class="dt">M</span>
@@ -359,9 +391,9 @@ main <span class="fu">=</span> <span class="kw">do</span>
     putStrLn <span class="fu">$</span> writeMarkdown def myDoc
     <span class="co">-- render as HTML</span>
     putStrLn <span class="fu">$</span> renderMarkup <span class="fu">$</span> writeHtml def myDoc</code></pre>
-</div><div id="pandoc-example-output" class="slide section level2">
+</section><section id="pandoc-example-output" class="slide level2">
 <h1>Pandoc example output</h1>
-<pre><code>  Gordon   Ramsy
+<pre class="stretch"><code>  Gordon   Ramsy
   -------- -------
   Sally    Storm
   Blah     Bleh
@@ -387,7 +419,7 @@ main <span class="fu">=</span> <span class="kw">do</span>
 &lt;td align=&quot;left&quot;&gt;&lt;p&gt;Bleh&lt;/p&gt;&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;</code></pre>
-</div><div id="parsing-jira-markup-with-parsec" class="slide section level2">
+</section><section id="parsing-jira-markup-with-parsec" class="slide level2">
 <h1>Parsing Jira markup with Parsec</h1>
 <ul>
 <li>Issue description formatted as Jira markup</li>
@@ -401,9 +433,9 @@ main <span class="fu">=</span> <span class="kw">do</span>
 </ul></li>
 <li>Example using parsec to transform some text</li>
 </ul>
-</div><div id="parsec-example" class="slide section level2">
+</section><section id="parsec-example" class="slide level2">
 <h1>Parsec example</h1>
-<pre class="sourceCode Haskell"><code class="sourceCode haskell"><span class="kw">import           </span><span class="dt">Text.Parsec.Char</span>
+<pre class="sourceCode stretch Haskell"><code class="sourceCode haskell"><span class="kw">import           </span><span class="dt">Text.Parsec.Char</span>
 <span class="kw">import           </span><span class="dt">Text.Parsec.String</span> (<span class="dt">Parser</span>)
 <span class="kw">import           </span><span class="dt">Text.Parsec.Prim</span> <span class="kw">hiding</span> ((&lt;|&gt;))
 <span class="kw">import           </span><span class="dt">Text.Parsec.Combinator</span>
@@ -438,8 +470,8 @@ main <span class="fu">=</span> <span class="kw">do</span>
                         <span class="dt">Left</span> e <span class="ot">-&gt;</span> print e       <span class="co">-- on failure print error</span>
                         <span class="dt">Right</span> rs <span class="ot">-&gt;</span> putStrLn rs <span class="co">-- on success print out:</span>
     <span class="co">-- See issue OMED-457 for more information related the bug listed in OMED-765</span></code></pre>
-</div>
-<div id="my-experience" class="titleslide slide section level1"><h1>My experience</h1></div><div id="overview-of-experience" class="slide section level2">
+</section></section>
+<section><section id="my-experience" class="titleslide slide level1"><h1>My experience</h1></section><section id="overview-of-experience" class="slide level2">
 <h1>Overview of experience</h1>
 <ul>
 <li>A lot of Haskell code is declarative
@@ -468,7 +500,7 @@ main <span class="fu">=</span> <span class="kw">do</span>
 <li>No you can’t do that because you are an idiot</li>
 </ul></li>
 </ul>
-</div><div id="error-reporting" class="slide section level2">
+</section><section id="error-reporting" class="slide level2">
 <h1>Error reporting</h1>
 <ul>
 <li>I like the idea of let it break</li>
@@ -487,7 +519,7 @@ main <span class="fu">=</span> <span class="kw">do</span>
 </ul></li>
 <li>Probably better to explicitly handle failure.</li>
 </ul>
-</div><div id="printf-with-debug.trace" class="slide section level2">
+</section><section id="printf-with-debug.trace" class="slide level2">
 <h1>Printf with Debug.Trace</h1>
 <ul>
 <li><code>Debug.Trace</code> is a <code>printf</code> escape hatch for pure code</li>
@@ -503,7 +535,7 @@ main <span class="fu">=</span> <span class="kw">do</span>
 <li>Helped me understand all my misconceptions</li>
 </ul></li>
 </ul>
-<pre class="sourceCode Haskell"><code class="sourceCode haskell"><span class="co">-- ......</span>
+<pre class="sourceCode stretch Haskell"><code class="sourceCode haskell"><span class="co">-- ......</span>
 <span class="kw">type</span> <span class="dt">MyParser</span> <span class="fu">=</span> <span class="dt">Parsec</span> <span class="dt">String</span> <span class="dt">ParseState</span>
 <span class="co">-- .....</span>
 <span class="co">-- Really gross but worked.</span>
@@ -511,15 +543,15 @@ main <span class="fu">=</span> <span class="kw">do</span>
 <span class="co">-- to access the parse state through my trace message</span>
 <span class="ot">traceM' ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">MyParser</span> ()
 traceM' msg <span class="fu">=</span> getState <span class="fu">&gt;&gt;=</span> (\s <span class="ot">-&gt;</span> return <span class="fu">$!</span> trace (<span class="ch">'\n'</span> <span class="fu">:</span> msg) s) <span class="fu">&gt;&gt;=</span> setState</code></pre>
-</div>
-<div id="wrapping-up" class="titleslide slide section level1"><h1>Wrapping up</h1></div><div id="the-tool" class="slide section level2">
+</section></section>
+<section><section id="wrapping-up" class="titleslide slide level1"><h1>Wrapping up</h1></section><section id="the-tool" class="slide level2">
 <h1>The tool</h1>
 <ul>
 <li>The tool can be found here <a href="https://github.com/HanStolpo/JiraStructureToDocx">https://github.com/HanStolpo/JiraStructureToDocx</a></li>
 <li>Quality of code is low (just good enough for us to use internally)</li>
 <li>The same goes for the non existent documentation</li>
 </ul>
-</div><div id="some-links" class="slide section level2">
+</section><section id="some-links" class="slide level2">
 <h1>Some Links</h1>
 <ul>
 <li>Jira: <a href="https://www.atlassian.com/software/jira">https://www.atlassian.com/software/jira</a></li>
@@ -541,7 +573,49 @@ traceM' msg <span class="fu">=</span> getState <span class="fu">&gt;&gt;=</span>
 <li>aeson: <a href="http://hackage.haskell.org/package/aeson">http://hackage.haskell.org/package/aeson</a></li>
 <li>YAML: <a href="http://hackage.haskell.org/package/yaml-0.8.8.2">http://hackage.haskell.org/package/yaml-0.8.8.2</a></li>
 </ul>
-</div>
-<div id="end" class="titleslide slide section level1"><h1>END</h1></div>
-</body>
+</section></section>
+<section><section id="end" class="titleslide slide level1"><h1>END</h1></section></section>
+			</div>
+		</div>
+
+		<script src="../lib/js/head.min.js"></script>
+		<script src="../js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'convex', // none/fade/slide/convex/concave/zoom
+				// The "normal" size of the presentation, aspect ratio will be preserved
+				// when the presentation is scaled to fit different resolutions. Can be
+				// specified using percentage units.
+				width: 1160,
+				height: 720,
+				// Factor of the display size that should remain empty around the content
+				margin: 0.01,
+
+				// Bounds for smallest/largest possible scale to apply to content
+				minScale: 0.05,
+				maxScale: 1.5,
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: '../lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
 </html>

@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>reveal.js - The HTML Presentation Framework</title>
+
+		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+		<meta name="author" content="Hakim El Hattab">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="../css/reveal.css">
+		<link rel="stylesheet" href="../css/theme/moon.css" id="theme">
+		<link rel="stylesheet" type="text/css" href="../css/highlighting.css" />
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="../lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? '../css/print/pdf.css' : '../css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="../lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+			<div class="slides">
+<section><section id="for-the-purely-lazy" class="titleslide slide level1"><h1>For the Purely Lazy</h1></section><section id="the-low-down" class="slide level2">
+<h1>The Low Down</h1>
+<ul>
+<li>Looking at Lazy Evaluation in the purely functional language Haskell.</li>
+<li>All about the lazy, purity just along for the ride.</li>
+<li>Wat is Lazy Evaluation?</li>
+<li>What is it good for?</li>
+<li>What are the gotchas?</li>
+</ul>
+</section></section>
+<section><section id="evaluation-strategies" class="titleslide slide level1"><h1>Evaluation strategies</h1></section><section id="eager-or-lazy" class="slide level2">
+<h1>Eager or Lazy</h1>
+<ul>
+<li><p>In Haskell like languages evaluation is reducing expressions to their simplest form.<br /><span style="color:lightblue"><code>(5 + 4 - 2) * (5 + 4 - 2) ⇒ 49</code></span></p></li>
+<li><p>Two options when expression includes function application.<br /><span style="color:lightblue"><code>square (5 + 4 - 2) ⇒ 49</code></span></p>
+<ul>
+<li><p><span style="color:red"> Reduce arguments first (<em>Innermost reduction / Eager Evaluation</em>)</span><br /> <span style="color:firebrick"> <code>square (5 + 4 - 2) ⇒ square(7) ⇒ 7 * 7 ⇒ 49</code> </span></p></li>
+<li><p><span style="color:limegreen"> Apply function first (<em>Outermost reduction / Lazy Evaluation</em>)</span><br /> <span style="color:olivedrab"> <code>square (5 + 4 - 2) ⇒ (5 + 4 - 2) * (5 + 4 - 2) ⇒ 7 * 7 ⇒ 49</code> </span></p></li>
+</ul></li>
+<li><p>Final answer == expression in normal form<br /><span style="color:lightblue"><code>49</code></span> is the normal form of <span style="color:lightblue"><code>square (5 + 4 - 2)</code></span></p></li>
+</ul>
+<aside class="notes">
+Inner most reduction / outer most reduction from [Thinking Functionally with Haskell][] page 27.
+</aside>
+</section><section id="lazy-is-a-bit-more-involved" class="slide level2">
+<h1>Lazy is a bit more involved</h1>
+<div style="width: 50%;float: left;">
+<ul>
+<li>Outermost reduction</li>
+<li>Only evaluate as needed
+<ul>
+<li>Not to normal form</li>
+<li>To head normal form / weak head normal form</li>
+<li>Outer most constructor</li>
+</ul></li>
+<li>Shares sub expressions when expanding</li>
+</ul>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">square (<span class="dv">5</span> <span class="fu">+</span> <span class="dv">4</span>)
+<span class="ot">⇒</span> <span class="kw">let</span> x <span class="fu">=</span> <span class="dv">5</span> <span class="fu">+</span> <span class="dv">4</span> <span class="kw">in</span> square x
+<span class="ot">⇒</span> x <span class="fu">*</span> x
+<span class="ot">⇒</span> <span class="kw">let</span> x <span class="fu">=</span> <span class="dv">7</span> <span class="kw">in</span> x <span class="fu">*</span> x
+<span class="ot">⇒</span> <span class="dv">7</span><span class="fu">*</span><span class="dv">7</span>
+<span class="ot">⇒</span> <span class="dv">49</span></code></pre>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">(<span class="dv">5</span>,square (<span class="dv">5</span> <span class="fu">+</span> <span class="dv">4</span>))
+<span class="ot">⇒</span> <span class="kw">let</span> a <span class="fu">=</span> <span class="dv">5</span>, b <span class="fu">=</span> square (<span class="dv">5</span> <span class="fu">+</span> <span class="dv">4</span>) <span class="kw">in</span> (a,b)</code></pre>
+</div>
+<div style="width: 50%;float: right;">
+<img src="../media/Lazy_Eval_Sharing_and_Head_Normal.svg" alt="Lazy evaluation showing sharing and evaluating to head normal form" />
+<div>
+
+
+</section><section id="whats-the-difference" class="slide level2">
+<h1>Whats the difference</h1>
+<div style="width: 50%;float: left;">
+<p>Given</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">fst (a, b) <span class="fu">=</span> a
+fst (<span class="dv">0</span>, square (<span class="dv">5</span> <span class="fu">+</span> <span class="dv">4</span>)) </code></pre>
+<p>Eager</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">fst (<span class="dv">0</span>, square (<span class="dv">5</span> <span class="fu">+</span> <span class="dv">4</span>)) 
+<span class="ot">⇒</span> fst (<span class="dv">0</span>, square <span class="dv">9</span>) 
+<span class="ot">⇒</span> fst (<span class="dv">0</span>, <span class="dv">9</span> <span class="fu">*</span> <span class="dv">9</span>)
+<span class="ot">⇒</span> <span class="dv">0</span></code></pre>
+<p>Lazy</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">fst (<span class="dv">0</span>, square (<span class="dv">5</span> <span class="fu">+</span> <span class="dv">4</span>)) 
+<span class="ot">⇒</span> <span class="kw">let</span> a <span class="fu">=</span> <span class="dv">0</span>, b <span class="fu">=</span> square (<span class="dv">5</span> <span class="fu">+</span> <span class="dv">4</span>) <span class="kw">in</span> fst (a, b) 
+<span class="ot">⇒</span> a
+<span class="ot">⇒</span> <span class="dv">0</span></code></pre>
+Lazy never evaluated <span style="color:lightblue"><code>square (5 + 4)</code></span> where eager did.
+</div>
+<div style="width: 50%;float: right;">
+<img src="../media/Lazy_vs_Eager.svg" alt="Lazy vs Eager evaluation" />
+</div>
+</section><section class="slide level2">
+
+<div style="height: 5%;float: top;">
+<p>Given</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">fst (<span class="dv">0</span>, ⊥) </code></pre>
+</div>
+<div style="height: 95%;float: bottom;">
+<div style="width: 50%;float: left;">
+<p>Eager</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">fst (<span class="dv">0</span>, ⊥) 
+<span class="ot">⇒</span> fst ⊥
+<span class="ot">⇒</span> ⊥</code></pre>
+</div>
+<div style="width: 50%;float: right;">
+<p>Lazy</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">fst (<span class="dv">0</span>, ⊥) 
+<span class="ot">⇒</span> <span class="kw">let</span> a <span class="fu">=</span> <span class="dv">0</span>, b <span class="fu">=</span> ⊥ <span class="kw">in</span> fst (a, b) 
+<span class="ot">⇒</span> a
+<span class="ot">⇒</span> <span class="dv">0</span></code></pre>
+</div>
+</div>
+<div style="height: 5%;float: bottom;">
+<ul>
+<li>In the presence of bottom (⊥, undefined / non termination)</li>
+<li>Lazy evaluation can still return a result</li>
+<li>Lazy version never evaluated the ⊥ argument.</li>
+</ul>
+</div>
+</section><section id="lazy-always-best-well-no." class="slide level2">
+<h1>Lazy always best! Well no.</h1>
+<div style="width: 30%;float: left;">
+<ul>
+<li>Lazy evaluation has a bookkeeping overhead</li>
+<li>Unevaluated expression builds up in memory</li>
+<li>Eager is not always better than Lazy</li>
+<li>Lazy is not always better than Eager</li>
+<li>Just a note, technically primitive operations in GHC are not lazy.</li>
+</ul>
+</div>
+<div style="width: 70%;float: right;">
+<img src="../media/Lazy_vs_Eager_Cost.svg" alt="The cost of lazy evaluation" />
+</div>
+</section></section>
+<section><section id="the-good-the-bad-and-the-smugly" class="titleslide slide level1"><h1>The Good, The Bad and The Smugly</h1></section><section id="the-good-and-bad" class="slide level2">
+<h1>The Good and Bad</h1>
+<div style="width: 50%;float: left;">
+<h3>Pros</h3>
+<ul>
+<li>More efficient ?
+<ul>
+<li>This is a red herring.</li>
+<li>It could be or it couldn’t.</li>
+</ul></li>
+<li>Modularity!
+<ul>
+<li>This is the real reason</li>
+<li>John Hughes - <a href="http://www.cs.kent.ac.uk/people/staff/dat/miranda/whyfp90.pdf" title="Why Functional Programming Matters">Why Functional Programming Matters</a></li>
+<li>Glue allowing composition of functional programs</li>
+</ul></li>
+<li>Efficient tricks for pure languages.
+<ul>
+<li>Again ? Contradiction ? Nope.</li>
+<li>Memoization preserving purity and abstraction.</li>
+<li>Caching preserving purity and abstraction.</li>
+</ul></li>
+</ul>
+</div>
+<div style="width: 50%;float: right;">
+<h3>Cons</h3>
+<ul>
+<li>Difficult to reason about time and space usage.
+<ul>
+<li>Time ? Not sold.
+<ul>
+<li>Lazy O(n) &lt;= Eager O(n)</li>
+<li>When is the cost? Latency is a concern.</li>
+</ul></li>
+<li>Space ?
+<ul>
+<li>Unfortunately yes.</li>
+<li>The dreaded space leak.</li>
+</ul></li>
+</ul></li>
+<li>Parallel unfriendly
+<ul>
+<li>Doing work in parallel means doing the work in parallel.</li>
+<li>Have to force work to be done.</li>
+<li>Only an issue if you believe in automagic parallelization.</li>
+<li>See <a href="https://hackage.haskell.org/package/conduit" title="Conduit">Parallel and Concurrent Programming in Haskell</a></li>
+</ul></li>
+</ul>
+</div>
+<aside class="notes">
+
+</aside>
+</section><section id="so-dont-be-smug" class="slide level2">
+<h1>So Don’t be Smug</h1>
+<ul>
+<li>Laziness is not a silver bullet.</li>
+<li>Laziness is not a scarlet letter.</li>
+<li>Most eager languages have lazy constructs.</li>
+<li>Most lazy languages have eager constructs.</li>
+</ul>
+</section></section>
+<section><section id="modularity" class="titleslide slide level1"><h1>Modularity</h1></section><section id="lazy-aids-composition" class="slide level2">
+<h1>Lazy Aids Composition</h1>
+<ul>
+<li>From Why <a href="http://www.cs.kent.ac.uk/people/staff/dat/miranda/whyfp90.pdf" title="Why Functional Programming Matters">Functional Programming Matters</a></li>
+<li>Can structured whole programs as function composition</li>
+<li><span style="color: lightblue"><code>(f . g) input == f (g input)</code></span></li>
+<li><span style="color: lightblue"><code>g</code></span> only consumes <span style="color: lightblue"><code>input</code></span> as <span style="color: lightblue"><code>f</code></span> needs it.</li>
+<li><span style="color: lightblue"><code>f</code></span> knows nothing of <span style="color: lightblue"><code>g</code></span></li>
+<li><span style="color: lightblue"><code>g</code></span> knows nothing of <span style="color: lightblue"><code>f</code></span></li>
+<li>When <span style="color: lightblue"><code>f</code></span> terminates <span style="color: lightblue"><code>g</code></span> terminates</li>
+<li>Allows termination conditions to be separated from loop bodies.</li>
+<li>Can modularise as generators and selectors.</li>
+</ul>
+</section><section id="lazy-composition-sqrt" class="slide level2">
+<h1>Lazy Composition Sqrt</h1>
+<div style="height: 50%; float: top">
+<ul>
+<li>Example from Why <a href="http://www.cs.kent.ac.uk/people/staff/dat/miranda/whyfp90.pdf" title="Why Functional Programming Matters">Functional Programming Matters</a></li>
+<li>Newton-Raphson to calculate square root approximation.</li>
+<li>One function generates sequence of approximations.</li>
+<li>Two options to chose when approximation is good enough.
+<ul>
+<li>Don’t care approximations to what.</li>
+</ul></li>
+<li>Can to give different square root approximations.</li>
+<li>Paper expands on examples of Laziness aiding composition.</li>
+</ul>
+</div>
+<div style="height: 50%; float: bottom">
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- Generate a sqrt sequence of operations using Newton-Raphson</span>
+nextSqrtApprox n x <span class="fu">=</span> (x <span class="fu">+</span> n<span class="fu">/</span>x) <span class="fu">/</span> <span class="dv">2</span>
+<span class="co">-- iterate f x == [x, f x, f (f x), ...]</span>
+sqrtApprox n <span class="fu">=</span> iterate (nextSqrtApprox n) (n<span class="fu">/</span><span class="dv">2</span>)
+<span class="co">-- element where the difference with previous is below threshold</span>
+within eps (a<span class="fu">:</span>b<span class="fu">:</span>bs) <span class="fu">|</span> abs(a<span class="fu">-</span>b) <span class="fu">&lt;=</span> eps <span class="fu">=</span> b
+                    <span class="fu">|</span> otherwise <span class="fu">=</span> within eps (b<span class="fu">:</span>bs)
+<span class="co">-- Calculate approximate sqrt using within</span>
+withinSqrt eps n <span class="fu">=</span> within eps (sqrtApprox n)
+<span class="co">-- element where ratio with previous is close to 1</span>
+relative eps (a<span class="fu">:</span>b<span class="fu">:</span>bs) <span class="fu">|</span> abs(a<span class="fu">-</span>b) <span class="fu">&lt;=</span> eps <span class="fu">*</span> abs b <span class="fu">=</span> b
+                      <span class="fu">|</span> otherwise <span class="fu">=</span> relative eps (b<span class="fu">:</span>bs)
+<span class="co">-- Calculate approximate sqrt using relative</span>
+relativeSqrt eps n <span class="fu">=</span> within eps (sqrtApprox n)</code></pre>
+</div>
+</section><section id="caveats-about-lazy-composition" class="slide level2">
+<h1>Caveats about Lazy Composition</h1>
+<ul>
+<li>When using Lazy IO
+<ul>
+<li>Promptness of resource finalization is a problem</li>
+</ul></li>
+<li>Use libraries libraries like
+<ul>
+<li><a href="https://hackage.haskell.org/package/conduit" title="Conduit">Conduit</a></li>
+<li><a href="https://hackage.haskell.org/package/pipes" title="pipes">Pipes</a></li>
+</ul></li>
+</ul>
+</section></section>
+<section><section id="lazy-tricks" class="titleslide slide level1"><h1>Lazy Tricks</h1></section><section id="memoization" class="slide level2">
+<h1>Memoization</h1>
+<div style="width: 30%; float: left">
+<ul>
+<li>Use Laziness to incrementally build the list of all Fibonacci numbers.</li>
+<li>The list refers to itself to reuse calculations.</li>
+<li>The list is in constant applicative form (CAF) so is memoized</li>
+<li>See <a href="https://wiki.haskell.org/Memoization" title="Haskell Wiki Memoization">Haskell wiki</a> for more tricks using infinite data structures to memoize functions.</li>
+</ul>
+</div>
+<div style="width: 70%; float: right">
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">fib_list ::</span> [<span class="dt">Integer</span>]
+fib_list <span class="fu">=</span> <span class="dv">0</span><span class="fu">:</span><span class="dv">1</span><span class="fu">:</span><span class="dv">1</span><span class="fu">:</span><span class="dv">2</span><span class="fu">:</span>[n2 <span class="fu">+</span> n1<span class="fu">|</span> (n2, n1) <span class="ot">&lt;-</span> 
+                    zip (drop <span class="dv">2</span> fib_list) (drop <span class="dv">3</span> fib_list)]
+<span class="ot">fib_best ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Integer</span>
+fib_best n <span class="fu">=</span> fib_list <span class="fu">!!</span> n</code></pre>
+<p>GHCi with timing</p>
+<pre><code>*Main&gt; 5 &lt; fib_best 100000
+True
+(0.86 secs, 449258648 bytes)
+*Main&gt; 5 &lt; fib_best 100001
+True
+(0.02 secs, 0 bytes)
+*Main&gt; </code></pre>
+</div>
+</section><section id="caching" class="slide level2">
+<h1>Caching</h1>
+<ul>
+<li>So you have some data/results and some expensive queries against it.</li>
+<li>You want to perform the queries only when they are needed.</li>
+<li>You want to perform the queries only once.</li>
+<li>You must preserve purity.</li>
+<li>What do you do?</li>
+<li>Perform the queries and store in the data structure.</li>
+<li>Laziness means they will only be evaluated once and only when needed.</li>
+</ul>
+</section></section>
+			</div>
+		</div>
+
+		<script src="../lib/js/head.min.js"></script>
+		<script src="../js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'convex', // none/fade/slide/convex/concave/zoom
+				// The "normal" size of the presentation, aspect ratio will be preserved
+				// when the presentation is scaled to fit different resolutions. Can be
+				// specified using percentage units.
+				width: 1160,
+				height: 720,
+				// Factor of the display size that should remain empty around the content
+				margin: 0.01,
+
+				// Bounds for smallest/largest possible scale to apply to content
+				minScale: 0.05,
+				maxScale: 1.5,
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: '../lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
