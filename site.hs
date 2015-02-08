@@ -147,7 +147,13 @@ _stretchCodeBlocks = walk f
         f x = x
 
 _stretchCodeBlocks' :: Item Pandoc -> Compiler (Item Pandoc)
-_stretchCodeBlocks' i = return (Item (itemIdentifier i)  (_stretchCodeBlocks . itemBody $ i))
+_stretchCodeBlocks' i = do
+    o <- getMetadataField (itemIdentifier i) "autoStretchCode"
+    case o of
+        Just "False" -> return i
+        Just "false" -> return i
+        _            -> return (Item (itemIdentifier i)  (_stretchCodeBlocks . itemBody $ i))
+
 
 _pandocWriterSlides :: Item Pandoc ->  Compiler (Item String)
 _pandocWriterSlides  =  _stretchCodeBlocks' >=> w
@@ -157,7 +163,7 @@ _pandocWriterSlides  =  _stretchCodeBlocks' >=> w
                                                , writerIncremental = True 
                                                , writerHighlight = True
                                                , writerExtensions = S.fromList [Ext_literate_haskell]
-                                               , writerSectionDivs = False
+                                               , writerSectionDivs = True
                                                , writerHtml5 = True
                                                } 
 _pandocWriterPosts :: Item Pandoc ->  Compiler (Item String)
@@ -183,6 +189,7 @@ _pandocWriterWith wOpts i = do
                     ++ "\n\twriterHighlight = " ++ (show . writerHighlight $ o)
                     ++ "\n\twriterSlideVariant = " ++ (show . writerSlideVariant $ o)
                     ++ "\n\twriterSectionDivs = " ++ (show . writerSectionDivs $ o)
+                    ++ "\n\twriterHtml5 = " ++ (show . writerHtml5 $ o)
                     ++ "\n\twriterHtml5 = " ++ (show . writerHtml5 $ o)
                     ++ "\n-------------------------------------------"
     ("_pandocWriterWith for "++) . (show ident++) . (" with meta data\n"++) . show <$> getMetadata ident >>= logMsg 
