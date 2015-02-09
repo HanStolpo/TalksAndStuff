@@ -39,6 +39,11 @@ Eager or Lazy
 
 * Final answer == expression in normal form  
     <span style="color:lightblue">```49```</span> is the normal form of <span style="color:lightblue">```square (5 + 4 - 2)```</span>
+* Eager also called strict.
+* Lazy also called non-strict (sort of)
+    * Lazy is non-strict but non-strict is not necessarily Lazy.
+    * Haskell requires non-strictness
+    * Most implementations are Lazy
 
 <div class="notes">
 Inner most reduction / outer most reduction from [Thinking Functionally with Haskell][] page 27.
@@ -246,11 +251,11 @@ Caveats about Lazy Composition
 * When using Lazy IO
     * Promptness of resource finalization is a problem
 * Use libraries libraries like
-    * [Conduit][3]
-    * [Pipes][4]
+    * [Conduit][4]
+    * [Pipes][5]
 
-[3]: https://hackage.haskell.org/package/conduit (Conduit)
-[4]: https://hackage.haskell.org/package/pipes (pipes)
+[4]: https://hackage.haskell.org/package/conduit (Conduit)
+[5]: https://hackage.haskell.org/package/pipes (pipes)
 
 Lazy Tricks
 =========================================
@@ -295,3 +300,214 @@ Caching
 * What do you do?
 * Perform the queries and store in the data structure.
 * Laziness means they will only be evaluated once and only when needed.
+
+* * * *
+
+* Canned example using really expensive fib.
+* ```Fibber``` is some ```Num``` type you can do math on.
+* You can ask it for the resultant value of the Fibonacci number.
+* You wont export the constructor.
+
+<div style="width: 60%; float: left;">
+```{.haskell .stretch}
+fib_worst :: Int -> Integer
+fib_worst 0 = 0
+fib_worst 1 = 1
+fib_worst 2 = 1
+fib_worst n = fib_worst(n-2) + fib_worst(n-1)
+
+data Fibber = Fibber{fibNum :: Int, fibValue :: Integer}
+makeFibber :: Int -> Fibber
+makeFibber a = Fibber a (fib_worst a)
+instance Eq Fibber where a == b = fibNum a == fibNum b
+instance Ord Fibber where a <= b = fibNum a <= fibNum b
+instance Show Fibber where show a = show . fibNum $ a
+instance Num Fibber where
+    a + b = makeFibber (fibNum a + fibNum b)
+    a * b = makeFibber (fibNum a * fibNum b)
+    abs = makeFibber . abs . fibNum
+    signum = makeFibber . signum . fibNum
+    fromInteger = makeFibber . fromInteger
+    negate = makeFibber . negate . fibNum
+```
+</div>
+
+<div style="width: 40%; float: right;">
+GHCi
+```
+*Main> let fibber30 = makeFibber 30
+(0.00 secs, 0 bytes)
+*Main> let fibber25 = makeFibber 25
+(0.00 secs, 0 bytes)
+*Main> fibValue (fibber30 - fibber25)
+5
+(0.00 secs, 0 bytes)
+*Main> fibValue fibber30
+832040
+(1.22 secs, 127472744 bytes)
+*Main> fibValue fibber30
+832040
+(0.00 secs, 0 bytes)
+*Main> fibValue fibber25
+75025
+(0.11 secs, 10684624 bytes)
+*Main> 
+```
+</div>
+
+Time and Space
+===============================
+
+Times up
+-------------------------------
+* Algorithmic complexity of Lazy evaluation is never more than Eager.
+* Consider Eager behaviour for upper bound.
+* Real issue - work might be delayed.
+* Delayed work is real issue for parallelism.
+* Can always force work using [seq][6] and [deepseq][7] and [force][7]
+* See [Parallel and Concurrent Programming in Haskell][3]
+
+[6]: http://hackage.haskell.org/package/base-4.7.0.2/docs/Prelude.html#v:seq (Base library seq)
+[7]: http://hackage.haskell.org/package/deepseq-1.4.0.0/docs/Control-DeepSeq.html (DeepSeq library)
+
+Space Leaks
+------------------------
+* Space Leak - program / expression uses more memory than required.
+    * Memory is eventually released
+    * You think it will run in constant memory but it doesn't
+    * Building up unevaluated thunks.
+    * Unnecessarily keeping reference to data alive.
+* Memory leak - program allocates memory that is never reclaimed.
+* Pure Haskell code can only be able to Space Leak (no Memory Leak).
+* Most other Haskell code should only be able to Space Leak (mostly no Memory Leak).
+
+Examples from "Leaking Space"
+--------------------------------
+* Some space leak examples from [Leaking Space - Eliminating memory hogs][8]
+```haskell
+xs = delete "dead" ["alive", "dead"]
+```
+* Lazy evaluation will keep ```dead``` alive until evaluation of ```xs``` is forced.
+* One form of space leak results from adding to and removing from lists but never evaluating (to reduce).
+```haskell
+xs = let xs' = delete "dead" ["alive", "dead"] in xs' `seq` xs'
+```
+* Why not always strict/eager.
+    * Composition.
+    * Composing strictly requires arguments to be evaluated fully.
+    * ```sum [1..n]``` will consume O(n) space when evaluated strictly.
+    * ```sum [1..n]``` **should** consume O(1) space when evaluated lazily (implementation).
+    * Usually easier to introduce strictness when lazy than laziness when strict.
+
+* * *
+
+* This definition is O(n) space. 
+* List is not actually kept in memory
+* Accumulates ```(+)``` operations. 
+```haskell
+sum1 (x:xs) = x + sum1 xs 
+sum1 [] = 0
+```
+* This definition is O(n) space. 
+* Also accumulates ```(+)``` operations. 
+```haskell
+sum2 xs = sum2’ 0 xs 
+   where 
+       sum2’ a (x:xs) = sum2’ (a+x) xs 
+       sum2’ a [] = a
+```
+* This definition is O(1) space. 
+```haskell
+sum3 xs = sum3’ 0 xs 
+   where 
+       sum3’ !a (x:xs) = sum3’ (a+x) xs 
+       sum3’ !a [] = a
+```
+* With optimizations in GHC ```sum2``` may be transformed into ```sum3``` during strictness analysis.
+* The article has more examples of space leaks.
+[8]: http://queue.acm.org/detail.cfm?id=2538488 (Leaking Space - Eliminating memory hogs: By Neil Mitchell)
+
+When Strictness can make things slow
+------------------------------------
+<div style="float: top;">
+* Maybe one should just through strictness in everywhere
+* Something I did not know. Pattern matches are strict.
+* Example from [Haskell Wiki][9]
+* Strict pattern match forces all recursive calls to splitAt
+</div>
+
+<div style="float: bottom;">
+<div style="width: 50%; float: left;">
+
+```haskell
+-- Strict
+splitAt_sp n xs = ("splitAt_lp " ++ show n) $
+    if n<=0
+        then ([], xs)
+        else
+            case xs of
+                [] -> ([], [])
+                y:ys ->
+                    case splitAt_lp' (n-1) ys of
+                        -- pattern match is strict
+                        (prefix, suffix) -> (y : prefix, suffix)
+```
+
+</div>
+
+<div style="width: 50%; float: right;">
+
+```haskell
+-- Lazy
+splitAt_lp n xs = ("splitAt_lp " ++ show n) $
+    if n<=0
+        then ([], xs)
+        else
+            case xs of
+                [] -> ([], [])
+                y:ys ->
+                    case splitAt_lp' (n-1) ys of
+                        -- pattern match is lazy
+                        ~(prefix, suffix) -> (y : prefix, suffix)
+```
+
+</div>
+</div>
+<div style="float: bottom;">
+GHCi
+```
+*Main> sum . take 5 . fst . splitAt_sp 10000000 $ repeat 1
+5
+(20.78 secs, 3642437376 bytes)
+*Main> sum . take 5 . fst . splitAt_lp 10000000 $ repeat 1
+5
+(0.00 secs, 0 bytes)
+```
+</div>
+[9]: https://wiki.haskell.org/Lazy_pattern_match (Haskell Wiki Lazy Pattern Matching)
+
+What to do with thorny space leaks
+----------------------------------
+* Pinpoint leaks using GHC's profiling tools.
+* For some domains libraries exist that eliminate large classes of space leaks by design
+    * Streaming libraries like
+        * [Conduit][4]
+        * [Pipes][5]
+    * FRP Libraries like
+        * [Netwire][10]
+
+[10]: https://hackage.haskell.org/package/netwire (Netwire)
+
+Further reading
+=============
+
+* [How does Lazy Evaluation work?][11] - Great article with lots of pictures.
+* [The Point of Laziness][12] - Some criticisms of laziness.
+* [Lazy bindings][13] - A response to [The Point of Laziness][12] about what is good about laziness.
+* [Leaking Space - Eliminating memory hogs][8] - A good article about space leaks.
+* [Reasoning about space leaks with space invariants][14] - Another good article about space leaks.
+
+[11]: https://hackhands.com/lazy-evaluation-works-haskell/
+[12]: https://existentialtype.wordpress.com/2011/04/24/
+[13]: http://augustss.blogspot.com/2011/05/more-points-for-lazy-evaluation-in.html
+[14]: http://apfelmus.nfshost.com/blog/2013/08/21-space-invariants.html
