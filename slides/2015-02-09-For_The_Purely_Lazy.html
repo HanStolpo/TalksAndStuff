@@ -58,7 +58,14 @@
 <li><p><span style="color:red"> Reduce arguments first (<em>Innermost reduction / Eager Evaluation</em>)</span><br /> <span style="color:firebrick"> <code>square (5 + 4 - 2) ⇒ square(7) ⇒ 7 * 7 ⇒ 49</code> </span></p></li>
 <li><p><span style="color:limegreen"> Apply function first (<em>Outermost reduction / Lazy Evaluation</em>)</span><br /> <span style="color:olivedrab"> <code>square (5 + 4 - 2) ⇒ (5 + 4 - 2) * (5 + 4 - 2) ⇒ 7 * 7 ⇒ 49</code> </span></p></li>
 </ul></li>
-<li><p>Final answer == expression in normal form<br /><span style="color:lightblue"><code>49</code></span> is the normal form of <span style="color:lightblue"><code>square (5 + 4 - 2)</code></span></p></li>
+<li>Final answer == expression in normal form<br /><span style="color:lightblue"><code>49</code></span> is the normal form of <span style="color:lightblue"><code>square (5 + 4 - 2)</code></span></li>
+<li>Eager also called strict.</li>
+<li>Lazy also called non-strict (sort of)
+<ul>
+<li>Lazy is non-strict but non-strict is not necessarily Lazy.</li>
+<li>Haskell requires non-strictness</li>
+<li>Most implementations are Lazy</li>
+</ul></li>
 </ul>
 <aside class="notes">
 Inner most reduction / outer most reduction from [Thinking Functionally with Haskell][] page 27.
@@ -199,7 +206,7 @@ Lazy never evaluated <span style="color:lightblue"><code>square (5 + 4)</code></
 <li>Doing work in parallel means doing the work in parallel.</li>
 <li>Have to force work to be done.</li>
 <li>Only an issue if you believe in automagic parallelization.</li>
-<li>See <a href="https://hackage.haskell.org/package/conduit" title="Conduit">Parallel and Concurrent Programming in Haskell</a></li>
+<li>See <a href="httP://http://community.haskell.org/~simonmar/pcph/" title="Parallel and Concurrent Programming in Haskell: Techniques for Multicore and Multithreaded Programming">Parallel and Concurrent Programming in Haskell</a></li>
 </ul></li>
 </ul>
 </div>
@@ -269,7 +276,7 @@ relativeSqrt eps n <span class="fu">=</span> within eps (sqrtApprox n)</code></p
 <li>Use libraries libraries like
 <ul>
 <li><a href="https://hackage.haskell.org/package/conduit" title="Conduit">Conduit</a></li>
-<li><a href="https://hackage.haskell.org/package/pipes" title="pipes">Pipes</a></li>
+<li><a href="https://wiki.haskell.org/Memoization" title="Haskell Wiki Memoization">Pipes</a></li>
 </ul></li>
 </ul>
 </section></section>
@@ -309,7 +316,185 @@ True
 <li>Perform the queries and store in the data structure.</li>
 <li>Laziness means they will only be evaluated once and only when needed.</li>
 </ul>
+</section><section class="slide level2">
+
+<ul>
+<li>Canned example using really expensive fib.</li>
+<li><code>Fibber</code> is some <code>Num</code> type you can do math on.</li>
+<li>You can ask it for the resultant value of the Fibonacci number.</li>
+<li>You wont export the constructor.</li>
+</ul>
+<div style="width: 60%; float: left;">
+<pre class="sourceCode haskell stretch"><code class="sourceCode haskell"><span class="ot">fib_worst ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Integer</span>
+fib_worst <span class="dv">0</span> <span class="fu">=</span> <span class="dv">0</span>
+fib_worst <span class="dv">1</span> <span class="fu">=</span> <span class="dv">1</span>
+fib_worst <span class="dv">2</span> <span class="fu">=</span> <span class="dv">1</span>
+fib_worst n <span class="fu">=</span> fib_worst(n<span class="fu">-</span><span class="dv">2</span>) <span class="fu">+</span> fib_worst(n<span class="fu">-</span><span class="dv">1</span>)
+
+<span class="kw">data</span> <span class="dt">Fibber</span> <span class="fu">=</span> <span class="dt">Fibber</span>{<span class="ot">fibNum ::</span> <span class="dt">Int</span>,<span class="ot"> fibValue ::</span> <span class="dt">Integer</span>}
+<span class="ot">makeFibber ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Fibber</span>
+makeFibber a <span class="fu">=</span> <span class="dt">Fibber</span> a (fib_worst a)
+<span class="kw">instance</span> <span class="dt">Eq</span> <span class="dt">Fibber</span> <span class="kw">where</span> a <span class="fu">==</span> b <span class="fu">=</span> fibNum a <span class="fu">==</span> fibNum b
+<span class="kw">instance</span> <span class="dt">Ord</span> <span class="dt">Fibber</span> <span class="kw">where</span> a <span class="fu">&lt;=</span> b <span class="fu">=</span> fibNum a <span class="fu">&lt;=</span> fibNum b
+<span class="kw">instance</span> <span class="dt">Show</span> <span class="dt">Fibber</span> <span class="kw">where</span> show a <span class="fu">=</span> show <span class="fu">.</span> fibNum <span class="fu">$</span> a
+<span class="kw">instance</span> <span class="dt">Num</span> <span class="dt">Fibber</span> <span class="kw">where</span>
+    a <span class="fu">+</span> b <span class="fu">=</span> makeFibber (fibNum a <span class="fu">+</span> fibNum b)
+    a <span class="fu">*</span> b <span class="fu">=</span> makeFibber (fibNum a <span class="fu">*</span> fibNum b)
+    abs <span class="fu">=</span> makeFibber <span class="fu">.</span> abs <span class="fu">.</span> fibNum
+    signum <span class="fu">=</span> makeFibber <span class="fu">.</span> signum <span class="fu">.</span> fibNum
+    fromInteger <span class="fu">=</span> makeFibber <span class="fu">.</span> fromInteger
+    negate <span class="fu">=</span> makeFibber <span class="fu">.</span> negate <span class="fu">.</span> fibNum</code></pre>
+</div>
+<div style="width: 40%; float: right;">
+<p>GHCi</p>
+<pre><code>*Main&gt; let fibber30 = makeFibber 30
+(0.00 secs, 0 bytes)
+*Main&gt; let fibber25 = makeFibber 25
+(0.00 secs, 0 bytes)
+*Main&gt; fibValue (fibber30 - fibber25)
+5
+(0.00 secs, 0 bytes)
+*Main&gt; fibValue fibber30
+832040
+(1.22 secs, 127472744 bytes)
+*Main&gt; fibValue fibber30
+832040
+(0.00 secs, 0 bytes)
+*Main&gt; fibValue fibber25
+75025
+(0.11 secs, 10684624 bytes)
+*Main&gt; </code></pre>
+</div>
 </section></section>
+<section><section id="time-and-space" class="titleslide slide level1"><h1>Time and Space</h1></section><section id="times-up" class="slide level2">
+<h1>Times up</h1>
+<ul>
+<li>Algorithmic complexity of Lazy evaluation is never more than Eager.</li>
+<li>Consider Eager behaviour for upper bound.</li>
+<li>Real issue - work might be delayed.</li>
+<li>Delayed work is real issue for parallelism.</li>
+<li>Can always force work using <a href="http://hackage.haskell.org/package/base-4.7.0.2/docs/Prelude.html#v:seq" title="Base library seq">seq</a> and <a href="http://hackage.haskell.org/package/deepseq-1.4.0.0/docs/Control-DeepSeq.html" title="DeepSeq library">deepseq</a> and <a href="http://hackage.haskell.org/package/deepseq-1.4.0.0/docs/Control-DeepSeq.html" title="DeepSeq library">force</a></li>
+<li>See <a href="httP://http://community.haskell.org/~simonmar/pcph/" title="Parallel and Concurrent Programming in Haskell: Techniques for Multicore and Multithreaded Programming">Parallel and Concurrent Programming in Haskell</a></li>
+</ul>
+</section><section id="space-leaks" class="slide level2">
+<h1>Space Leaks</h1>
+<ul>
+<li>Space Leak - program / expression uses more memory than required.
+<ul>
+<li>Memory is eventually released</li>
+<li>You think it will run in constant memory but it doesn’t</li>
+<li>Building up unevaluated thunks.</li>
+<li>Unnecessarily keeping reference to data alive.</li>
+</ul></li>
+<li>Memory leak - program allocates memory that is never reclaimed.</li>
+<li>Pure Haskell code can only be able to Space Leak (no Memory Leak).</li>
+<li>Most other Haskell code should only be able to Space Leak (mostly no Memory Leak).</li>
+</ul>
+</section><section id="examples-from-leaking-space" class="slide level2">
+<h1>Examples from “Leaking Space”</h1>
+<ul>
+<li><p>Some space leak examples from [Leaking Space - Eliminating memory hogs][8]</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">xs <span class="fu">=</span> delete <span class="st">&quot;dead&quot;</span> [<span class="st">&quot;alive&quot;</span>, <span class="st">&quot;dead&quot;</span>]</code></pre></li>
+<li>Lazy evaluation will keep <code>dead</code> alive until evaluation of <code>xs</code> is forced.</li>
+<li><p>One form of space leak results from adding to and removing from lists but never evaluating (to reduce).</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">xs <span class="fu">=</span> <span class="kw">let</span> xs' <span class="fu">=</span> delete <span class="st">&quot;dead&quot;</span> [<span class="st">&quot;alive&quot;</span>, <span class="st">&quot;dead&quot;</span>] <span class="kw">in</span> xs' <span class="ot">`seq`</span> xs'</code></pre></li>
+<li>Why not always strict/eager.
+<ul>
+<li>Composition.</li>
+<li>Composing strictly requires arguments to be evaluated fully.</li>
+<li><code>sum [1..n]</code> will consume O(n) space when evaluated strictly.</li>
+<li><code>sum [1..n]</code> <strong>should</strong> consume O(1) space when evaluated lazily (implementation).</li>
+<li>Usually easier to introduce strictness when lazy than laziness when strict.</li>
+</ul></li>
+</ul>
+</section><section class="slide level2">
+
+<ul>
+<li>This definition is O(n) space.</li>
+<li>List is not actually kept in memory</li>
+<li><p>Accumulates <code>(+)</code> operations.</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">sum1 (x<span class="fu">:</span>xs) <span class="fu">=</span> x <span class="fu">+</span> sum1 xs 
+sum1 [] <span class="fu">=</span> <span class="dv">0</span></code></pre></li>
+<li>This definition is O(n) space.</li>
+<li><p>Also accumulates <code>(+)</code> operations.</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">sum2 xs <span class="fu">=</span> sum2’ <span class="dv">0</span> xs 
+   <span class="kw">where</span> 
+   sum2’ a (x<span class="fu">:</span>xs) <span class="fu">=</span> sum2’ (a<span class="fu">+</span>x) xs 
+   sum2’ a [] <span class="fu">=</span> a</code></pre></li>
+<li><p>This definition is O(1) space.</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">sum3 xs <span class="fu">=</span> sum3’ <span class="dv">0</span> xs 
+   <span class="kw">where</span> 
+   sum3’ <span class="fu">!</span>a (x<span class="fu">:</span>xs) <span class="fu">=</span> sum3’ (a<span class="fu">+</span>x) xs 
+   sum3’ <span class="fu">!</span>a [] <span class="fu">=</span> a</code></pre></li>
+<li>With optimizations in GHC <code>sum2</code> may be transformed into <code>sum3</code> during strictness analysis.</li>
+<li><p>The article has more examples of space leaks. [8]: http://queue.acm.org/detail.cfm?id=2538488 (Leaking Space - Eliminating memory hogs: By Neil Mitchell)</p></li>
+</ul>
+</section><section id="when-strictness-can-make-things-slow" class="slide level2">
+<h1>When Strictness can make things slow</h1>
+<div style="float: top;">
+<ul>
+<li>Maybe one should just through strictness in everywhere</li>
+<li>Something I did not know. Pattern matches are strict.</li>
+<li>Example from <a href="https://wiki.haskell.org/Lazy_pattern_match" title="Haskell Wiki Lazy Pattern Matching">Haskell Wiki</a></li>
+<li>Strict pattern match forces all recursive calls to splitAt</li>
+</ul>
+</div>
+<div style="float: bottom;">
+<div style="width: 50%; float: left;">
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- Strict</span>
+splitAt_sp n xs <span class="fu">=</span> (<span class="st">&quot;splitAt_lp &quot;</span> <span class="fu">++</span> show n) <span class="fu">$</span>
+    <span class="kw">if</span> n<span class="fu">&lt;=</span><span class="dv">0</span>
+        <span class="kw">then</span> ([], xs)
+        <span class="kw">else</span>
+            <span class="kw">case</span> xs <span class="kw">of</span>
+                [] <span class="ot">-&gt;</span> ([], [])
+                y<span class="fu">:</span>ys <span class="ot">-&gt;</span>
+                    <span class="kw">case</span> splitAt_lp' (n<span class="fu">-</span><span class="dv">1</span>) ys <span class="kw">of</span>
+                        <span class="co">-- pattern match is strict</span>
+                        (prefix, suffix) <span class="ot">-&gt;</span> (y <span class="fu">:</span> prefix, suffix)</code></pre>
+</div>
+<div style="width: 50%; float: right;">
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- Lazy</span>
+splitAt_lp n xs <span class="fu">=</span> (<span class="st">&quot;splitAt_lp &quot;</span> <span class="fu">++</span> show n) <span class="fu">$</span>
+    <span class="kw">if</span> n<span class="fu">&lt;=</span><span class="dv">0</span>
+        <span class="kw">then</span> ([], xs)
+        <span class="kw">else</span>
+            <span class="kw">case</span> xs <span class="kw">of</span>
+                [] <span class="ot">-&gt;</span> ([], [])
+                y<span class="fu">:</span>ys <span class="ot">-&gt;</span>
+                    <span class="kw">case</span> splitAt_lp' (n<span class="fu">-</span><span class="dv">1</span>) ys <span class="kw">of</span>
+                        <span class="co">-- pattern match is lazy</span>
+                        <span class="fu">~</span>(prefix, suffix) <span class="ot">-&gt;</span> (y <span class="fu">:</span> prefix, suffix)</code></pre>
+</div>
+</div>
+<div style="float: bottom;">
+<p>GHCi</p>
+<pre><code>*Main&gt; sum . take 5 . fst . splitAt_sp 10000000 $ repeat 1
+5
+(20.78 secs, 3642437376 bytes)
+*Main&gt; sum . take 5 . fst . splitAt_lp 10000000 $ repeat 1
+5
+(0.00 secs, 0 bytes)</code></pre>
+</div>
+</section><section id="what-to-do-with-thorny-space-leaks" class="slide level2">
+<h1>What to do with thorny space leaks</h1>
+<ul>
+<li>Pinpoint leaks using GHC’s profiling tools.</li>
+<li>For some domains libraries exist that eliminate large classes of space leaks by design
+<ul>
+<li>Streaming libraries like
+<ul>
+<li><a href="https://hackage.haskell.org/package/conduit" title="Conduit">Conduit</a></li>
+<li><a href="https://wiki.haskell.org/Memoization" title="Haskell Wiki Memoization">Pipes</a></li>
+</ul></li>
+<li>FRP Libraries like
+<ul>
+<li><a href="https://hackage.haskell.org/package/netwire" title="Netwire">Netwire</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</section></section>
+<section><section id="further-reading" class="titleslide slide level1"><h1>Further reading</h1></section></section>
 			</div>
 		</div>
 
@@ -330,8 +515,10 @@ True
 				// The "normal" size of the presentation, aspect ratio will be preserved
 				// when the presentation is scaled to fit different resolutions. Can be
 				// specified using percentage units.
-				width: 1160,
-				height: 720,
+				// width: 1160,
+				// height: 720,
+				width: 1920,
+				height: 1080,
 				// Factor of the display size that should remain empty around the content
 				margin: 0.01,
 
