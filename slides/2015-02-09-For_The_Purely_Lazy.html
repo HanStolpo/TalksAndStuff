@@ -68,7 +68,7 @@
 </ul></li>
 </ul>
 <aside class="notes">
-Inner most reduction / outer most reduction from [Thinking Functionally with Haskell][] page 27.
+<p>Inner most reduction / outer most reduction from [Thinking Functionally with Haskell][] page 27.</p>
 </aside>
 </section><section id="lazy-is-a-bit-more-involved" class="slide level2">
 <h1>Lazy is a bit more involved</h1>
@@ -113,10 +113,12 @@ fst (<span class="dv">0</span>, square (<span class="dv">5</span> <span class="f
 <span class="ot">⇒</span> <span class="kw">let</span> a <span class="fu">=</span> <span class="dv">0</span>, b <span class="fu">=</span> square (<span class="dv">5</span> <span class="fu">+</span> <span class="dv">4</span>) <span class="kw">in</span> fst (a, b) 
 <span class="ot">⇒</span> a
 <span class="ot">⇒</span> <span class="dv">0</span></code></pre>
-Lazy never evaluated <span style="color:lightblue"><code>square (5 + 4)</code></span> where eager did.
+<p>Lazy never evaluated <span style="color:lightblue"><code>square (5 + 4)</code></span> where eager did.</p>
 </div>
 <div style="width: 50%;float: right;">
-<img src="../media/Lazy_vs_Eager.svg" alt="Lazy vs Eager evaluation" />
+<figure>
+<img src="../media/Lazy_vs_Eager.svg" alt="Lazy vs Eager evaluation" /><figcaption>Lazy vs Eager evaluation</figcaption>
+</figure>
 </div>
 </section><section class="slide level2">
 
@@ -158,13 +160,15 @@ Lazy never evaluated <span style="color:lightblue"><code>square (5 + 4)</code></
 </ul>
 </div>
 <div style="width: 70%;float: right;">
-<img src="../media/Lazy_vs_Eager_Cost.svg" alt="The cost of lazy evaluation" />
+<figure>
+<img src="../media/Lazy_vs_Eager_Cost.svg" alt="The cost of lazy evaluation" /><figcaption>The cost of lazy evaluation</figcaption>
+</figure>
 </div>
 </section></section>
 <section><section id="the-good-the-bad-and-the-smugly" class="titleslide slide level1"><h1>The Good, The Bad and The Smugly</h1></section><section id="the-good-and-bad" class="slide level2">
 <h1>The Good and Bad</h1>
 <div style="width: 50%;float: left;">
-<h3>Pros</h3>
+<h3 id="pros">Pros</h3>
 <ul>
 <li>More efficient ?
 <ul>
@@ -186,7 +190,7 @@ Lazy never evaluated <span style="color:lightblue"><code>square (5 + 4)</code></
 </ul>
 </div>
 <div style="width: 50%;float: right;">
-<h3>Cons</h3>
+<h3 id="cons">Cons</h3>
 <ul>
 <li>Difficult to reason about time and space usage.
 <ul>

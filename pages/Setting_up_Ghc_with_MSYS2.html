@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>GLApp - Setting_up_Ghc_with_MSYS2</title>
+        <link rel="stylesheet" type="text/css" href="../css/default.css" />
+        <link rel="stylesheet" type="text/css" href="../css/highlighting.css" />
+    </head>
+    <body>
+        <div id="header">
+            <div id="logo">
+                <a href="../">Not really a site</a>
+            </div>
+            <div id="navigation">
+                <a href="../">Home</a>
+				<a href="../about.html">About</a>
+                <a href="../archive.html">Archive</a>
+            </div>
+        </div>
+
+		<div id="content">
+	<h1>Setting_up_Ghc_with_MSYS2</h1>
+
+	<h1 id="intro">Intro</h1>
+<p>My own notes on how to setup a GHC environment on windows with MSYS2. I was put on the right track by following “<a href="https://ghc.haskell.org/trac/ghc/wiki/Building/Preparation/Windows?redirectedfrom=Building/Preparation/Windows/MSYS2">Building GHC On Windows</a>”.</p>
+<h1 id="installing-msys2">Installing MSYS2</h1>
+<ul>
+<li>Grab the installer from [http://msys2.github.io/]</li>
+<li>Grab either the 32 or 64 bit version. I would suggest the 32 bit version since I still ran into some troubles with 64 bit GHC 7.8.4</li>
+<li>Don’t install it to a path with spaces in it.</li>
+<li>Follow the steps on the installer’s site in particular
+<ul>
+<li>Update the core MSYS first by running <code>pacman -Syu</code> from the MSYS shell and then restart the shell.</li>
+</ul></li>
+<li>Some things to note about the installation
+<ul>
+<li>In the install directory there are three <code>.bat</code> files to run 3 different shells (MSYS, MINGW32, MINGW64). Most of the time you will run one of the MINGW shells (mingw32_shell.bat if using MSYS2 32 bit)</li>
+<li>Your home directory would be <code>INSTALLATION_DIRECTORY\home\USER_NAME</code></li>
+<li>From within the shell you have a posix like file system in particular
+<ul>
+<li><code>C:</code> drive is <code>/c</code> (drives don’t show up in root but can all be accessed similarly)</li>
+<li>Home directory is <code>~</code></li>
+<li>You can get the windows path from a shell path by doing <code>pwd -W</code></li>
+</ul></li>
+</ul></li>
+<li>Next install some tools needed for development
+<ul>
+<li>From the MINGW shell <code>pacman -Sy git tar binutils autoconf make libtool automake python2 p7zip patch man wget</code></li>
+<li>Note do not install a compiler tool chain (i.e. gcc) we will use the one that comes with GHC</li>
+</ul></li>
+<li>Optionally setup public cryptography for use with github etc (openssh should be installed, if not run <code>pacman -Sy openssh</code>)
+<ul>
+<li>if you already have a public and a private key copy them to <code>~/.ssh</code> (windows does not like making directories with periods do it from the shell <code>cd ~; mkdir .ssh</code></li>
+<li>Otherwise generate RSA keys by doing <code>ssh-keygen</code> .
+<ul>
+<li>Private key will be <code>~/.ssh/id_rsa</code></li>
+<li>Public key will be <code>~/.ssh/id_rsa.pub</code></li>
+</ul></li>
+<li>Setup ssh agent to load the keys when starting the shell.
+<ul>
+<li>Edit the following file ```~/.bashrc</li>
+<li>Add the following line to run the ssh agent <code>eval `ssh-agent -s`</code></li>
+<li>Add the following line to add your keys <code>ssh-add</code></li>
+</ul></li>
+</ul></li>
+</ul>
+<h1 id="install-ghc">Install GHC</h1>
+<ul>
+<li>Grab pre-built binaries for Windows from [https://www.haskell.org/ghc/]</li>
+<li>At the current time I would suggest 32 bit GHC 7.8.3 [https://www.haskell.org/ghc/dist/7.8.3/ghc-7.8.3-i386-unknown-mingw32.tar.xz]</li>
+<li>I suggest installing GHC in such a way so that it is easy to switch between distributions</li>
+<li>Make a directory where you would extract GHC (e.g. <code>c:\ghc_all</code>)</li>
+<li>Extract the versioned GHC folder to that directory (e.g. after extraction you have <code>c:\ghc_all\ghc-7.8.3</code></li>
+<li>Create a junction called <code>ghc_current</code> to point at the versioned GHC
+<ul>
+<li>From the Windows command line and not from the MSYS/MINGW shell.</li>
+<li>CD to the where the versioned directory was extracted (e.g. `<code>cd c:\ghc_all</code>)</li>
+<li>Create a junction called ghc_current to the versioned directory (e.g. <code>mklink /J ghc_current ghc-7.8.3</code> )</li>
+<li>You should now have a folder <code>ghc_current</code> that points to the specific GHC.</li>
+</ul></li>
+<li>Now modify the <code>.bashrc</code> file so that the MSYS/MINGW shell will know about GHC and use the gcc that came with your GHC version.
+<ul>
+<li>Edit the file <code>~/.bashrc</code> to add GHC, GHC and cabal to the path by appending
+<ul>
+<li>Add GHC : <code>export PATH=/c/ghc_all/ghc_current/bin:$PATH</code></li>
+<li>Add GCC that comes with GHC : <code>export PATH=/c/ghc_all/ghc_current/mingw/bin:$PATH</code></li>
+<li>Add cabal default binary install directory: <code>export PATH=/c/Users/$USER/AppData/Roaming/cabal/bin:$PATH</code></li>
+</ul></li>
+</ul></li>
+<li>Get the Windows binaries for Cabal from [https://www.haskell.org/cabal/download.html]
+<ul>
+<li>Extract the binary the versioned GHC binary directory (e.g. <code>c:\ghc_all\ghc-7.8.3\bin</code></li>
+<li>The name of the newer built binaries include the full version of cabal so rename it to cabal for easy access.</li>
+<li>If you install a newer cabal using cabal it will detect and use that one.</li>
+<li>Update Cabal, from MINGW shell <code>cabal update</code></li>
+<li>Edit your Cabal config file to ensure library profiling is enabled
+<ul>
+<li>Edit the file ```/c/Users/$USER/AppData/Roaming/cabal/config</li>
+<li>Make sure the file contains the line <code>library-profiling: True</code> (your probably just have to uncomment it)</li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+
+
+        <div id="footer">
+            Site proudly generated by
+            <a href="http://jaspervdj.be/hakyll">Hakyll</a>
+        </div>
+    </body>
+</html>

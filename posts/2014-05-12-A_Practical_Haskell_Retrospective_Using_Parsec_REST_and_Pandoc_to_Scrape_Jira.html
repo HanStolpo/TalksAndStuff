@@ -97,7 +97,7 @@
 </ul>
 <h2 id="http-conduit">HTTP-Conduit</h2>
 <p>In order to pick the Jira server’s brain about all the little issues it has, we need to send and receive HTTP requests. Luckily we do not have to do this manually, there is a very easy to use Haskell library called <a href="https://hackage.haskell.org/package/http-conduit">http-conduit</a>. It has nice examples in its documentation so I will show an example using it to get an issue from Jira.</p>
-<pre class="sourceCode Haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Network.HTTP.Conduit</span>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Network.HTTP.Conduit</span>
 <span class="kw">import </span><span class="dt">Network.HTTP.Types.Header</span>
 <span class="kw">import </span><span class="dt">Network.Connection</span> (<span class="dt">TLSSettings</span> (..))
 <span class="kw">import </span><span class="dt">Network.Socket</span>(withSocketsDo)
@@ -142,7 +142,7 @@ Response body =
 <p><a href="http://hackage.haskell.org/package/aeson">Aeson</a> was the farther of Jason in Greek mythology and this library is the big daddy of JSON parsing. <a href="http://hackage.haskell.org/package/aeson">Aeson</a> allows you to specify how to encode and decode Haskell types to and from JSON. As an added bonus the <a href="http://hackage.haskell.org/package/yaml-0.8.8.2">YAML</a> package uses the exact same type classes to encode and decode to and from YAML.</p>
 <p>In order for your type to be encoded as JSON it must be a member of the <code>ToJSON</code> type class and if you want to turn some JSON into your type then you need a <code>FromJSON</code> instance. With the <code>DeriveGeneric</code> GHC extension these instances can automatically be derived for your types. Of course the JSON you receive will not always match the structure of the types you want to use internally, and in this case you would manually define how to map from JSON to your type.</p>
 <p>Even when you have to manually define the mapping from JSON to your type it is quite easy to do with very little overhead. It usually involves using only a few parser combinators that act on Aeson’s representation of JSON values. A useful trick to use when decoding a specific JSON response to your type, is to wrap your type in a <code>newtype</code>, and then define the <code>FromJSON</code> instance for the wrapper type. Below is an example decoding the response from Jira to an internal type and then encoding it to YAML before printing it out again.</p>
-<pre class="sourceCode Haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE OverloadedStrings, DeriveGeneric #-}</span>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE OverloadedStrings, DeriveGeneric #-}</span>
 <span class="kw">import           </span><span class="dt">Network.HTTP.Conduit</span>
 <span class="kw">import           </span><span class="dt">Network.Connection</span> (<span class="dt">TLSSettings</span> (..))
 <span class="kw">import           </span><span class="dt">Network.Socket</span>(withSocketsDo)
@@ -205,7 +205,7 @@ fetchTestIssue <span class="fu">=</span> <span class="kw">do</span>
    <span class="co">-- Print the resultant ByteString to the console </span>
    B.putStrLn <span class="fu">.</span> YAML.encode <span class="fu">.</span> fmap issueFromResponse <span class="fu">.</span> AS.decode <span class="fu">.</span> responseBody <span class="fu">$</span> response</code></pre>
 <p>The result printed out would look like this:</p>
-<pre class="sourceCode YAML"><code class="sourceCode yaml"><span class="fu">issueDescription:</span> You have to delete zero first before you can put in your Dosage
+<pre class="sourceCode yaml"><code class="sourceCode yaml"><span class="fu">issueDescription:</span> You have to delete zero first before you can put in your Dosage
 <span class="fu">issueId:</span> 333132
 <span class="fu">issueKey:</span> DEMO-3083
 <span class="fu">issueSummary:</span> ! 'Backspace to delete zero to enter your dosage '</code></pre>
@@ -251,7 +251,7 @@ fetchTestIssue <span class="fu">=</span> <span class="kw">do</span>
 </ul>
 <p>All the readers parse to the same <a href="http://hackage.haskell.org/package/pandoc-types-1.12.3.3/docs/Text-Pandoc-Definition.html">abstract representation</a> and all the writers consume this abstract representation. So it is very modular, since all you have to do to support a new input format is add a reader and it can output as any of the writer formats, and similarly the other way around. The <a href="http://hackage.haskell.org/package/pandoc-types-1.12.3.3/docs/Text-Pandoc-Definition.html">abstract representation</a> of Pandoc is also ideal when you want to programmatically generate documents, which is exactly what we want to do.</p>
 <p>Here is an example of programmatically generating a Pandoc document and then writing it out as Pandoc markdown and HTML.</p>
-<pre class="sourceCode Haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Text.Pandoc</span>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Text.Pandoc</span>
 <span class="kw">import </span><span class="dt">Text.Pandoc.Builder</span> <span class="kw">hiding</span> (space)
 <span class="kw">import </span><span class="dt">Text.Blaze.Renderer.String</span>
 <span class="kw">import qualified</span> <span class="dt">Data.Map</span> <span class="kw">as</span> <span class="dt">M</span>
@@ -311,7 +311,7 @@ main <span class="fu">=</span> <span class="kw">do</span>
 <p>The description of a Jira issue is formatted using <a href="https://jira.atlassian.com/secure/WikiRendererHelpAction.jspa?section=all">Jira markup</a> and we wanted to have the same formatting that you saw in Jira in the generated document. Unfortunately there is no reader that can convert from <a href="https://jira.atlassian.com/secure/WikiRendererHelpAction.jspa?section=all">Jira markup</a> to <a href="http://hackage.haskell.org/package/pandoc-types-1.12.3.3/docs/Text-Pandoc-Definition.html">Pandoc’s AST</a>. This meant that I had to write parser for <a href="https://jira.atlassian.com/secure/WikiRendererHelpAction.jspa?section=all">Jira markup</a>. Writing parsers are well supported in Haskell and the library to use is usually <a href="http://hackage.haskell.org/package/parsec">Parsec</a> or one of its variants.</p>
 <p>From the <a href="http://www.haskell.org/haskellwiki/Parsec">Haskell wiki</a> we get the following “Parsec is a monadic parser combinator library and it can parse context-sensitive, infinite look-ahead grammars but performs best on predictive (LL[1]) grammars.”</p>
 <p>You build more complex parser by combining smaller parser using the provided parser combinators. Your final parser is run against some input and it produces some values. For more complex parsers you can pass in user state to be used while parsing. Below is an example of a simple search and replace parser.</p>
-<pre class="sourceCode Haskell"><code class="sourceCode haskell"><span class="kw">import           </span><span class="dt">Text.Parsec.Char</span>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import           </span><span class="dt">Text.Parsec.Char</span>
 <span class="kw">import           </span><span class="dt">Text.Parsec.String</span> (<span class="dt">Parser</span>)
 <span class="kw">import           </span><span class="dt">Text.Parsec.Prim</span> <span class="kw">hiding</span> ((&lt;|&gt;))
 <span class="kw">import           </span><span class="dt">Text.Parsec.Combinator</span>
@@ -367,7 +367,7 @@ traceM' msg <span class="fu">=</span> getState <span class="fu">&gt;&gt;=</span>
 <h2 id="in-the-end-i-actually-really-like-haskell">In the end I actually really like Haskell</h2>
 <p>Minor gripes asside my feelings about Haskell are very positive. Some people are scared off by the operators and strange sounding typeclasses but I found Haskell to be very consitent. There are only a few idioms and oprators to learn and they are used all over the place, in the same way, and you can expect the same behaviour. The libraries seem to be very composable and that they converge on convention and style. Combine the succint code with a type system that gives you confidence and in my book you have a winner.</p>
 <h2 id="the-source">The source</h2>
-<p>If anyone is interested the source code for the tool can be found here <a href="https://github.com/HanStolpo/JiraStructureToDocx">https://github.com/HanStolpo/JiraStructureToDocx</a> but be warned the quality is very poor. It is just good enough as an internal dev tool for us and, it was a learning experience.</p>
+<p>If anyone is interested the source code for the tool can be found here <a href="https://github.com/HanStolpo/JiraStructureToDocx" class="uri">https://github.com/HanStolpo/JiraStructureToDocx</a> but be warned the quality is very poor. It is just good enough as an internal dev tool for us and, it was a learning experience.</p>
 <h2 id="the-slides-for-the-talk">The slides for the talk</h2>
 <p>The slides for the talk can be found here <a href="../Slides/2014-05-12-A_Practical_Haskell_Retrospective_Using_Parsec_REST_and_Pandoc_to_Scrape_Jira.html">Slides</a></p>
 </div>

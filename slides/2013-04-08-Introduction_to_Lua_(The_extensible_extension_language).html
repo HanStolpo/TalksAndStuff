@@ -85,16 +85,14 @@
 <dt>Lua 5.1.x</dt>
 <dd>Most widely used standard Lua distribution
 </dd>
-<dd>Supports any system that can compile ANSI C
+<dd>Supports any system that can compile ANSI C Lua 5.2.x
 </dd>
-<dt>Lua 5.2.x</dt>
 <dd>The newest Lua.
 </dd>
 <dd>Not that widely supported yet.
 </dd>
-<dd>Supports any system that can compile ANSI C
+<dd>Supports any system that can compile ANSI C LuaJit
 </dd>
-<dt>LuaJit</dt>
 <dd>Blindingly fast just in time compiler that is Lua 5.1.x compatible.
 </dd>
 <dd>Supports dynamic FFI to <em>C</em> shared libraries
@@ -123,18 +121,18 @@
 <ul>
 <li>Get the source and compile into your application
 <ul>
-<li><a href="http://www.lua.org/versions.html">http://www.lua.org/versions.html</a></li>
-<li><a href="http://luajit.org/download.html">http://luajit.org/download.html</a></li>
+<li><a href="http://www.lua.org/versions.html" class="uri">http://www.lua.org/versions.html</a></li>
+<li><a href="http://luajit.org/download.html" class="uri">http://luajit.org/download.html</a></li>
 </ul></li>
-<li>Use LuaRocks <a href="http://luarocks.org/">http://luarocks.org/</a>
+<li>Use LuaRocks <a href="http://luarocks.org/" class="uri">http://luarocks.org/</a>
 <ul>
 <li>Deployment and management system for Lua modules</li>
 </ul></li>
-<li>Use LuaDist <a href="http://luadist.org/">http://luadist.org/</a>
+<li>Use LuaDist <a href="http://luadist.org/" class="uri">http://luadist.org/</a>
 <ul>
 <li>Deployment and management system for Lua modules</li>
 </ul></li>
-<li>Install Lua for Windows <a href="https://code.google.com/p/luaforwindows/">https://code.google.com/p/luaforwindows/</a>
+<li>Install Lua for Windows <a href="https://code.google.com/p/luaforwindows/" class="uri">https://code.google.com/p/luaforwindows/</a>
 <ul>
 <li>Batteries included installation.</li>
 </ul></li>
@@ -199,19 +197,16 @@ e <span class="ot">=</span> IamNotDefined <span class="kw">and</span> IamNotDefi
 <p>All values in Lua are <em>first-class</em> (stored in variables; passed as arguments; returned as results)</p>
 <dl>
 <dt>nil</dt>
-<dd>The bottom type signifying nothing
+<dd>The bottom type signifying nothing boolean
 </dd>
-<dt>boolean</dt>
 <dd>The logical type can either be <code>true</code> or <code>false</code>.
 </dd>
-<dd><code>nil</code> and <code>false</code> counts as false everything else is true.
+<dd><code>nil</code> and <code>false</code> counts as false everything else is true. number
 </dd>
-<dt>number</dt>
 <dd>The only arithmetic type.
 </dd>
-<dd>Runtime dependant usually <code>double</code> (could be <code>char</code>, <code>short</code>, <code>int</code>, <code>float</code>).
+<dd>Runtime dependant usually <code>double</code> (could be <code>char</code>, <code>short</code>, <code>int</code>, <code>float</code>). string
 </dd>
-<dt>string</dt>
 <dd>Immutable array of 8-bit <code>char</code> values.
 </dd>
 <dd>8-bit clean i.e. may include embedded zeros <code>'\0'</code>
@@ -225,19 +220,16 @@ e <span class="ot">=</span> IamNotDefined <span class="kw">and</span> IamNotDefi
 </dd>
 <dd>Any function defined in <em>C</em> and exposed to <em>Lua</em>
 </dd>
-<dd>Any compiled file or string of <em>Lua</em> statements
+<dd>Any compiled file or string of <em>Lua</em> statements thread
 </dd>
-<dt>thread</dt>
 <dd>Represents independent thread of execution.
 </dd>
-<dd>Not <em>OS</em> threads used for coroutines
+<dd>Not <em>OS</em> threads used for coroutines userdata
 </dd>
-<dt>userdata</dt>
 <dd>Arbitrary <em>C</em> data to be stored in <em>Lua</em>
 </dd>
-<dd>Only operations are assignment and identity test
+<dd>Only operations are assignment and identity test table
 </dd>
-<dt>table</dt>
 <dd>The only data structure in <em>Lua</em>
 </dd>
 <dd>Associative arrays
@@ -429,8 +421,8 @@ _1<span class="ot">,</span> _2<span class="ot">,</span> _3 <span class="ot">=</s
 <pre class="sourceCode stretch lua"><code class="sourceCode lua"><span class="kw">do</span>
     <span class="kw">local</span> onlyVisibleHere <span class="ot">=</span> <span class="dv">5</span>
 <span class="kw">end</span></code></pre>
+<p>if then else</p>
 </dd>
-<dt>if then else</dt>
 <dd><p>Conditional branching with each branch introducing a local scope.</p>
 <pre class="sourceCode stretch lua"><code class="sourceCode lua"><span class="kw">if</span> a <span class="ot">==</span> b <span class="kw">then</span>      <span class="co">-- start if branch</span>
     e <span class="ot">=</span> <span class="dv">2</span>
@@ -450,15 +442,15 @@ _1<span class="ot">,</span> _2<span class="ot">,</span> _3 <span class="ot">=</s
 <span class="kw">while</span> a <span class="ot">&lt;</span> b <span class="kw">do</span>
     a <span class="ot">=</span> a <span class="ot">+</span> <span class="dv">1</span>       <span class="co">-- executes 4 times</span>
 <span class="kw">end</span></code></pre>
+<p>repeat</p>
 </dd>
-<dt>repeat</dt>
 <dd><p>Execute block and if condition is true repeat until false</p>
 <pre class="sourceCode stretch lua"><code class="sourceCode lua"><span class="kw">local</span> a<span class="ot">,</span>b <span class="ot">=</span> <span class="dv">4</span><span class="ot">,</span><span class="dv">5</span>
 <span class="kw">repeat</span>
    a <span class="ot">=</span> a <span class="ot">+</span> <span class="dv">1</span>        <span class="co">-- executes 2 times</span>
 <span class="kw">until</span> a <span class="ot">==</span> b</code></pre>
+<p>break</p>
 </dd>
-<dt>break</dt>
 <dd><p>Forces enclosing looping structure to terminate immediately</p>
 <pre class="sourceCode stretch lua"><code class="sourceCode lua"><span class="kw">local</span> a <span class="ot">=</span> <span class="dv">1</span>
 <span class="kw">while</span> <span class="kw">true</span> <span class="kw">do</span>
