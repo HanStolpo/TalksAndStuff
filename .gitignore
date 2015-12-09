@@ -6,3 +6,4 @@ _cache
 *.o
 *.exe
 *.swp
+.stack-work/
