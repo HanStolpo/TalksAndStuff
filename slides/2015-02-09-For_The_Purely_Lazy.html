@@ -13,9 +13,19 @@
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
-
+      <!--beige.css*-->
+      <!--black.css*-->
+      <!--blood.css*-->
+      <!--league.css*-->
+      <!--moon.css*-->
+      <!--night.css*-->
+      <!--serif.css*-->
+      <!--simple.css*-->
+      <!--sky.css*-->
+      <!--solarized.css*-->
+      <!--white.css*-->
 		<link rel="stylesheet" href="../css/reveal.css">
-		<link rel="stylesheet" href="../css/theme/moon.css" id="theme">
+		<link rel="stylesheet" href="../css/theme/serif.css" id="theme">
 		<link rel="stylesheet" type="text/css" href="../css/highlighting.css" />
 
 		<!-- Code syntax highlighting -->
@@ -52,13 +62,18 @@
 <section><section id="evaluation-strategies" class="titleslide slide level1"><h1>Evaluation strategies</h1></section><section id="eager-or-lazy" class="slide level2">
 <h1>Eager or Lazy</h1>
 <ul>
-<li><p>In Haskell like languages evaluation is reducing expressions to their simplest form.<br /><span style="color:lightblue"><code>(5 + 4 - 2) * (5 + 4 - 2) ⇒ 49</code></span></p></li>
-<li><p>Two options when expression includes function application.<br /><span style="color:lightblue"><code>square (5 + 4 - 2) ⇒ 49</code></span></p>
+<li><p>In Haskell like languages evaluation is reducing expressions to their simplest form.<br />
+<span style="color:lightblue"><code>(5 + 4 - 2) * (5 + 4 - 2) ⇒ 49</code></span></p></li>
+<li><p>Two options when expression includes function application.<br />
+<span style="color:lightblue"><code>square (5 + 4 - 2) ⇒ 49</code></span></p>
 <ul>
-<li><p><span style="color:red"> Reduce arguments first (<em>Innermost reduction / Eager Evaluation</em>)</span><br /> <span style="color:firebrick"> <code>square (5 + 4 - 2) ⇒ square(7) ⇒ 7 * 7 ⇒ 49</code> </span></p></li>
-<li><p><span style="color:limegreen"> Apply function first (<em>Outermost reduction / Lazy Evaluation</em>)</span><br /> <span style="color:olivedrab"> <code>square (5 + 4 - 2) ⇒ (5 + 4 - 2) * (5 + 4 - 2) ⇒ 7 * 7 ⇒ 49</code> </span></p></li>
+<li><p><span style="color:red"> Reduce arguments first (<em>Innermost reduction / Eager Evaluation</em>)</span><br />
+ <span style="color:firebrick"> <code>square (5 + 4 - 2) ⇒ square(7) ⇒ 7 * 7 ⇒ 49</code> </span></p></li>
+<li><p><span style="color:limegreen"> Apply function first (<em>Outermost reduction / Lazy Evaluation</em>)</span><br />
+ <span style="color:olivedrab"> <code>square (5 + 4 - 2) ⇒ (5 + 4 - 2) * (5 + 4 - 2) ⇒ 7 * 7 ⇒ 49</code> </span></p></li>
 </ul></li>
-<li>Final answer == expression in normal form<br /><span style="color:lightblue"><code>49</code></span> is the normal form of <span style="color:lightblue"><code>square (5 + 4 - 2)</code></span></li>
+<li>Final answer == expression in normal form<br />
+<span style="color:lightblue"><code>49</code></span> is the normal form of <span style="color:lightblue"><code>square (5 + 4 - 2)</code></span></li>
 <li>Eager also called strict.</li>
 <li>Lazy also called non-strict (sort of)
 <ul>
@@ -83,14 +98,14 @@
 </ul></li>
 <li>Shares sub expressions when expanding</li>
 </ul>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">square (<span class="dv">5</span> <span class="fu">+</span> <span class="dv">4</span>)
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">square (<span class="dv">5</span> <span class="fu">+</span> <span class="dv">4</span>)
 <span class="ot">⇒</span> <span class="kw">let</span> x <span class="fu">=</span> <span class="dv">5</span> <span class="fu">+</span> <span class="dv">4</span> <span class="kw">in</span> square x
 <span class="ot">⇒</span> x <span class="fu">*</span> x
 <span class="ot">⇒</span> <span class="kw">let</span> x <span class="fu">=</span> <span class="dv">7</span> <span class="kw">in</span> x <span class="fu">*</span> x
 <span class="ot">⇒</span> <span class="dv">7</span><span class="fu">*</span><span class="dv">7</span>
-<span class="ot">⇒</span> <span class="dv">49</span></code></pre>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">(<span class="dv">5</span>,square (<span class="dv">5</span> <span class="fu">+</span> <span class="dv">4</span>))
-<span class="ot">⇒</span> <span class="kw">let</span> a <span class="fu">=</span> <span class="dv">5</span>, b <span class="fu">=</span> square (<span class="dv">5</span> <span class="fu">+</span> <span class="dv">4</span>) <span class="kw">in</span> (a,b)</code></pre>
+<span class="ot">⇒</span> <span class="dv">49</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">(<span class="dv">5</span>,square (<span class="dv">5</span> <span class="fu">+</span> <span class="dv">4</span>))
+<span class="ot">⇒</span> <span class="kw">let</span> a <span class="fu">=</span> <span class="dv">5</span>, b <span class="fu">=</span> square (<span class="dv">5</span> <span class="fu">+</span> <span class="dv">4</span>) <span class="kw">in</span> (a,b)</code></pre></div>
 </div>
 <div style="width: 50%;float: right;">
 <img src="../media/Lazy_Eval_Sharing_and_Head_Normal.svg" alt="Lazy evaluation showing sharing and evaluating to head normal form" />
@@ -101,18 +116,18 @@
 <h1>Whats the difference</h1>
 <div style="width: 50%;float: left;">
 <p>Given</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">fst (a, b) <span class="fu">=</span> a
-fst (<span class="dv">0</span>, square (<span class="dv">5</span> <span class="fu">+</span> <span class="dv">4</span>)) </code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">fst (a, b) <span class="fu">=</span> a
+fst (<span class="dv">0</span>, square (<span class="dv">5</span> <span class="fu">+</span> <span class="dv">4</span>)) </code></pre></div>
 <p>Eager</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">fst (<span class="dv">0</span>, square (<span class="dv">5</span> <span class="fu">+</span> <span class="dv">4</span>)) 
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">fst (<span class="dv">0</span>, square (<span class="dv">5</span> <span class="fu">+</span> <span class="dv">4</span>)) 
 <span class="ot">⇒</span> fst (<span class="dv">0</span>, square <span class="dv">9</span>) 
 <span class="ot">⇒</span> fst (<span class="dv">0</span>, <span class="dv">9</span> <span class="fu">*</span> <span class="dv">9</span>)
-<span class="ot">⇒</span> <span class="dv">0</span></code></pre>
+<span class="ot">⇒</span> <span class="dv">0</span></code></pre></div>
 <p>Lazy</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">fst (<span class="dv">0</span>, square (<span class="dv">5</span> <span class="fu">+</span> <span class="dv">4</span>)) 
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">fst (<span class="dv">0</span>, square (<span class="dv">5</span> <span class="fu">+</span> <span class="dv">4</span>)) 
 <span class="ot">⇒</span> <span class="kw">let</span> a <span class="fu">=</span> <span class="dv">0</span>, b <span class="fu">=</span> square (<span class="dv">5</span> <span class="fu">+</span> <span class="dv">4</span>) <span class="kw">in</span> fst (a, b) 
 <span class="ot">⇒</span> a
-<span class="ot">⇒</span> <span class="dv">0</span></code></pre>
+<span class="ot">⇒</span> <span class="dv">0</span></code></pre></div>
 <p>Lazy never evaluated <span style="color:lightblue"><code>square (5 + 4)</code></span> where eager did.</p>
 </div>
 <div style="width: 50%;float: right;">
@@ -124,21 +139,21 @@ fst (<span class="dv">0</span>, square (<span class="dv">5</span> <span class="f
 
 <div style="height: 5%;float: top;">
 <p>Given</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">fst (<span class="dv">0</span>, ⊥) </code></pre>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">fst (<span class="dv">0</span>, ⊥) </code></pre></div>
 </div>
 <div style="height: 95%;float: bottom;">
 <div style="width: 50%;float: left;">
 <p>Eager</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">fst (<span class="dv">0</span>, ⊥) 
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">fst (<span class="dv">0</span>, ⊥) 
 <span class="ot">⇒</span> fst ⊥
-<span class="ot">⇒</span> ⊥</code></pre>
+<span class="ot">⇒</span> ⊥</code></pre></div>
 </div>
 <div style="width: 50%;float: right;">
 <p>Lazy</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">fst (<span class="dv">0</span>, ⊥) 
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">fst (<span class="dv">0</span>, ⊥) 
 <span class="ot">⇒</span> <span class="kw">let</span> a <span class="fu">=</span> <span class="dv">0</span>, b <span class="fu">=</span> ⊥ <span class="kw">in</span> fst (a, b) 
 <span class="ot">⇒</span> a
-<span class="ot">⇒</span> <span class="dv">0</span></code></pre>
+<span class="ot">⇒</span> <span class="dv">0</span></code></pre></div>
 </div>
 </div>
 <div style="height: 5%;float: bottom;">
@@ -168,51 +183,10 @@ fst (<span class="dv">0</span>, square (<span class="dv">5</span> <span class="f
 <section><section id="the-good-the-bad-and-the-smugly" class="titleslide slide level1"><h1>The Good, The Bad and The Smugly</h1></section><section id="the-good-and-bad" class="slide level2">
 <h1>The Good and Bad</h1>
 <div style="width: 50%;float: left;">
-<h3 id="pros">Pros</h3>
-<ul>
-<li>More efficient ?
-<ul>
-<li>This is a red herring.</li>
-<li>It could be or it couldn’t.</li>
-</ul></li>
-<li>Modularity!
-<ul>
-<li>This is the real reason</li>
-<li>John Hughes - <a href="http://www.cs.kent.ac.uk/people/staff/dat/miranda/whyfp90.pdf" title="Why Functional Programming Matters">Why Functional Programming Matters</a></li>
-<li>Glue allowing composition of functional programs</li>
-</ul></li>
-<li>Efficient tricks for pure languages.
-<ul>
-<li>Again ? Contradiction ? Nope.</li>
-<li>Memoization preserving purity and abstraction.</li>
-<li>Caching preserving purity and abstraction.</li>
-</ul></li>
-</ul>
+<p>### Pros * More efficient ? * This is a red herring. * It could be or it couldn’t. * Modularity! * This is the real reason * John Hughes - <a href="http://www.cs.kent.ac.uk/people/staff/dat/miranda/whyfp90.pdf" title="Why Functional Programming Matters">Why Functional Programming Matters</a> * Glue allowing composition of functional programs * Efficient tricks for pure languages. * Again ? Contradiction ? Nope. * Memoization preserving purity and abstraction. * Caching preserving purity and abstraction.</p>
 </div>
 <div style="width: 50%;float: right;">
-<h3 id="cons">Cons</h3>
-<ul>
-<li>Difficult to reason about time and space usage.
-<ul>
-<li>Time ? Not sold.
-<ul>
-<li>Lazy O(n) &lt;= Eager O(n)</li>
-<li>When is the cost? Latency is a concern.</li>
-</ul></li>
-<li>Space ?
-<ul>
-<li>Unfortunately yes.</li>
-<li>The dreaded space leak.</li>
-</ul></li>
-</ul></li>
-<li>Parallel unfriendly
-<ul>
-<li>Doing work in parallel means doing the work in parallel.</li>
-<li>Have to force work to be done.</li>
-<li>Only an issue if you believe in automagic parallelization.</li>
-<li>See <a href="httP://http://community.haskell.org/~simonmar/pcph/" title="Parallel and Concurrent Programming in Haskell: Techniques for Multicore and Multithreaded Programming">Parallel and Concurrent Programming in Haskell</a></li>
-</ul></li>
-</ul>
+<p>### Cons * Difficult to reason about time and space usage. * Time ? Not sold. * Lazy O(n) &lt;= Eager O(n) * When is the cost? Latency is a concern. * Space ? * Unfortunately yes. * The dreaded space leak. * Parallel unfriendly * Doing work in parallel means doing the work in parallel. * Have to force work to be done. * Only an issue if you believe in automagic parallelization. * See <a href="httP://http://community.haskell.org/~simonmar/pcph/" title="Parallel and Concurrent Programming in Haskell: Techniques for Multicore and Multithreaded Programming">Parallel and Concurrent Programming in Haskell</a></p>
 </div>
 <aside class="notes">
 
@@ -255,7 +229,7 @@ fst (<span class="dv">0</span>, square (<span class="dv">5</span> <span class="f
 </ul>
 </div>
 <div style="height: 50%; float: bottom">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- Generate a sqrt sequence of operations using Newton-Raphson</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- Generate a sqrt sequence of operations using Newton-Raphson</span>
 nextSqrtApprox n x <span class="fu">=</span> (x <span class="fu">+</span> n<span class="fu">/</span>x) <span class="fu">/</span> <span class="dv">2</span>
 <span class="co">-- iterate f x == [x, f x, f (f x), ...]</span>
 sqrtApprox n <span class="fu">=</span> iterate (nextSqrtApprox n) (n<span class="fu">/</span><span class="dv">2</span>)
@@ -268,7 +242,7 @@ withinSqrt eps n <span class="fu">=</span> within eps (sqrtApprox n)
 relative eps (a<span class="fu">:</span>b<span class="fu">:</span>bs) <span class="fu">|</span> abs(a<span class="fu">-</span>b) <span class="fu">&lt;=</span> eps <span class="fu">*</span> abs b <span class="fu">=</span> b
                       <span class="fu">|</span> otherwise <span class="fu">=</span> relative eps (b<span class="fu">:</span>bs)
 <span class="co">-- Calculate approximate sqrt using relative</span>
-relativeSqrt eps n <span class="fu">=</span> within eps (sqrtApprox n)</code></pre>
+relativeSqrt eps n <span class="fu">=</span> within eps (sqrtApprox n)</code></pre></div>
 </div>
 </section><section id="caveats-about-lazy-composition" class="slide level2">
 <h1>Caveats about Lazy Composition</h1>
@@ -295,11 +269,11 @@ relativeSqrt eps n <span class="fu">=</span> within eps (sqrtApprox n)</code></p
 </ul>
 </div>
 <div style="width: 70%; float: right">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">fib_list ::</span> [<span class="dt">Integer</span>]
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">fib_list ::</span> [<span class="dt">Integer</span>]
 fib_list <span class="fu">=</span> <span class="dv">0</span><span class="fu">:</span><span class="dv">1</span><span class="fu">:</span><span class="dv">1</span><span class="fu">:</span><span class="dv">2</span><span class="fu">:</span>[n2 <span class="fu">+</span> n1<span class="fu">|</span> (n2, n1) <span class="ot">&lt;-</span> 
                     zip (drop <span class="dv">2</span> fib_list) (drop <span class="dv">3</span> fib_list)]
 <span class="ot">fib_best ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Integer</span>
-fib_best n <span class="fu">=</span> fib_list <span class="fu">!!</span> n</code></pre>
+fib_best n <span class="fu">=</span> fib_list <span class="fu">!!</span> n</code></pre></div>
 <p>GHCi with timing</p>
 <pre><code>*Main&gt; 5 &lt; fib_best 100000
 True
@@ -329,7 +303,7 @@ True
 <li>You wont export the constructor.</li>
 </ul>
 <div style="width: 60%; float: left;">
-<pre class="sourceCode haskell stretch"><code class="sourceCode haskell"><span class="ot">fib_worst ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Integer</span>
+<div class="sourceCode"><pre class="sourceCode haskell stretch"><code class="sourceCode haskell"><span class="ot">fib_worst ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Integer</span>
 fib_worst <span class="dv">0</span> <span class="fu">=</span> <span class="dv">0</span>
 fib_worst <span class="dv">1</span> <span class="fu">=</span> <span class="dv">1</span>
 fib_worst <span class="dv">2</span> <span class="fu">=</span> <span class="dv">1</span>
@@ -347,7 +321,7 @@ makeFibber a <span class="fu">=</span> <span class="dt">Fibber</span> a (fib_wor
     abs <span class="fu">=</span> makeFibber <span class="fu">.</span> abs <span class="fu">.</span> fibNum
     signum <span class="fu">=</span> makeFibber <span class="fu">.</span> signum <span class="fu">.</span> fibNum
     fromInteger <span class="fu">=</span> makeFibber <span class="fu">.</span> fromInteger
-    negate <span class="fu">=</span> makeFibber <span class="fu">.</span> negate <span class="fu">.</span> fibNum</code></pre>
+    negate <span class="fu">=</span> makeFibber <span class="fu">.</span> negate <span class="fu">.</span> fibNum</code></pre></div>
 </div>
 <div style="width: 40%; float: right;">
 <p>GHCi</p>
@@ -398,10 +372,10 @@ makeFibber a <span class="fu">=</span> <span class="dt">Fibber</span> a (fib_wor
 <h1>Examples from “Leaking Space”</h1>
 <ul>
 <li><p>Some space leak examples from [Leaking Space - Eliminating memory hogs][8]</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">xs <span class="fu">=</span> delete <span class="st">&quot;dead&quot;</span> [<span class="st">&quot;alive&quot;</span>, <span class="st">&quot;dead&quot;</span>]</code></pre></li>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">xs <span class="fu">=</span> delete <span class="st">&quot;dead&quot;</span> [<span class="st">&quot;alive&quot;</span>, <span class="st">&quot;dead&quot;</span>]</code></pre></div></li>
 <li>Lazy evaluation will keep <code>dead</code> alive until evaluation of <code>xs</code> is forced.</li>
 <li><p>One form of space leak results from adding to and removing from lists but never evaluating (to reduce).</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">xs <span class="fu">=</span> <span class="kw">let</span> xs' <span class="fu">=</span> delete <span class="st">&quot;dead&quot;</span> [<span class="st">&quot;alive&quot;</span>, <span class="st">&quot;dead&quot;</span>] <span class="kw">in</span> xs' <span class="ot">`seq`</span> xs'</code></pre></li>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">xs <span class="fu">=</span> <span class="kw">let</span> xs' <span class="fu">=</span> delete <span class="st">&quot;dead&quot;</span> [<span class="st">&quot;alive&quot;</span>, <span class="st">&quot;dead&quot;</span>] <span class="kw">in</span> xs' <span class="ot">`seq`</span> xs'</code></pre></div></li>
 <li>Why not always strict/eager.
 <ul>
 <li>Composition.</li>
@@ -417,19 +391,19 @@ makeFibber a <span class="fu">=</span> <span class="dt">Fibber</span> a (fib_wor
 <li>This definition is O(n) space.</li>
 <li>List is not actually kept in memory</li>
 <li><p>Accumulates <code>(+)</code> operations.</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">sum1 (x<span class="fu">:</span>xs) <span class="fu">=</span> x <span class="fu">+</span> sum1 xs 
-sum1 [] <span class="fu">=</span> <span class="dv">0</span></code></pre></li>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">sum1 (x<span class="fu">:</span>xs) <span class="fu">=</span> x <span class="fu">+</span> sum1 xs 
+sum1 [] <span class="fu">=</span> <span class="dv">0</span></code></pre></div></li>
 <li>This definition is O(n) space.</li>
 <li><p>Also accumulates <code>(+)</code> operations.</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">sum2 xs <span class="fu">=</span> sum2’ <span class="dv">0</span> xs 
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">sum2 xs <span class="fu">=</span> sum2’ <span class="dv">0</span> xs 
    <span class="kw">where</span> 
    sum2’ a (x<span class="fu">:</span>xs) <span class="fu">=</span> sum2’ (a<span class="fu">+</span>x) xs 
-   sum2’ a [] <span class="fu">=</span> a</code></pre></li>
+   sum2’ a [] <span class="fu">=</span> a</code></pre></div></li>
 <li><p>This definition is O(1) space.</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">sum3 xs <span class="fu">=</span> sum3’ <span class="dv">0</span> xs 
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">sum3 xs <span class="fu">=</span> sum3’ <span class="dv">0</span> xs 
    <span class="kw">where</span> 
    sum3’ <span class="fu">!</span>a (x<span class="fu">:</span>xs) <span class="fu">=</span> sum3’ (a<span class="fu">+</span>x) xs 
-   sum3’ <span class="fu">!</span>a [] <span class="fu">=</span> a</code></pre></li>
+   sum3’ <span class="fu">!</span>a [] <span class="fu">=</span> a</code></pre></div></li>
 <li>With optimizations in GHC <code>sum2</code> may be transformed into <code>sum3</code> during strictness analysis.</li>
 <li><p>The article has more examples of space leaks. [8]: http://queue.acm.org/detail.cfm?id=2538488 (Leaking Space - Eliminating memory hogs: By Neil Mitchell)</p></li>
 </ul>
@@ -445,7 +419,7 @@ sum1 [] <span class="fu">=</span> <span class="dv">0</span></code></pre></li>
 </div>
 <div style="float: bottom;">
 <div style="width: 50%; float: left;">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- Strict</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- Strict</span>
 splitAt_sp n xs <span class="fu">=</span> (<span class="st">&quot;splitAt_lp &quot;</span> <span class="fu">++</span> show n) <span class="fu">$</span>
     <span class="kw">if</span> n<span class="fu">&lt;=</span><span class="dv">0</span>
         <span class="kw">then</span> ([], xs)
@@ -455,10 +429,10 @@ splitAt_sp n xs <span class="fu">=</span> (<span class="st">&quot;splitAt_lp &qu
                 y<span class="fu">:</span>ys <span class="ot">-&gt;</span>
                     <span class="kw">case</span> splitAt_lp' (n<span class="fu">-</span><span class="dv">1</span>) ys <span class="kw">of</span>
                         <span class="co">-- pattern match is strict</span>
-                        (prefix, suffix) <span class="ot">-&gt;</span> (y <span class="fu">:</span> prefix, suffix)</code></pre>
+                        (prefix, suffix) <span class="ot">-&gt;</span> (y <span class="fu">:</span> prefix, suffix)</code></pre></div>
 </div>
 <div style="width: 50%; float: right;">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- Lazy</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- Lazy</span>
 splitAt_lp n xs <span class="fu">=</span> (<span class="st">&quot;splitAt_lp &quot;</span> <span class="fu">++</span> show n) <span class="fu">$</span>
     <span class="kw">if</span> n<span class="fu">&lt;=</span><span class="dv">0</span>
         <span class="kw">then</span> ([], xs)
@@ -468,7 +442,7 @@ splitAt_lp n xs <span class="fu">=</span> (<span class="st">&quot;splitAt_lp &qu
                 y<span class="fu">:</span>ys <span class="ot">-&gt;</span>
                     <span class="kw">case</span> splitAt_lp' (n<span class="fu">-</span><span class="dv">1</span>) ys <span class="kw">of</span>
                         <span class="co">-- pattern match is lazy</span>
-                        <span class="fu">~</span>(prefix, suffix) <span class="ot">-&gt;</span> (y <span class="fu">:</span> prefix, suffix)</code></pre>
+                        <span class="fu">~</span>(prefix, suffix) <span class="ot">-&gt;</span> (y <span class="fu">:</span> prefix, suffix)</code></pre></div>
 </div>
 </div>
 <div style="float: bottom;">
