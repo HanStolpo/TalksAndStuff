@@ -7,3 +7,4 @@ _cache
 *.exe
 *.swp
 .stack-work/
+site

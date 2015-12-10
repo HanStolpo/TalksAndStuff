@@ -1,19 +1,21 @@
 --------------------------------------------------------------------------------
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE RecordWildCards   #-}
 import           Control.Applicative
 import           Control.Arrow
 import           Control.Monad
+import           Control.Monad.Error.Class
 import           Data.Char
 import           Data.Maybe
 import           Data.Monoid
-import qualified Data.Set               as S
+import qualified Data.Set                  as S
 import           Debug.Trace
-import           GHC.IO.Encoding        (getLocaleEncoding, setLocaleEncoding,
-                                         utf8)
+import           GHC.IO.Encoding           (getLocaleEncoding,
+                                            setLocaleEncoding, utf8)
 import           Hakyll
 import           Text.Pandoc.Definition
 import           Text.Pandoc.Options
-import           Text.Pandoc.Walk       (walk)
+import           Text.Pandoc.Walk          (walk)
 import           Text.Read
 
 
@@ -80,8 +82,7 @@ mainHakyl = hakyllWith cfg $ do
         route $ setExtension "html"
         compile $ _pandocReader
             >>= _pandocWriterSlides
-            -- >>= loadAndApplyTemplate "templates/slides.html" postCtx
-            >>= loadAndApplyTemplate "templates/revealjs.html" postCtx
+            >>= _loadAndApplySlideTemplate postCtx
             >>= relativizeUrls
 
     create ["archive.html"] $ do
@@ -154,12 +155,14 @@ _stretchCodeBlocks' i = do
         Just "False" -> return i
         Just "false" -> return i
         _            -> return (Item (itemIdentifier i)  (_stretchCodeBlocks . itemBody $ i))
-
+defaultSlideVariant :: HTMLSlideVariant
+-- defaultSlideVariant = RevealJsSlides
+defaultSlideVariant = SlidySlides
 
 _pandocWriterSlides :: Item Pandoc ->  Compiler (Item String)
 _pandocWriterSlides  =  _stretchCodeBlocks' >=> w
     where
-        w = _pandocWriterWith $ def { writerSlideVariant = RevealJsSlides
+        w = _pandocWriterWith $ def { writerSlideVariant = defaultSlideVariant
                                                , writerSlideLevel = Just 1
                                                , writerIncremental = True
                                                , writerHighlight = True
@@ -184,20 +187,28 @@ _pandocWriterWith wOpts i = do
         setOp k f o = maybe o (fst . (f o &&& logMsg . ("setOp "++) . (k++) . (" = "++))) <$> getMetadataField (itemIdentifier i) k
         ident = itemIdentifier i
         printOpts o =  "-------------------------------------------"
-                    ++ "\npandoc options for " ++ (show ident) ++ ":"
-                    ++ "\n\twriterSlideLevel = " ++ (show . writerSlideLevel $ o)
-                    ++ "\n\twriterIncremental = " ++ (show . writerIncremental $ o)
-                    ++ "\n\twriterHighlight = " ++ (show . writerHighlight $ o)
-                    ++ "\n\twriterSlideVariant = " ++ (show . writerSlideVariant $ o)
-                    ++ "\n\twriterSectionDivs = " ++ (show . writerSectionDivs $ o)
-                    ++ "\n\twriterHtml5 = " ++ (show . writerHtml5 $ o)
-                    ++ "\n\twriterHtml5 = " ++ (show . writerHtml5 $ o)
-                    ++ "\n-------------------------------------------"
+                     ++ "\npandoc options for "     ++ show ident ++ ":"
+                     ++ "\n\twriterSlideLevel = "   ++ (show . writerSlideLevel $ o)
+                     ++ "\n\twriterIncremental = "  ++ (show . writerIncremental $ o)
+                     ++ "\n\twriterHighlight = "    ++ (show . writerHighlight $ o)
+                     ++ "\n\twriterSlideVariant = " ++ (show . writerSlideVariant $ o)
+                     ++ "\n\twriterSectionDivs = "  ++ (show . writerSectionDivs $ o)
+                     ++ "\n\twriterHtml5 = "        ++ (show . writerHtml5 $ o)
+                     ++ "\n-------------------------------------------"
     ("_pandocWriterWith for "++) . (show ident++) . (" with meta data\n"++) . show <$> getMetadata ident >>= logMsg
+         {-wOpts :: WriterOptions-}
     pure wOpts
         >>= setOp "slideLevel"   (\o v-> o {writerSlideLevel = readMaybe v})
         >>= setOp "incremental"  (\o v-> o {writerIncremental = map toLower v == "true"})
         >>= setOp "highlight"    (\o v-> o {writerHighlight = map toLower v == "true"})
         >>= setOp "slideVariant" (\o v-> o {writerSlideVariant = writerSlideVariant o `fromMaybe` readMaybe v})
-        >>= \ o -> logMsg (printOpts o) >> (return $ writePandocWith o i)
+        >>= (\ w@WriterOptions{..} -> pure $ w{writerHtml5 = writerSlideVariant /= SlidySlides && writerHtml5})
+        >>= \ o -> logMsg (printOpts o) >> return (writePandocWith o i)
 
+_loadAndApplySlideTemplate :: Context a -> Item a -> Compiler (Item String)
+_loadAndApplySlideTemplate postCtx i = do
+  slide <- fromMaybe defaultSlideVariant . join . fmap readMaybe <$> getMetadataField (itemIdentifier i) "slideVariant"
+  case slide of
+    RevealJsSlides -> loadAndApplyTemplate "templates/revealjs.html" postCtx i
+    SlidySlides    -> loadAndApplyTemplate "templates/slidy.html" postCtx i
+    a              -> throwError ["Unsupported SlideVariant" ++ show a]
