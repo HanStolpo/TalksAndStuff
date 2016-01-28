@@ -6,4 +6,4 @@ I give at my functional programming users group.
 
 Pages
 ======================
-[Setting up GHC using MSYS2](./Pages/Setting_up_Ghc_with_MSYS2.html)
+[Setting up GHC using MSYS2](./pages/Setting_up_Ghc_with_MSYS2.html)
