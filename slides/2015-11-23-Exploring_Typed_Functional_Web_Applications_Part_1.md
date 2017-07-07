@@ -3,9 +3,15 @@ title: Exploring Typed Functional Web Application Part 1
 author: Handré Stolp
 date: November 23, 2015
 slideLevel: 2
-incremental: True
+incremental: false
 slideVariant: RevealJsSlides
-autoStretchCode: True
+autoStretchCode: true
+designWidth: 1000
+designHeight: 1350
+margin: 0.1
+minScale: 0.1
+maxScale: 3
+
 ---
 
 Exploring Typed Functional Web Applications Part 1

@@ -5,7 +5,13 @@ date: February 9, 2015
 slideLevel: 2
 incremental: False
 slideVariant: RevealJsSlides
-autoStretchCode: False
+autoStretchCode: false
+designWidth: 1000
+designHeight: 1220
+margin: 0.1
+minScale: 0.1
+maxScale: 3
+
 ---
 
 For the Purely Lazy 
