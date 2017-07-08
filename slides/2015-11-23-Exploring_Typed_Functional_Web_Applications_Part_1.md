@@ -5,7 +5,7 @@ date: November 23, 2015
 slideLevel: 2
 incremental: false
 slideVariant: RevealJsSlides
-autoStretchCode: true
+autoStretchCode: false
 designWidth: 1000
 designHeight: 1350
 margin: 0.1
@@ -39,7 +39,7 @@ Single Page Web Application
     * a lot of logic, state and behaviour
     * "thousands" of technology options
 
-Why Typed Functional
+Why Typed Functional {.blah data-width=8000}
 ----------------------------------------
 * To be clear - Strongly Statically Typed Functional
 * I make mistakes
@@ -180,7 +180,7 @@ Defining an API (server endpoints)
 
 A little echo server
 ---------------------
-````haskell
+```` {.haskell .stretch style="margin-left:-40%; width:180%;"}
 data EchoMessage = EchoMessage -- The messages we echo
   { path      :: Text          -- The route that was hit
   , message   :: Text          -- The message to echo

@@ -1,6 +1,6 @@
---------------------------------------------------------------------------------
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards   #-}
+import Prelude ()
 import           Control.Applicative
 import           Control.Arrow
 import           Control.Monad
@@ -9,7 +9,6 @@ import           Data.Char
 import           Data.Maybe
 import           Data.Monoid
 import qualified Data.Set                  as S
-import           Debug.Trace
 import           GHC.IO.Encoding           (getLocaleEncoding,
                                             setLocaleEncoding, utf8)
 import           Hakyll
@@ -17,6 +16,7 @@ import           Text.Pandoc.Definition
 import           Text.Pandoc.Options
 import           Text.Pandoc.Walk          (walk)
 import           Text.Read
+import ClassyPrelude hiding (fromList, (<>), toLower)
 
 
 --------------------------------------------------------------------------------
@@ -155,25 +155,109 @@ _stretchCodeBlocks' i = do
         Just "False" -> return i
         Just "false" -> return i
         _            -> return (Item (itemIdentifier i)  (_stretchCodeBlocks . itemBody $ i))
+
+_headerAttrsIfMissing ::
+     String -> String -> Item Pandoc -> Compiler (Item Pandoc)
+_headerAttrsIfMissing yamlAttr htmlAttr i = do
+  o <- getMetadataField (itemIdentifier i) yamlAttr
+  case o of
+    Nothing -> return i
+    Just "" -> return i
+    Just s -> return (Item (itemIdentifier i) (go s . itemBody $ i))
+  where
+    go :: String -> Pandoc -> Pandoc
+    go s = walk f
+      where
+        f (Header lvl (ident, clss, kvs) cs) =
+          Header
+            lvl
+            ( ident
+            , clss
+            , fromMaybe
+                kvs
+                ((kvs <$ lookup htmlAttr kvs) <|> Just ((htmlAttr, s) : kvs)))
+            cs
+        f x = x
+
+_topParagraphClass ::
+     Item Pandoc -> Compiler (Item Pandoc)
+_topParagraphClass  i = do
+  o <- getMetadataField (itemIdentifier i) "topParagraphClass"
+  case o of
+    Nothing -> return i
+    Just "" -> return i
+    Just s -> return (Item (itemIdentifier i) (go s . itemBody $ i))
+  where
+    go :: String -> Pandoc -> Pandoc
+    go s = walk f
+      where
+        tag = [("data-custom-paragraph-class", "true")]
+        f (Div a [Div (_, _, tag') [p@(Para _)]])
+          | tag' == tag = Div a [p]
+        f (p@(Para _)) = Div ("", [s], tag) [p]
+        f x = x
+
+_codeAttrsIfMissing :: String -> String -> Item Pandoc -> Compiler (Item Pandoc)
+_codeAttrsIfMissing yamlAttr htmlAttr i = do
+  o <- getMetadataField (itemIdentifier i) yamlAttr
+  case o of
+    Nothing -> return i
+    Just "" -> return i
+    Just s -> return (Item (itemIdentifier i) (go s . itemBody $ i))
+  where
+    go :: String -> Pandoc -> Pandoc
+    go s = walk f
+      where
+        f (CodeBlock (ident, clss, kvs) c) =
+          CodeBlock
+            ( ident
+            , clss
+            , fromMaybe
+                kvs
+                ((kvs <$ lookup htmlAttr kvs) <|>
+                 Just ((htmlAttr,s) : kvs)))
+            c
+        f x = x
+
 defaultSlideVariant :: HTMLSlideVariant
 -- defaultSlideVariant = RevealJsSlides
 defaultSlideVariant = SlidySlides
 
-_pandocWriterSlides :: Item Pandoc ->  Compiler (Item String)
-_pandocWriterSlides  =  _stretchCodeBlocks' >=> w
-    where
-        w = _pandocWriterWith $ def { writerSlideVariant = defaultSlideVariant
-                                               , writerSlideLevel = Just 1
-                                               , writerIncremental = True
-                                               , writerHighlight = True
-                                               , writerExtensions = S.fromList [Ext_literate_haskell]
-                                               , writerSectionDivs = True
-                                               , writerHtml5 = True
-                                               }
-_pandocWriterPosts :: Item Pandoc ->  Compiler (Item String)
-_pandocWriterPosts  =  _pandocWriterWith $ def { writerHighlight = True
-                                               , writerExtensions = S.fromList [Ext_literate_haskell]
-                                               }
+_pandocWriterSlides :: Item Pandoc -> Compiler (Item String)
+_pandocWriterSlides =
+  _topParagraphClass >=>
+  _headerAttrsIfMissing "backTransition" "data-transition" >=>
+  _headerAttrsIfMissing "backTransitionSpeed" "data-transition-speed" >=>
+  _headerAttrsIfMissing "backGroundColor" "data-background-color" >=>
+  _headerAttrsIfMissing "backGroundImage" "data-background-image" >=>
+  _headerAttrsIfMissing "backGroundSize" "data-background-size" >=>
+  _headerAttrsIfMissing "backGroundPosition" "data-background-position" >=>
+  _headerAttrsIfMissing "backGroundRepeat" "data-background-repeat" >=>
+  _headerAttrsIfMissing "slideState" "data-state" >=>
+  _codeAttrsIfMissing "codeBackGroundColor" "data-background-color" >=>
+  _codeAttrsIfMissing "codeBackGroundImage" "data-background-image" >=>
+  _codeAttrsIfMissing "codeBackGroundSize" "data-background-size" >=>
+  _codeAttrsIfMissing "codeBackGroundPosition" "data-background-position" >=>
+  _codeAttrsIfMissing "codeBackGroundRepeat" "data-background-repeat" >=>
+  _stretchCodeBlocks' >=> w
+  where
+    w =
+      _pandocWriterWith $
+      def
+      { writerSlideVariant = defaultSlideVariant
+      , writerSlideLevel = Just 1
+      , writerIncremental = True
+      , writerHighlight = True
+      , writerExtensions = S.fromList [Ext_literate_haskell]
+      , writerSectionDivs = True
+      , writerHtml5 = True
+      }
+
+_pandocWriterPosts :: Item Pandoc -> Compiler (Item String)
+_pandocWriterPosts =
+  _pandocWriterWith $
+  def
+  {writerHighlight = True, writerExtensions = S.fromList [Ext_literate_haskell]}
 
 _pandocWriterPages :: Item Pandoc ->  Compiler (Item String)
 _pandocWriterPages  =  _pandocWriterWith $ def { writerHighlight = True
@@ -206,9 +290,9 @@ _pandocWriterWith wOpts i = do
         >>= \ o -> logMsg (printOpts o) >> return (writePandocWith o i)
 
 _loadAndApplySlideTemplate :: Context a -> Item a -> Compiler (Item String)
-_loadAndApplySlideTemplate postCtx i = do
+_loadAndApplySlideTemplate postCtx_ i = do
   slide <- fromMaybe defaultSlideVariant . join . fmap readMaybe <$> getMetadataField (itemIdentifier i) "slideVariant"
   case slide of
-    RevealJsSlides -> loadAndApplyTemplate "templates/revealjs.html" postCtx i
-    SlidySlides    -> loadAndApplyTemplate "templates/slidy.html" postCtx i
+    RevealJsSlides -> loadAndApplyTemplate "templates/revealjs.html" postCtx_ i
+    SlidySlides    -> loadAndApplyTemplate "templates/slidy.html" postCtx_ i
     a              -> throwError ["Unsupported SlideVariant" ++ show a]

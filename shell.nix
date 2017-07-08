@@ -11,6 +11,7 @@ let
      hakyll-favicon hakyll-filestore
      hakyll-ogmarkup hakyll-series
      base
+     pandoc pandoc-types
     ]);
 in with pkgs;
   runCommand "hakyll-env"
