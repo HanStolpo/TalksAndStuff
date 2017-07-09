@@ -44,7 +44,23 @@ codeBackGroundColor: "#424284"
   }
 
   div.sourceCode>pre.sourceCode{
+    /*background:rgba(00, 00, 00, 0.5);*/
+  }
+
+  code{
     background:rgba(00, 00, 00, 0.5);
+  }
+
+  /*section.indent-body-2{
+    padding-left: 50px;
+    padding-right: 50px;
+  }*/
+
+  .smaller-list li{
+    font-size:smaller;
+  }
+  .smaller-list p{
+    font-size:smaller;
   }
 </style>
 
@@ -220,9 +236,8 @@ int main()
 
 </section>
 
-<section>
+<section class="indent-body-2">
 <div style="margin-top:-40px"> <h4 style="font-variant:small-caps;"> Purely functional programming languages </h4> </div>
-
 <div style="text-align:left"> Obey the Leibnz' principal </div>
 
 | The result of function **application**
@@ -237,9 +252,8 @@ This all means they are referential transparent
 
 </section>
 
-<section>
+<section class="indent-body-2">
 <div style="margin-top:-40px"> <h4 style="font-variant:small-caps;"> Purely functional programming languages </h4> </div>
-
 <div style="text-align:left"> Are often **lazy** </div>
 
 So expression only get evaluated when needed
@@ -248,9 +262,8 @@ Allows *tying the knot* for cyclic data structures while retaining purity
 
 </section>
 
-<section>
+<section class="indent-body-2">
 <div style="margin-top:-40px"> <h4 style="font-variant:small-caps;"> Purely functional programming languages which are lazy</h4> </div>
-
 <div style="text-align:left"> Have **benefits** </div>
 
 Results of **evaluation** can be **cached**
@@ -268,10 +281,8 @@ Treat deployment of packages as a function in a programming language
 
 </section>
 
-<section>
-
+<section class="indent-body-2">
 <div style="margin-top:-40px"> <h4 style="font-variant:small-caps;"> Conventional package management </h4> </div>
-
 <div style="text-align:left"> In conventional package mangers </div>
 
 A *"function"* is representative of imperative languages like *C*
@@ -284,7 +295,7 @@ Execution can destructively modify other packages
 
 </section>
 
-<section>
+<section class="indent-body-2">
 <div style="margin-top:-40px"> <h4 style="font-variant:small-caps;"> Purely functional package management</h4> </div>
 <div style="text-align:left"> In Nix </div>
 
@@ -299,7 +310,7 @@ Build scripts are run in **isolated environments limiting** chances of **side ef
 
 </section>
 
-<section>
+<section class="indent-body-2">
 <div style="margin-top:-40px"> <h4 style="font-variant:small-caps;"> Purely functional package management</h4> </div>
 <div style="text-align:left"> In Nix </div>
 
@@ -314,9 +325,9 @@ The **storage** locations are **immutable**
 
 </section>
 
-<section>
+<section class="indent-body2">
 <div style="margin-top:-40px"> <h4 style="font-variant:small-caps;"> Purely functional package management</h4> </div>
-<div style="text-align:left"> This means in Nix </div>
+<div style="text-align:left;"> This means in Nix </div>
 
 You get determinism, the same package is the same where or when ever you install it
 
@@ -330,6 +341,354 @@ You can actually reason about the state of your packages
 
 </section>
 
+NixOS
+===========
+
+<section>
+
+**NixOS** is a GNU/Linux distribution built around the **Nix** package manager
+
+It builds on **Nix** using the **Nix Expression** DSL to **declaratively define** every component
+including the **kernel** and **configuration files**
+
+It uses **systemd** for services which are declaratively defined using the **Nix Expression** DSL.
+
+| It uses a **source based** model **with binaries**,
+| that is cached binaries are used instead of building from source when possible
+
+</section>
+
+<section>
+
+| **NixOS** gives you determinism;
+| the same configuration builds the same machine no matter when or where
+
+**NixOS** is gives you **relaible** **atomic** upgrades
+
+**NixOS** allows you to always **rollback** any changes
+
+**NixOS** allows you to **safely live upgrade** your system
+
+</section>
+
+Nix Expression Language
+==========================
+
+<section>
+<div style="margin-top:-40px"> <h4 style="font-variant:small-caps;"> It is a pure, lazy, functional language </h4> </div>
+
+Purity means no side-effects (e.g. no variable assignment)
+
+Laziness means function arguments are only evaluated when needed
+
+Functional means functions are first class and can be passed around and manipulated
+
+The language is not full-featured and general purpose
+
+Its aim is describing packages, compositions of packages and variability within packages
+
+</section>
+
+<section>
+<div style="margin-top:-40px"> <h4 style="font-variant:small-caps;"> Comments </h4> </div>
+<div>
+| Comments can be
+| single-line, started with a `#` character, or
+| inline/multi-line, enclosed within `/* ... */`
+
+```nix
+# this is a line comment
+/* this
+is a multiline comment */
+```
+</div>
+</section>
+
+<section>
+<div style="margin-top:-40px"> <h4 style="font-variant:small-caps;"> Simple Values </h4> </div>
+
+<div style="margin-top:-30px">
+* The null value `null`
+* Integers `1234`
+* Booleans `true` and `false`
+* Strings
+```nix
+"single line string"
+''
+  First line of a multiline string.
+  Second line
+''
+"this is an ${antiquote} in a string"
+```
+    * as a convenience URIs don't need quotes
+    ```nix
+    http://example.org/foo.tar.bz2
+    ```
+* Paths `/bin/sh` or `./builder.sh`
+
+</div>
+
+</section>
+
+<section>
+<div style="margin-top:-40px"> <h4 style="font-variant:small-caps;"> Lists </h4> </div>
+
+<div>
+
+```nix
+[123 ./foo.nix "abc" (f {x = y;}) ]
+```
+* heterogeneous list
+* white space delimited list of values
+* enclosed by square brackets
+
+</div>
+</section>
+
+<section>
+<div style="margin-top:-40px"> <h4 style="font-variant:small-caps;"> Sets </h4> </div>
+
+<div>
+
+```nix
+{ x = 123;
+  text = "Hello";
+  y = f { bla = 456; };
+}
+```
+
+* heterogeneous dictionary
+* list of name value pairs called attributes
+* delimited by semicolon
+* enclosed by curly brackets
+* attributes selected using `.`
+```nix
+{ a = "Foo"; b = "Bar"; }.a
+```
+* in recursive sets elements can refer to each other
+```nix
+rec {x = y; y = 123;}.x == 123
+```
+
+</div>
+</section>
+
+<section>
+<div style="margin-top:-40px"> <h4 style="font-variant:small-caps;"> Let-expressions </h4> </div>
+<div>
+
+Allows you to introduce local variables for an expression
+
+```nix
+let
+  x = "foo";
+  y = "bar";
+in x + y
+```
+
+</div>
+</section>
+
+<section>
+<div style="margin-top:-40px"> <h4 style="font-variant:small-caps;"> Inheriting attributes </h4> </div>
+<div>
+
+When defining sets its often convenient to copy variable from the surrounding scope
+```nix
+let x = 123; in
+{ inherit x;
+  y = 456;
+}
+```
+or from another set
+```nix
+let aset = {x = 123, q = 456}; in
+{ inherit (aset) x;
+  y = 456;
+}
+```
+both evaluates to
+```nix
+{ x = 123; y = 456; }
+```
+
+</div>
+</section>
+
+<section>
+<div style="margin-top:-40px"> <h4 style="font-variant:small-caps;"> With-expressions </h4> </div>
+<div>
+
+```nix
+with e1; e2
+```
+
+introduces the set `e1` into the lexical scope of expression `e2`
+
+```nix
+let as = { x = "foo"; y = "bar"; };
+in with as; x + y
+```
+
+</div>
+</section>
+
+<section>
+<div style="margin-top:-40px"> <h4 style="font-variant:small-caps;"> Functions </h4> </div>
+<div>
+
+| Functions are single argument and curried
+| defined as an argument pattern followed by a body
+| `pattern: body`
+| and application is white space
+| `f x`
+
+```nix
+let negate = x: !x;
+    concat = x: y: x + y;
+in if negate true then concat "foo" "bar" else ""
+```
+</div>
+</section>
+
+<section>
+<div style="margin-top:-40px"> <h4 style="font-variant:small-caps;"> Functions </h4> </div>
+<div>
+
+set patterns are supported
+
+```nix
+{ x, y, z }: z + y + x
+```
+
+including variable binding, default values for missing keys and partial matches
+```nix
+args@{ x, y ? "default", z, ... }: z + y + x + args.a
+```
+
+</div>
+</section>
+
+
+<section>
+<div style="margin-top:-40px"> <h4 style="font-variant:small-caps;"> Conditionals </h4> </div>
+<div>
+
+Doesn't really need explaining
+
+```nix
+if e1 then e2 else e3
+```
+
+</div>
+</section>
+
+<section>
+<div style="margin-top:-40px"> <h4 style="font-variant:small-caps;"> Operators </h4> </div>
+<div>
+
+```nix
+e.attrpath    # select attribute
+e1 e2         # call function
+e ? attrpath  # test attribute existance
+e1 ++ e2      # list concatenation
+e1 + e2       # list or path concatenation
+!e1           # boolean negation
+e1 // e2      # set union
+e1 == e2      # equality
+e1 != e2      # inequality
+e1 && e2      # logical AND
+e1 || e2      # logical OR
+e1 -> e2      # logical implication (!e1 || e2)
+```
+</div>
+</section>
+
+Nix by example
+===============
+
+<section>
+
+Nix expressions that actually get built are **derivations**
+
+<div class="fragment fade-in fade-up">
+Here is the example derivation for building GNU Hello
+```nix
+{stdenv, fetchurl}:
+
+stdenv.mkDerivation {
+  name = "hello-2.6";
+
+  src = fetchurl {
+    url = ftp://ftp.gnu.org/gnu/hello/hello-2.6.tar.gz;
+    sha256 = "1h6fjkkwr7kxv0rl5l61ya0b49imzfaspy7jk9jas1fil31sjykl";
+  };
+
+  meta = {
+    homepage = http://www.gnu.org/software/hello/manual/;
+    license = "GPLv3+";
+  };
+}
+```
+</div>
+
+</section>
+
+<section>
+<div class="smaller-list" style="margin-top:-40px">
+```nix
+{stdenv, fetchurl}:
+
+stdenv.mkDerivation {
+  name = "hello-2.6";
+
+  src = fetchurl {
+    url = ftp://ftp.gnu.org/gnu/hello/hello-2.6.tar.gz;
+    sha256 = "1h6fjkkwr7kxv0rl5l61ya0b49imzfaspy7jk9jas1fil31sjykl";
+  };
+
+  meta = {
+    homepage = http://www.gnu.org/software/hello/manual/;
+    license = "GPLv3+";
+  };
+}
+```
+* function taking a set with attributes `stdenv` and `fetchurl`
+* returns a derivation
+    * specifying the package's name, source and meta info
+    * not specifying build procedure so standard Autotools will be used `./configure; make; make install`
+
+</div>
+</section>
+
+
+<section data-state="smaller-list">
+<div class="smaller-list" style="margin-top:-40px">
+
+to build *hello* we compose its function with its arguments
+
+```nix
+rec {
+  stdenv = ...;
+  fetchurl = import ../build-support/fetchurl {
+    inherit stdenv curl;
+  };
+  hello = import ../applications/misc/hello {
+    inherit stdenv fetchurl;
+  }
+  ...
+}
+```
+</div>
+
+The `hello` attribute is bound to the function defined earlier and invoked with its arguments
+
+The dependencies of the function are themselves defined in the set
+
+</section>
+
 <div class="notes">
 [an-alternative-explaination-of-nix]: http://sandervanderburg.blogspot.co.za/2012/11/an-alternative-explaination-of-nix.html
+[tying-the-knot]: https://wiki.haskell.org/Tying_the_Knot
+[nix-expression-language]:https://nixos.org/nix/manual/#ch-expression-language
 </div>
