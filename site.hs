@@ -2,7 +2,7 @@
 {-# LANGUAGE RecordWildCards   #-}
 import Prelude ()
 import           Control.Applicative
-import           Control.Arrow
+import           Control.Arrow hiding (second)
 import           Control.Monad
 import           Control.Monad.Error.Class
 import           Data.Char
@@ -59,6 +59,10 @@ mainHakyl = hakyllWith cfg $ do
         compile copyFileCompiler
 
     match "lib/**" $ do
+        route   idRoute
+        compile copyFileCompiler
+
+    match "plugin/**" $ do
         route   idRoute
         compile copyFileCompiler
 
@@ -179,10 +183,9 @@ _headerAttrsIfMissing yamlAttr htmlAttr i = do
             cs
         f x = x
 
-_topParagraphClass ::
-     Item Pandoc -> Compiler (Item Pandoc)
-_topParagraphClass  i = do
-  o <- getMetadataField (itemIdentifier i) "topParagraphClass"
+_topBlockClass :: Item Pandoc -> Compiler (Item Pandoc)
+_topBlockClass i = do
+  o <- getMetadataField (itemIdentifier i) "topBlockClass"
   case o of
     Nothing -> return i
     Just "" -> return i
@@ -192,9 +195,32 @@ _topParagraphClass  i = do
     go s = walk f
       where
         tag = [("data-custom-paragraph-class", "true")]
-        f (Div a [Div (_, _, tag') [p@(Para _)]])
-          | tag' == tag = Div a [p]
-        f (p@(Para _)) = Div ("", [s], tag) [p]
+        ---
+        dropDivs (Div (_,_,tag') [b]) | tag' == tag = b
+        dropDivs b = b
+        ---
+        f (Div a bs) = Div a (map (walk dropDivs) bs)
+        --- Para
+        f (b@(Para _)) = Div ("", [s], tag) [b]
+        --- LineBlock
+        f (b@(LineBlock _)) = Div ("", [s], tag) [b]
+        --- Plain
+        f (b@(Plain _)) = Div ("", [s], tag) [b]
+        --- CodeBlock
+        f (b@(CodeBlock _ _)) = Div ("", [s], tag) [b]
+        --- RawBlock skip raw blocks (otherwise it breaks the slides)
+        f (b@(RawBlock _ _)) = b
+        --- BlockQuote
+        f (BlockQuote bs) = Div ("", [s], tag) [BlockQuote (map dropDivs bs)]
+        --- OrderedList
+        f (OrderedList as bbs) = Div ("", [s], tag) [OrderedList as (map (map dropDivs) bbs)]
+        --- BulletList
+        f (BulletList bbs) = Div ("", [s], tag) [BulletList (map (map dropDivs) bbs)]
+        --- DefinitionList
+        f (DefinitionList cs) = Div ("", [s], tag) [DefinitionList (map (second (map (map dropDivs))) cs)]
+        --- Table
+        f (Table is as ds hbbs rbbbs) = Div ("", [s], tag) [Table is as ds (map (map dropDivs) hbbs) (map (map (map dropDivs)) rbbbs)]
+        ---
         f x = x
 
 _codeAttrsIfMissing :: String -> String -> Item Pandoc -> Compiler (Item Pandoc)
@@ -225,7 +251,7 @@ defaultSlideVariant = SlidySlides
 
 _pandocWriterSlides :: Item Pandoc -> Compiler (Item String)
 _pandocWriterSlides =
-  _topParagraphClass >=>
+  _topBlockClass >=>
   _headerAttrsIfMissing "backTransition" "data-transition" >=>
   _headerAttrsIfMissing "backTransitionSpeed" "data-transition-speed" >=>
   _headerAttrsIfMissing "backGroundColor" "data-background-color" >=>

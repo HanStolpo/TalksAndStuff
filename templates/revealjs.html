@@ -16,7 +16,6 @@
 
     <!-- Code syntax highlighting -->
     <link rel="stylesheet" type="text/css" href="../css/highlighting.css" />
-    <!--<link rel="stylesheet" href="../lib/css/zenburn.css">-->
 
     <!--[if lt IE 9]>
     <script src="../lib/js/html5shiv.js"></script>
@@ -30,15 +29,6 @@
 $body$
       </div>
     </div>
-    <!--
-    footerAnchorImage: "../images/nixos-custom.svg"
-    footerAnchoreHeight: 10%
-    footerAnchorWidth: 20%
-    footerAnchorImageMaxWidth: 200%
-    <div style="position:fixed;bottom:5px;left:5px;width:20%;height:10%;">
-      <img src="../images/nixos-custom.svg"  style="height:100%;max-width:200%;position:absolute;bottom:0px;left:0px;z-index:1;"> <img/>
-    </div>
-    -->
     $if(footerAnchorImage)$
     <div style="position:fixed;bottom:5px;left:5px;width:$footerAnchorWidth$;height:$footerAnchoreHeight$;">
       <img src="../images/nixos-custom.svg"  style="height:100%;max-width:$footerAnchorImageMaxWidth$;position:absolute;bottom:0px;left:0px;z-index:1;"> <img/>
@@ -74,10 +64,19 @@ $body$
         // width: "100%", height: "100%", margin: 0, minScale: 1, maxScale: 1,
 
         // Display controls in the bottom right corner
+        $if(controls)$
+        controls: $controls$,
+        $else$
         controls: true,
+        $endif$
+
 
         // Display a presentation progress bar
+        $if(progress)$
+        progress: $progress$,
+        $else$
         progress: true,
+        $endif$
 
         // Set default timing of 2 minutes per slide
         defaultTiming: 120,
@@ -178,12 +177,8 @@ $body$
 
         // Optional reveal.js plugins
         dependencies: [
-          { src: '../lib/js/classList.js', condition: function() { return !document.body.classList; } }
-          // { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-          // { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-          // { src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
-          // { src: 'plugin/zoom-js/zoom.js', async: true },
-          // { src: 'plugin/notes/notes.js', async: true }
+          { src: '../lib/js/classList.js', condition: function() { return !document.body.classList; } },
+          { src: '../plugin/notes/notes.js', async: true }
         ]
       });
 
