@@ -10,7 +10,7 @@
   </head>
   <body>
       <div id="introduction" class="titleslide slide section level1"><h1>Introduction</h1></div><div id="me-and-the-talk" class="slide section level2">
-<h1>Me and the talk</h1>
+<h2>Me and the talk</h2>
 <ul>
 <li>Post related to slides <a href="http://hanstolpo.github.io/TalksAndStuff/posts/2014-05-12-A_Practical_Haskell_Retrospective_Using_Parsec_REST_and_Pandoc_to_Scrape_Jira.html" class="uri">http://hanstolpo.github.io/TalksAndStuff/posts/2014-05-12-A_Practical_Haskell_Retrospective_Using_Parsec_REST_and_Pandoc_to_Scrape_Jira.html</a></li>
 <li>For links see the post</li>
@@ -26,7 +26,7 @@
 <li>Haskell is not that hard you just have to get used to it</li>
 </ul>
 </div><div id="background" class="slide section level2">
-<h1>Background</h1>
+<h2>Background</h2>
 <ul>
 <li>We make training simulators</li>
 <li>Our issue tracking system is Jira</li>
@@ -37,7 +37,7 @@
 <li>Lets write one :)</li>
 </ul>
 </div><div id="background-1" class="slide section level2">
-<h1>Background</h1>
+<h2>Background</h2>
 <ul>
 <li>Had just read
 <ul>
@@ -54,7 +54,7 @@
 </ul></li>
 </ul>
 </div><div id="what-the-tool-had-to-do" class="slide section level2">
-<h1>What the tool had to do</h1>
+<h2>What the tool had to do</h2>
 <ul>
 <li>Issues organized hierarchically using Structure plug-in</li>
 <li>Hierarchy defines document outline</li>
@@ -70,7 +70,7 @@
 </ul>
 </div>
 <div id="talking-to-jira" class="titleslide slide section level1"><h1>Talking to Jira</h1></div><div id="jiras-restlike-interface" class="slide section level2">
-<h1>Jira’s RESTlike Interface</h1>
+<h2>Jira’s RESTlike Interface</h2>
 <ul>
 <li>Access Jira over HTTP using the Jira REST APIs
 <ul>
@@ -88,7 +88,7 @@
 <li>Let’s not offend anyone and call it RESTlike</li>
 </ul>
 </div><div id="restlike---incomplete-incorrect-over-simplified" class="slide section level2">
-<h1>RESTlike - incomplete, incorrect, over simplified</h1>
+<h2>RESTlike - incomplete, incorrect, over simplified</h2>
 <ul>
 <li>It is client server based.</li>
 <li>Communication is stateless.
@@ -107,7 +107,7 @@
 </ul></li>
 </ul>
 </div><div id="restlike---incomplete-incorrect-over-simplified-1" class="slide section level2">
-<h1>RESTlike - incomplete, incorrect, over simplified</h1>
+<h2>RESTlike - incomplete, incorrect, over simplified</h2>
 <ul>
 <li>One resource multiple representation (e.g. HTML, XML, JSON, etc)</li>
 <li>Interface constrained to the standard methods of the protocol.
@@ -121,7 +121,7 @@
 <li>There is actually lots more.</li>
 </ul>
 </div><div id="restlike---incomplete-incorrect-over-simplified-2" class="slide section level2">
-<h1>RESTlike - incomplete, incorrect, over simplified</h1>
+<h2>RESTlike - incomplete, incorrect, over simplified</h2>
 <p>Example matrix from Wikipedia</p>
 <table>
 <colgroup>
@@ -133,34 +133,34 @@
 </colgroup>
 <thead>
 <tr class="header">
-<th align="left">Resource</th>
-<th align="left">GET</th>
-<th align="left">PUT</th>
-<th align="left">POST</th>
-<th align="left">DELETE</th>
+<th>Resource</th>
+<th>GET</th>
+<th>PUT</th>
+<th>POST</th>
+<th>DELETE</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left"><p>Collection</p>
+<td><p>Collection</p>
 <p>http://eg.com/resources</p></td>
-<td align="left"><p>List the URIs and other details of elements.</p></td>
-<td align="left"><p>Replace the entire collection.</p></td>
-<td align="left"><p>Add a new entry to the collection. URI is assigned automatically.</p></td>
-<td align="left"><p>Delete the entire collection.</p></td>
+<td><p>List the URIs and other details of elements.</p></td>
+<td><p>Replace the entire collection.</p></td>
+<td><p>Add a new entry to the collection. URI is assigned automatically.</p></td>
+<td><p>Delete the entire collection.</p></td>
 </tr>
 <tr class="even">
-<td align="left"><p>Element</p>
+<td><p>Element</p>
 <p>http://eg.com/resources/item17</p></td>
-<td align="left"><p>Retrieve addressed element expressed in appropriate media type</p></td>
-<td align="left"><p>Replace element or if it does not exist the create it.</p></td>
-<td align="left"><p>Not generally used. Treat element as collection and create new entry</p></td>
-<td align="left"><p>Delete the item from the collection.</p></td>
+<td><p>Retrieve addressed element expressed in appropriate media type</p></td>
+<td><p>Replace element or if it does not exist the create it.</p></td>
+<td><p>Not generally used. Treat element as collection and create new entry</p></td>
+<td><p>Delete the item from the collection.</p></td>
 </tr>
 </tbody>
 </table>
 </div><div id="http-conduit-example" class="slide section level2">
-<h1>HTTP-Conduit example</h1>
+<h2>HTTP-Conduit example</h2>
 <div class="sourceCode"><pre class="sourceCode stretch haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Network.HTTP.Conduit</span>
 <span class="kw">import </span><span class="dt">Network.HTTP.Types.Header</span>
 <span class="kw">import </span><span class="dt">Network.Connection</span> (<span class="dt">TLSSettings</span> (..))
@@ -192,7 +192,7 @@ fetchTestIssue <span class="fu">=</span> <span class="kw">do</span>
    putStrLn <span class="st">&quot;Response body = &quot;</span>
    B.putStrLn bdy </code></pre></div>
 </div><div id="http-conduit-example-response" class="slide section level2">
-<h1>HTTP-Conduit example response</h1>
+<h2>HTTP-Conduit example response</h2>
 <pre class="stretch"><code>Response headers = 
 [(&quot;Server&quot;,&quot;nginx&quot;),(&quot;Content-Type&quot;,&quot;application/json;charset=UTF-8&quot;)]
 Response body = 
@@ -203,7 +203,7 @@ Response body =
 &quot;fields&quot;:{&quot;summary&quot;:&quot;Backspace to delete zero to enter your dosage &quot;,
 &quot;description&quot;:&quot;You have to delete zero first before you can put in your Dosage&quot;}}</code></pre>
 </div><div id="http-conduit" class="slide section level2">
-<h1>HTTP-Conduit</h1>
+<h2>HTTP-Conduit</h2>
 <ul>
 <li>Has good documentation and examples</li>
 <li>Really easy to use</li>
@@ -212,7 +212,7 @@ Response body =
 <li>No need to manually parse JSON just use Aeson</li>
 </ul>
 </div><div id="aeson" class="slide section level2">
-<h1>Aeson</h1>
+<h2>Aeson</h2>
 <ul>
 <li>Aeson was the farther of Jason in Greek mythology</li>
 <li>Aeson is the big daddy of JSON parsing</li>
@@ -236,7 +236,7 @@ Response body =
 </ul></li>
 </ul>
 </div><div id="aeson-example" class="slide section level2">
-<h1>Aeson example</h1>
+<h2>Aeson example</h2>
 <div class="sourceCode"><pre class="sourceCode stretch haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE OverloadedStrings, DeriveGeneric #-}</span>
 <span class="kw">import           </span><span class="dt">Network.HTTP.Conduit</span>
 <span class="kw">import           </span><span class="dt">Network.Connection</span> (<span class="dt">TLSSettings</span> (..))
@@ -280,7 +280,7 @@ Response body =
     <span class="co">-- Error message on parse failure</span>
     parseJSON a <span class="fu">=</span> AS.typeMismatch <span class="st">&quot;Expecting JSON object for Issue&quot;</span> a</code></pre></div>
 </div><div id="aeson-example-1" class="slide section level2">
-<h1>Aeson example</h1>
+<h2>Aeson example</h2>
 <div class="sourceCode"><pre class="sourceCode stretch haskell"><code class="sourceCode haskell"><span class="ot">fetchTestIssue ::</span> <span class="dt">IO</span> ()
 fetchTestIssue <span class="fu">=</span> <span class="kw">do</span>
         <span class="co">-- We use a demo instance of Jira available on the web</span>
@@ -301,14 +301,14 @@ fetchTestIssue <span class="fu">=</span> <span class="kw">do</span>
    <span class="co">-- Print the resultant ByteString to the console </span>
    B.putStrLn <span class="fu">.</span> YAML.encode <span class="fu">.</span> fmap issueFromResponse <span class="fu">.</span> AS.decode <span class="fu">.</span> responseBody <span class="fu">$</span> response</code></pre></div>
 </div><div id="aeson-example-output" class="slide section level2">
-<h1>Aeson example output</h1>
-<div class="sourceCode"><pre class="sourceCode stretch yaml"><code class="sourceCode yaml"><span class="fu">issueDescription:</span> You have to delete zero first before you can put in your Dosage
-<span class="fu">issueId:</span> 333132
-<span class="fu">issueKey:</span> DEMO-3083
-<span class="fu">issueSummary:</span> ! 'Backspace to delete zero to enter your dosage '</code></pre></div>
+<h2>Aeson example output</h2>
+<div class="sourceCode"><pre class="sourceCode stretch yaml"><code class="sourceCode yaml"><span class="fu">issueDescription:</span><span class="at"> You have to delete zero first before you can put in your Dosage</span>
+<span class="fu">issueId:</span><span class="at"> 333132</span>
+<span class="fu">issueKey:</span><span class="at"> DEMO-3083</span>
+<span class="fu">issueSummary:</span><span class="at"> ! 'Backspace to delete zero to enter your dosage '</span></code></pre></div>
 </div>
 <div id="creating-the-document" class="titleslide slide section level1"><h1>Creating the document</h1></div><div id="pandoc" class="slide section level2">
-<h1>Pandoc</h1>
+<h2>Pandoc</h2>
 <ul>
 <li>Haskell library and command line utility</li>
 <li>Read several markup formats
@@ -318,7 +318,7 @@ fetchTestIssue <span class="fu">=</span> <span class="kw">do</span>
 <li>Write several markup / document formats
 <ul>
 <li>HTML (XHTML, HTML5), HTML Slides (Slidy, reveal.js, Slideous, S5, DZSlides), Microsoft Word docx, OpenOffice/LibreOffice ODT, OpenDocument XML, EPUB, FictionBook2, DocBook, GNU TexInfo, Groff man pages, Haddock markup, InDesign ICML, OPML, LaTeX, ConTeXt,<br />
- LaTeX Beamer Slides, PDF, Markdown, reStructuredText, AsciiDoc, MediaWiki markup, Emacs Org-Mode, Textile</li>
+LaTeX Beamer Slides, PDF, Markdown, reStructuredText, AsciiDoc, MediaWiki markup, Emacs Org-Mode, Textile</li>
 </ul></li>
 <li>Modular
 <ul>
@@ -333,7 +333,7 @@ fetchTestIssue <span class="fu">=</span> <span class="kw">do</span>
 </ul></li>
 </ul>
 </div><div id="pandoc-example" class="slide section level2">
-<h1>Pandoc example</h1>
+<h2>Pandoc example</h2>
 <div class="sourceCode"><pre class="sourceCode stretch haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Text.Pandoc</span>
 <span class="kw">import </span><span class="dt">Text.Pandoc.Builder</span> <span class="kw">hiding</span> (space)
 <span class="kw">import </span><span class="dt">Text.Blaze.Renderer.String</span>
@@ -363,7 +363,7 @@ main <span class="fu">=</span> <span class="kw">do</span>
     <span class="co">-- render as HTML</span>
     putStrLn <span class="fu">$</span> renderMarkup <span class="fu">$</span> writeHtml def myDoc</code></pre></div>
 </div><div id="pandoc-example-output" class="slide section level2">
-<h1>Pandoc example output</h1>
+<h2>Pandoc example output</h2>
 <pre class="stretch"><code>  Gordon   Ramsy
   -------- -------
   Sally    Storm
@@ -391,7 +391,7 @@ main <span class="fu">=</span> <span class="kw">do</span>
 &lt;/tr&gt;
 &lt;/tbody&gt;</code></pre>
 </div><div id="parsing-jira-markup-with-parsec" class="slide section level2">
-<h1>Parsing Jira markup with Parsec</h1>
+<h2>Parsing Jira markup with Parsec</h2>
 <ul>
 <li>Issue description formatted as Jira markup</li>
 <li>Preserve formatting in generated document</li>
@@ -405,7 +405,7 @@ main <span class="fu">=</span> <span class="kw">do</span>
 <li>Example using parsec to transform some text</li>
 </ul>
 </div><div id="parsec-example" class="slide section level2">
-<h1>Parsec example</h1>
+<h2>Parsec example</h2>
 <div class="sourceCode"><pre class="sourceCode stretch haskell"><code class="sourceCode haskell"><span class="kw">import           </span><span class="dt">Text.Parsec.Char</span>
 <span class="kw">import           </span><span class="dt">Text.Parsec.String</span> (<span class="dt">Parser</span>)
 <span class="kw">import           </span><span class="dt">Text.Parsec.Prim</span> <span class="kw">hiding</span> ((&lt;|&gt;))
@@ -443,7 +443,7 @@ main <span class="fu">=</span> <span class="kw">do</span>
     <span class="co">-- See issue OMED-457 for more information related the bug listed in OMED-765</span></code></pre></div>
 </div>
 <div id="my-experience" class="titleslide slide section level1"><h1>My experience</h1></div><div id="overview-of-experience" class="slide section level2">
-<h1>Overview of experience</h1>
+<h2>Overview of experience</h2>
 <ul>
 <li>A lot of Haskell code is declarative
 <ul>
@@ -472,7 +472,7 @@ main <span class="fu">=</span> <span class="kw">do</span>
 </ul></li>
 </ul>
 </div><div id="error-reporting" class="slide section level2">
-<h1>Error reporting</h1>
+<h2>Error reporting</h2>
 <ul>
 <li>I like the idea of let it break</li>
 <li>Problem in Haskell; no stack trace</li>
@@ -491,7 +491,7 @@ main <span class="fu">=</span> <span class="kw">do</span>
 <li>Probably better to explicitly handle failure.</li>
 </ul>
 </div><div id="printf-with-debug.trace" class="slide section level2">
-<h1>Printf with Debug.Trace</h1>
+<h2>Printf with Debug.Trace</h2>
 <ul>
 <li><code>Debug.Trace</code> is a <code>printf</code> escape hatch for pure code</li>
 <li>Only emits when statement is evaluated</li>
@@ -516,14 +516,14 @@ main <span class="fu">=</span> <span class="kw">do</span>
 traceM' msg <span class="fu">=</span> getState <span class="fu">&gt;&gt;=</span> (\s <span class="ot">-&gt;</span> return <span class="fu">$!</span> trace (<span class="ch">'\n'</span> <span class="fu">:</span> msg) s) <span class="fu">&gt;&gt;=</span> setState</code></pre></div>
 </div>
 <div id="wrapping-up" class="titleslide slide section level1"><h1>Wrapping up</h1></div><div id="the-tool" class="slide section level2">
-<h1>The tool</h1>
+<h2>The tool</h2>
 <ul>
 <li>The tool can be found here <a href="https://github.com/HanStolpo/JiraStructureToDocx" class="uri">https://github.com/HanStolpo/JiraStructureToDocx</a></li>
 <li>Quality of code is low (just good enough for us to use internally)</li>
 <li>The same goes for the non existent documentation</li>
 </ul>
 </div><div id="some-links" class="slide section level2">
-<h1>Some Links</h1>
+<h2>Some Links</h2>
 <ul>
 <li>Jira: <a href="https://www.atlassian.com/software/jira" class="uri">https://www.atlassian.com/software/jira</a></li>
 <li>Pandoc: <a href="http://johnmacfarlane.net/pandoc/" class="uri">http://johnmacfarlane.net/pandoc/</a></li>

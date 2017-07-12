@@ -1,267 +1,242 @@
 <!doctype html>
 <html lang="en">
 
-	<head>
-		<meta charset="utf-8">
+  <head>
+    <meta charset="utf-8">
 
-		<title>reveal.js - The HTML Presentation Framework</title>
+    <title>Exploring Typed Functional Web Application Part 1</title>
 
-		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
-		<meta name="author" content="Hakim El Hattab">
+    <!-- reveal js -->
+    <link rel="stylesheet" href="../css/reveal.css">
+    
+    <link rel="stylesheet" href="../css/theme/serif.css" id="theme">
+    
 
-		<meta name="apple-mobile-web-app-capable" content="yes" />
-		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <!-- Code syntax highlighting -->
+    <link rel="stylesheet" type="text/css" href="../css/highlighting.css" />
 
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
-      <!--beige.css*-->
-      <!--black.css*-->
-      <!--blood.css*-->
-      <!--league.css*-->
-      <!--moon.css*-->
-      <!--night.css*-->
-      <!--serif.css*-->
-      <!--simple.css*-->
-      <!--sky.css*-->
-      <!--solarized.css*-->
-      <!--white.css*-->
-		<link rel="stylesheet" href="../css/reveal.css">
-		<link rel="stylesheet" href="../css/theme/serif.css" id="theme">
-		<link rel="stylesheet" type="text/css" href="../css/highlighting.css" />
+    <!--[if lt IE 9]>
+    <script src="../lib/js/html5shiv.js"></script>
+    <![endif]-->
 
-		<!-- Code syntax highlighting -->
-		<link rel="stylesheet" href="../lib/css/zenburn.css">
+  </head>
 
-		<!-- Printing and PDF exports -->
-		<script>
-			var link = document.createElement( 'link' );
-			link.rel = 'stylesheet';
-			link.type = 'text/css';
-			link.href = window.location.search.match( /print-pdf/gi ) ? '../css/print/pdf.css' : '../css/print/paper.css';
-			document.getElementsByTagName( 'head' )[0].appendChild( link );
-		</script>
-
-		<!--[if lt IE 9]>
-		<script src="../lib/js/html5shiv.js"></script>
-		<![endif]-->
-	</head>
-
-	<body>
-
-		<div class="reveal">
-			<div class="slides">
+  <body>
+    <div class="reveal">
+      <div class="slides">
 <section><section id="exploring-typed-functional-web-applications-part-1" class="titleslide slide level1"><h1>Exploring Typed Functional Web Applications Part 1</h1></section><section id="me" class="slide level2">
-<h1>Me</h1>
+<h2>Me</h2>
 <ul>
-<li class="fragment">This REALLY is an exploration</li>
-<li class="fragment">New to WebDev (started about 6 moths ago)</li>
-<li class="fragment">Haven’t used these specific tools previously
+<li>This REALLY is an exploration</li>
+<li>New to WebDev (started about 6 moths ago)</li>
+<li>Haven’t used these specific tools previously
 <ul>
-<li class="fragment">PureScript Halogen, Haskell Servant, WebPack</li>
+<li>PureScript Halogen, Haskell Servant, WebPack</li>
 </ul></li>
-<li class="fragment">Stack currently used
+<li>Stack currently used
 <ul>
-<li class="fragment">AngularJS, Haskell Yesod, NodeJS, CoffeeScript, Grunt, Gulp, Heroku</li>
+<li>AngularJS, Haskell Yesod, NodeJS, CoffeeScript, Grunt, Gulp, Heroku</li>
 </ul></li>
-<li class="fragment">This talk is a learning experience</li>
+<li>This talk is a learning experience</li>
 </ul>
 </section><section id="single-page-web-application" class="slide level2">
-<h1>Single Page Web Application</h1>
+<h2>Single Page Web Application</h2>
 <ul>
-<li class="fragment">Server and Client</li>
-<li class="fragment">Server
+<li>Server and Client</li>
+<li>Server
 <ul>
-<li class="fragment">serves up client</li>
-<li class="fragment">shared service for clients</li>
-<li class="fragment">“hundreds” of technology options</li>
+<li>serves up client</li>
+<li>shared service for clients</li>
+<li>“hundreds” of technology options</li>
 </ul></li>
-<li class="fragment">Client
+<li>Client
 <ul>
-<li class="fragment">not simple static pages any more</li>
-<li class="fragment">a lot of logic, state and behaviour</li>
-<li class="fragment">“thousands” of technology options</li>
+<li>not simple static pages any more</li>
+<li>a lot of logic, state and behaviour</li>
+<li>“thousands” of technology options</li>
 </ul></li>
 </ul>
-</section><section id="why-typed-functional" class="slide level2">
-<h1>Why Typed Functional</h1>
+</section><section id="why-typed-functional" class="slide level2 blah" data-width="8000">
+<h2>Why Typed Functional</h2>
 <ul>
-<li class="fragment">To be clear - Strongly Statically Typed Functional</li>
-<li class="fragment">I make mistakes
+<li>To be clear - Strongly Statically Typed Functional</li>
+<li>I make mistakes
 <ul>
-<li class="fragment">so many mistakes</li>
-<li class="fragment">compiler holds my hand</li>
-<li class="fragment">keeps me safe at night</li>
-<li class="fragment">makes up for my deficiencies</li>
+<li>so many mistakes</li>
+<li>compiler holds my hand</li>
+<li>keeps me safe at night</li>
+<li>makes up for my deficiencies</li>
 </ul></li>
-<li class="fragment">I am power mad
+<li>I am power mad
 <ul>
-<li class="fragment">good power to weight ratio</li>
-<li class="fragment">express complex things elegantly and correctly</li>
+<li>good power to weight ratio</li>
+<li>express complex things elegantly and correctly</li>
 </ul></li>
-<li class="fragment">I wan to be inefficient at WRITING code
+<li>I wan to be inefficient at WRITING code
 <ul>
-<li class="fragment">rather spend more time writing less code
+<li>rather spend more time writing less code
 <ul>
-<li class="fragment">less buggy too</li>
+<li>less buggy too</li>
 </ul></li>
-<li class="fragment">spend more time writing than running code
+<li>spend more time writing than running code
 <ul>
-<li class="fragment">less debugging buggy code</li>
+<li>less debugging buggy code</li>
 </ul></li>
 </ul></li>
 </ul>
 </section><section id="choices-on-server" class="slide level2">
-<h1>Choices on Server</h1>
+<h2>Choices on Server</h2>
 <ul>
-<li class="fragment">Languages - Haskell or OCaml or ?</li>
-<li class="fragment">Haskell Server Frameworks
+<li>Languages - Haskell or OCaml or ?</li>
+<li>Haskell Server Frameworks
 <ul>
-<li class="fragment">WAI - Yesod, Scotty, Servant, MFlow, Wheb, Spock</li>
-<li class="fragment">Other - HappStack, Snap</li>
-<li class="fragment">WAI has lots of composable middleware</li>
-<li class="fragment">Servant is WAI and looked really cool</li>
+<li>WAI - Yesod, Scotty, Servant, MFlow, Wheb, Spock</li>
+<li>Other - HappStack, Snap</li>
+<li>WAI has lots of composable middleware</li>
+<li>Servant is WAI and looked really cool</li>
 </ul></li>
-<li class="fragment">Haskell tool chain
+<li>Haskell tool chain
 <ul>
-<li class="fragment">cabal install
+<li>cabal install
 <ul>
-<li class="fragment">not really a tool chain</li>
+<li>not really a tool chain</li>
 </ul></li>
-<li class="fragment">nix
+<li>nix
 <ul>
-<li class="fragment">excellent and functional</li>
-<li class="fragment">use for more than just Haskell</li>
-<li class="fragment">doesn’t run everywhere and more buy in</li>
+<li>excellent and functional</li>
+<li>use for more than just Haskell</li>
+<li>doesn’t run everywhere and more buy in</li>
 </ul></li>
-<li class="fragment">Stack
+<li>Stack
 <ul>
-<li class="fragment">new kid on the block</li>
-<li class="fragment">easy to use and runs on “everywhere”</li>
+<li>new kid on the block</li>
+<li>easy to use and runs on “everywhere”</li>
 </ul></li>
 </ul></li>
 </ul>
 </section><section id="languages-choices-on-client" class="slide level2">
-<h1>Languages Choices on Client</h1>
+<h2>Languages Choices on Client</h2>
 <ul>
-<li class="fragment">Haskell GHCJs</li>
-<li class="fragment">Haskell Haste</li>
-<li class="fragment">Elm</li>
-<li class="fragment">PureScript</li>
-<li class="fragment">or ?</li>
+<li>Haskell GHCJs</li>
+<li>Haskell Haste</li>
+<li>Elm</li>
+<li>PureScript</li>
+<li>or ?</li>
 </ul>
 </section><section id="haskell-haste" class="slide level2">
-<h1>Haskell Haste</h1>
+<h2>Haskell Haste</h2>
 <ul>
-<li class="fragment">Compiles fair amount of Haskell code to JS ✓</li>
-<li class="fragment">Missing some Haskell features ✗</li>
-<li class="fragment">Share code between server client ✓</li>
-<li class="fragment">Needs a runtime ✗ - small though ✓</li>
-<li class="fragment">No real client side frameworks ✗</li>
-<li class="fragment">Integration with other JS a problem ✗</li>
+<li>Compiles fair amount of Haskell code to JS ✓</li>
+<li>Missing some Haskell features ✗</li>
+<li>Share code between server client ✓</li>
+<li>Needs a runtime ✗ - small though ✓</li>
+<li>No real client side frameworks ✗</li>
+<li>Integration with other JS a problem ✗</li>
 </ul>
 </section><section id="haskell-ghcjs" class="slide level2">
-<h1>Haskell GHCJs</h1>
+<h2>Haskell GHCJs</h2>
 <ul>
-<li class="fragment">Compiles most Haskell code to JS ✓</li>
-<li class="fragment">Share code between server client ✓</li>
-<li class="fragment">Needs a large runtime ✗</li>
-<li class="fragment">Has client side frameworks ✓
+<li>Compiles most Haskell code to JS ✓</li>
+<li>Share code between server client ✓</li>
+<li>Needs a large runtime ✗</li>
+<li>Has client side frameworks ✓
 <ul>
-<li class="fragment">oHm - Om inspired Haskell component MVC</li>
-<li class="fragment">Reflex-Dom - FRP</li>
+<li>oHm - Om inspired Haskell component MVC</li>
+<li>Reflex-Dom - FRP</li>
 </ul></li>
-<li class="fragment">Integration with other JS a problem ✗</li>
+<li>Integration with other JS a problem ✗</li>
 </ul>
 </section><section id="elm" class="slide level2">
-<h1>Elm</h1>
+<h2>Elm</h2>
 <ul>
-<li class="fragment">Haskell inspired ✓</li>
-<li class="fragment">Language based on FRP ✓</li>
-<li class="fragment">Front end first ✓</li>
-<li class="fragment">Client side framework comes with the language (sort off) ✓</li>
-<li class="fragment">Suggested client side architecture not actually FRP more component MVC ?</li>
-<li class="fragment">Integration with other JS easy ✓</li>
-<li class="fragment">Simple ✓, but lacking in power ✗</li>
-<li class="fragment">Can’t share code between server client ✗</li>
+<li>Haskell inspired ✓</li>
+<li>Language based on FRP ✓</li>
+<li>Front end first ✓</li>
+<li>Client side framework comes with the language (sort off) ✓</li>
+<li>Suggested client side architecture not actually FRP more component MVC ?</li>
+<li>Integration with other JS easy ✓</li>
+<li>Simple ✓, but lacking in power ✗</li>
+<li>Can’t share code between server client ✗</li>
 </ul>
 </section><section id="purescript" class="slide level2">
-<h1>PureScript</h1>
+<h2>PureScript</h2>
 <ul>
-<li class="fragment">Haskell like language ✓
+<li>Haskell like language ✓
 <ul>
-<li class="fragment">A lot of the power from Haskell ✓</li>
-<li class="fragment">A lot of the learning curve from Haskell ✗</li>
-<li class="fragment">Some extra goodies - row polymorphism, cleaner class hierarchy ✓</li>
+<li>A lot of the power from Haskell ✓</li>
+<li>A lot of the learning curve from Haskell ✗</li>
+<li>Some extra goodies - row polymorphism, cleaner class hierarchy ✓</li>
 </ul></li>
-<li class="fragment">Is strict not lazy ?</li>
-<li class="fragment">No runtime required ✓</li>
-<li class="fragment">Easy integration with other JS ✓</li>
-<li class="fragment">Has client side frameworks ✓
+<li>Is strict not lazy ?</li>
+<li>No runtime required ✓</li>
+<li>Easy integration with other JS ✓</li>
+<li>Has client side frameworks ✓
 <ul>
-<li class="fragment">purescript-halogen</li>
-<li class="fragment">purescript-thermite</li>
+<li>purescript-halogen</li>
+<li>purescript-thermite</li>
 </ul></li>
 </ul>
 </section><section id="toolchain-for-client" class="slide level2">
-<h1>Toolchain for Client</h1>
+<h2>Toolchain for Client</h2>
 <ul>
-<li class="fragment">General JS ➡ Browser JS</li>
-<li class="fragment">Other Assets ➡ Browser Assets ?</li>
-<li class="fragment">You will need Node.js</li>
-<li class="fragment">You will need NPM</li>
-<li class="fragment">You will probably need Bower</li>
-<li class="fragment">Need some combination of the following
+<li>General JS ➡ Browser JS</li>
+<li>Other Assets ➡ Browser Assets ?</li>
+<li>You will need Node.js</li>
+<li>You will need NPM</li>
+<li>You will probably need Bower</li>
+<li>Need some combination of the following
 <ul>
-<li class="fragment">Browserify, Webpack</li>
-<li class="fragment">Gulp, Grunt</li>
-<li class="fragment">Make, JSPM</li>
-<li class="fragment">probably more</li>
+<li>Browserify, Webpack</li>
+<li>Gulp, Grunt</li>
+<li>Make, JSPM</li>
+<li>probably more</li>
 </ul></li>
-<li class="fragment">Picked Webpack - seemed easiest</li>
+<li>Picked Webpack - seemed easiest</li>
 </ul>
 </section><section id="webpack" class="slide level2">
-<h1>Webpack</h1>
+<h2>Webpack</h2>
 <ul>
-<li class="fragment">Compiles JS, CSS, images, … into single JS file to serve</li>
-<li class="fragment">Configuration based</li>
-<li class="fragment">Lots of plugins</li>
-<li class="fragment">Dev server with hot reload</li>
-<li class="fragment">Easy to get started</li>
-<li class="fragment">check out SurviveJs book [http://survivejs.com/]</li>
+<li>Compiles JS, CSS, images, … into single JS file to serve</li>
+<li>Configuration based</li>
+<li>Lots of plugins</li>
+<li>Dev server with hot reload</li>
+<li>Easy to get started</li>
+<li>check out SurviveJs book [http://survivejs.com/]</li>
 </ul>
 </section></section>
 <section><section id="server" class="titleslide slide level1"><h1>Server</h1></section><section id="getting-started" class="slide level2">
-<h1>Getting started</h1>
+<h2>Getting started</h2>
 <ul>
-<li class="fragment">Was easy</li>
-<li class="fragment">Install stack</li>
-<li class="fragment">run - stack init</li>
-<li class="fragment">add servant-server and other libs to your cabal file</li>
-<li class="fragment">edit your stack.yaml adding “local-bin-path: ../bin”</li>
-<li class="fragment">stack build</li>
-<li class="fragment">ready</li>
+<li>Was easy</li>
+<li>Install stack</li>
+<li>run - stack init</li>
+<li>add servant-server and other libs to your cabal file</li>
+<li>edit your stack.yaml adding “local-bin-path: ../bin”</li>
+<li>stack build</li>
+<li>ready</li>
 </ul>
 </section><section id="servant" class="slide level2">
-<h1>Servant</h1>
+<h2>Servant</h2>
 <ul>
-<li class="fragment">Pretty new</li>
-<li class="fragment">Good documentation though</li>
-<li class="fragment">Uses some advanced Haskell
+<li>Pretty new</li>
+<li>Good documentation though</li>
+<li>Uses some advanced Haskell
 <ul>
-<li class="fragment">needs recent compiler</li>
-<li class="fragment">but still easy to use</li>
+<li>needs recent compiler</li>
+<li>but still easy to use</li>
 </ul></li>
-<li class="fragment">Extremely composable</li>
+<li>Extremely composable</li>
 </ul>
 </section><section id="defining-an-api-server-endpoints" class="slide level2">
-<h1>Defining an API (server endpoints)</h1>
+<h2>Defining an API (server endpoints)</h2>
 <ul>
-<li class="fragment">Define your API as type</li>
-<li class="fragment">Compose handlers to satisfy that type</li>
-<li class="fragment">Run your server</li>
+<li>Define your API as type</li>
+<li>Compose handlers to satisfy that type</li>
+<li>Run your server</li>
 </ul>
 </section><section id="a-little-echo-server" class="slide level2">
-<h1>A little echo server</h1>
-<div class="sourceCode"><pre class="sourceCode stretch haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">EchoMessage</span> <span class="fu">=</span> <span class="dt">EchoMessage</span> <span class="co">-- The messages we echo</span>
+<h2>A little echo server</h2>
+<div class="sourceCode" style="margin-left:-40%; width:180%;"><pre class="sourceCode haskell stretch"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">EchoMessage</span> <span class="fu">=</span> <span class="dt">EchoMessage</span> <span class="co">-- The messages we echo</span>
   {<span class="ot"> path      ::</span> <span class="dt">Text</span>          <span class="co">-- The route that was hit</span>
   ,<span class="ot"> message   ::</span> <span class="dt">Text</span>          <span class="co">-- The message to echo</span>
   ,<span class="ot"> timeStamp ::</span> <span class="dt">UTCTime</span>       <span class="co">-- The server side time stamp</span>
@@ -300,29 +275,29 @@ app <span class="fu">=</span> serve api server
 <span class="ot">runApp ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> ()
 runApp port <span class="fu">=</span> run port app  <span class="co">-- run our</span></code></pre></div>
 </section><section id="servant-isnt-just-for-services" class="slide level2">
-<h1>Servant isn’t just for services</h1>
+<h2>Servant isn’t just for services</h2>
 <ul>
-<li class="fragment">Servant is not limited to only being a service</li>
-<li class="fragment">You can use it to serve web pages</li>
-<li class="fragment">You can use it to serve static content</li>
-<li class="fragment">You can actually use any other WAI based server framework for part of your site</li>
-<li class="fragment">You are left with the choice of how to compose what you want though
+<li>Servant is not limited to only being a service</li>
+<li>You can use it to serve web pages</li>
+<li>You can use it to serve static content</li>
+<li>You can actually use any other WAI based server framework for part of your site</li>
+<li>You are left with the choice of how to compose what you want though
 <ul>
-<li class="fragment">HTLM templating - Blaze or Lucid</li>
-<li class="fragment">Serve static files - Use servant or another WAI application</li>
-<li class="fragment">etc …</li>
+<li>HTLM templating - Blaze or Lucid</li>
+<li>Serve static files - Use servant or another WAI application</li>
+<li>etc …</li>
 </ul></li>
 </ul>
 </section><section id="we-want-to-serve-our-client" class="slide level2">
-<h1>We want to serve our client</h1>
+<h2>We want to serve our client</h2>
 <ul>
-<li class="fragment">Single page web application - So skip HTML templating</li>
-<li class="fragment">Serve only static files - Generated by client tool chain</li>
-<li class="fragment">Serve dynamic JS for client settings</li>
+<li>Single page web application - So skip HTML templating</li>
+<li>Serve only static files - Generated by client tool chain</li>
+<li>Serve dynamic JS for client settings</li>
 </ul>
 </section><section id="serving-up-the-client" class="slide level2">
-<h1>Serving up the client</h1>
-<div class="sourceCode"><pre class="sourceCode stretch haskell"><code class="sourceCode haskell">           <span class="co">-- /settings.js - our dynamic JS giving settings back to the client</span>
+<h2>Serving up the client</h2>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">           <span class="co">-- /settings.js - our dynamic JS giving settings back to the client</span>
 <span class="kw">type</span> <span class="dt">Api</span> <span class="fu">=</span> <span class="st">&quot;settings.js&quot;</span> <span class="fu">:&gt;</span> <span class="dt">Get</span> <span class="ch">'[PlainText] Text</span>
            <span class="co">-- / - serve static files (must be last)</span>
          <span class="fu">:&lt;|&gt;</span> <span class="dt">Raw</span>
@@ -362,15 +337,15 @@ app s <span class="fu">=</span> serve api (server s)
 <span class="ot">runApp ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> ()
 runApp port <span class="fu">=</span> run port (app <span class="dt">Settings</span>{port <span class="fu">=</span> port, host <span class="fu">=</span> <span class="st">&quot;localhost&quot;</span>, clientApp <span class="fu">=</span> <span class="st">&quot;CounterExample&quot;</span>})</code></pre></div>
 </section><section id="serve-the-client-and-echo-his-requests" class="slide level2">
-<h1>Serve the client and echo his requests</h1>
+<h2>Serve the client and echo his requests</h2>
 <ul>
-<li class="fragment">I want to serve the client and echo his request</li>
-<li class="fragment">Do I have to rewrite my servers</li>
-<li class="fragment">No I can just compose them</li>
+<li>I want to serve the client and echo his request</li>
+<li>Do I have to rewrite my servers</li>
+<li>No I can just compose them</li>
 </ul>
 </section><section id="echoing-our-served-client" class="slide level2">
-<h1>Echoing our served client</h1>
-<div class="sourceCode"><pre class="sourceCode stretch haskell"><code class="sourceCode haskell"><span class="co">-- Import our two servers</span>
+<h2>Echoing our served client</h2>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- Import our two servers</span>
 <span class="kw">import qualified</span> <span class="dt">Client</span>
 <span class="kw">import qualified</span> <span class="dt">Echo</span>
 
@@ -393,53 +368,53 @@ app s <span class="fu">=</span> serve api (server s)
 runApp port clientApp <span class="fu">=</span> run port (app <span class="dt">Client.Settings</span>{Client.port <span class="fu">=</span> port, Client.host <span class="fu">=</span> <span class="st">&quot;localhost&quot;</span>, Client.clientApp <span class="fu">=</span> clientApp})</code></pre></div>
 </section></section>
 <section><section id="client" class="titleslide slide level1"><h1>Client</h1></section><section id="getting-started-1" class="slide level2">
-<h1>Getting Started</h1>
+<h2>Getting Started</h2>
 <ul>
-<li class="fragment">Surprisingly more involved than the server but not too bad.</li>
-<li class="fragment">Install latest version of PureScript compiler
+<li>Surprisingly more involved than the server but not too bad.</li>
+<li>Install latest version of PureScript compiler
 <ul>
-<li class="fragment"><code>cabal fetch purescript-0.7.6.1 &amp;&amp; cd purescript-0.7.6.1 &amp;&amp; stack install</code></li>
+<li><code>cabal fetch purescript-0.7.6.1 &amp;&amp; cd purescript-0.7.6.1 &amp;&amp; stack install</code></li>
 </ul></li>
-<li class="fragment">Install NodeJs and NPM</li>
-<li class="fragment">Initialize NPM and install your dev dependencies
+<li>Install NodeJs and NPM</li>
+<li>Initialize NPM and install your dev dependencies
 <ul>
-<li class="fragment"><code>npm init</code></li>
-<li class="fragment"><code>npm install webpack css-loader html-webpack-plugin style-loader --save-dev</code></li>
-<li class="fragment"><code>npm install webpack-dev-server purs-loader@0.4.0 virtual-dom --save-dev</code></li>
+<li><code>npm init</code></li>
+<li><code>npm install webpack css-loader html-webpack-plugin style-loader --save-dev</code></li>
+<li><code>npm install webpack-dev-server purs-loader@0.4.0 virtual-dom --save-dev</code></li>
 </ul></li>
-<li class="fragment">Install pulp to manage PureScript packages only
+<li>Install pulp to manage PureScript packages only
 <ul>
-<li class="fragment"><code>npm install -g pulp</code></li>
+<li><code>npm install -g pulp</code></li>
 </ul></li>
-<li class="fragment">Initialize your directory for PureScript and install libraries
+<li>Initialize your directory for PureScript and install libraries
 <ul>
-<li class="fragment"><code>pulp init</code></li>
-<li class="fragment"><code>pulp dep install purescript-console purescript-lists purescript-halogen purescript-affjax --save</code></li>
-<li class="fragment"><code>pulp dep install purescript-tuples purescript-debug purescript-routing --save</code></li>
+<li><code>pulp init</code></li>
+<li><code>pulp dep install purescript-console purescript-lists purescript-halogen purescript-affjax --save</code></li>
+<li><code>pulp dep install purescript-tuples purescript-debug purescript-routing --save</code></li>
 </ul></li>
-<li class="fragment">Install virtual-dom needed by halogen - <code>npm install virtual-dom --save</code></li>
-<li class="fragment">Setup our webpack configuration file</li>
+<li>Install virtual-dom needed by halogen - <code>npm install virtual-dom --save</code></li>
+<li>Setup our webpack configuration file</li>
 </ul>
 </section><section id="webpack-1" class="slide level2">
-<h1>Webpack</h1>
+<h2>Webpack</h2>
 <ul>
-<li class="fragment">Webpack is going to look at some JS file</li>
-<li class="fragment">It will follow all <code>require()</code>s that it sees and compile them into one <code>bundle.js</code></li>
-<li class="fragment">The types of things can be include are based on the loaders
+<li>Webpack is going to look at some JS file</li>
+<li>It will follow all <code>require()</code>s that it sees and compile them into one <code>bundle.js</code></li>
+<li>The types of things can be include are based on the loaders
 <ul>
-<li class="fragment">purs-loader to load purescript</li>
-<li class="fragment">css-loader to load css files</li>
-<li class="fragment">many more</li>
+<li>purs-loader to load purescript</li>
+<li>css-loader to load css files</li>
+<li>many more</li>
 </ul></li>
-<li class="fragment">Plugin that will automatically generate your <code>index.html</code></li>
-<li class="fragment">Plugin that will run a dev server recompiling whenever changes are detected</li>
-<li class="fragment">Plugin that will hot swap your code whenever it recompiles</li>
-<li class="fragment">Gives you rapid feedback when doing frontend work</li>
-<li class="fragment">You will need CORS when using webpack-dev-server with your actual server</li>
+<li>Plugin that will automatically generate your <code>index.html</code></li>
+<li>Plugin that will run a dev server recompiling whenever changes are detected</li>
+<li>Plugin that will hot swap your code whenever it recompiles</li>
+<li>Gives you rapid feedback when doing frontend work</li>
+<li>You will need CORS when using webpack-dev-server with your actual server</li>
 </ul>
 </section><section id="our-js-webpack-entry-point" class="slide level2">
-<h1>Our JS Webpack Entry point</h1>
-<div class="sourceCode"><pre class="sourceCode stretch javascript"><code class="sourceCode javascript"><span class="at">require</span>(<span class="st">'./main.css'</span>)<span class="op">;</span>  <span class="co">// here we include CSS</span>
+<h2>Our JS Webpack Entry point</h2>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="at">require</span>(<span class="st">'./main.css'</span>)<span class="op">;</span>  <span class="co">// here we include CSS</span>
 
 <span class="kw">var</span> settings <span class="op">=</span> <span class="at">require</span>(<span class="st">&quot;./settings&quot;</span>)<span class="op">;</span>  <span class="co">// here we include our seetins.js file</span>
 <span class="co">// Depending on our settings we include different purescript apps and run them</span>
@@ -463,38 +438,38 @@ runApp port clientApp <span class="fu">=</span> run port (app <span class="dt">C
   <span class="va">console</span>.<span class="at">error</span>(<span class="st">&quot;blah&quot;</span>)<span class="op">;</span>
 <span class="op">}</span></code></pre></div>
 </section><section id="halogen" class="slide level2">
-<h1>Halogen</h1>
+<h2>Halogen</h2>
 <ul>
-<li class="fragment">Its a declarative UI framework</li>
-<li class="fragment">It is component based</li>
-<li class="fragment">It is basically MVC’ish</li>
-<li class="fragment">You have a hierarchy of components</li>
-<li class="fragment">Each component sort of has
+<li>Its a declarative UI framework</li>
+<li>It is component based</li>
+<li>It is basically MVC’ish</li>
+<li>You have a hierarchy of components</li>
+<li>Each component sort of has
 <ul>
-<li class="fragment">Its model / state</li>
-<li class="fragment">A query algebra that specifies ways the model can change / requests on the model</li>
-<li class="fragment">A function that update the model given queries</li>
-<li class="fragment">A function that renders the model and may generate asynchronous queries</li>
+<li>Its model / state</li>
+<li>A query algebra that specifies ways the model can change / requests on the model</li>
+<li>A function that update the model given queries</li>
+<li>A function that renders the model and may generate asynchronous queries</li>
 </ul></li>
-<li class="fragment">Parents in the hierarchy can
+<li>Parents in the hierarchy can
 <ul>
-<li class="fragment">Do requests on their children using their query algebras</li>
-<li class="fragment">Peek at any of their children’s queries after they handled them</li>
-<li class="fragment">Information flow is one way only - Parent to child</li>
+<li>Do requests on their children using their query algebras</li>
+<li>Peek at any of their children’s queries after they handled them</li>
+<li>Information flow is one way only - Parent to child</li>
 </ul></li>
 </ul>
 </section><section id="halogen-1" class="slide level2">
-<h1>Halogen</h1>
+<h2>Halogen</h2>
 <ul>
-<li class="fragment">It has some scary types</li>
-<li class="fragment">But it has good tutorials</li>
-<li class="fragment">The types will guide you</li>
-<li class="fragment">I think it is commercially used - SlamData</li>
+<li>It has some scary types</li>
+<li>But it has good tutorials</li>
+<li>The types will guide you</li>
+<li>I think it is commercially used - SlamData</li>
 </ul>
 </section><section id="from-the-their-tutorial" class="slide level2">
-<h1>From the their tutorial</h1>
+<h2>From the their tutorial</h2>
 <p>From https://github.com/slamdata/purescript-halogen</p>
-<div class="sourceCode"><pre class="sourceCode stretch haskell"><code class="sourceCode haskell"><span class="co">-- | The state of the component</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- | The state of the component</span>
 <span class="kw">type</span> <span class="dt">State</span> <span class="fu">=</span> {<span class="ot"> on ::</span> <span class="dt">Boolean</span> }
 
 <span class="co">-- | The query algebra for the component</span>
@@ -525,23 +500,23 @@ myComponent <span class="fu">=</span> component render eval
     value <span class="ot">&lt;-</span> gets _<span class="fu">.</span>on
     pure (continue value)</code></pre></div>
 </section><section id="from-the-their-tutorial-1" class="slide level2">
-<h1>From the their tutorial</h1>
+<h2>From the their tutorial</h2>
 <p>From https://github.com/slamdata/purescript-halogen</p>
-<div class="sourceCode"><pre class="sourceCode stretch haskell"><code class="sourceCode haskell"><span class="ot">component ::</span> forall s f g<span class="fu">.</span> <span class="dt">Render</span> s f <span class="ot">-&gt;</span> <span class="dt">Eval</span> f s f g <span class="ot">-&gt;</span> <span class="dt">Component</span> s f g</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">component ::</span> forall s f g<span class="fu">.</span> <span class="dt">Render</span> s f <span class="ot">-&gt;</span> <span class="dt">Eval</span> f s f g <span class="ot">-&gt;</span> <span class="dt">Component</span> s f g</code></pre></div>
 <ul>
-<li class="fragment">s is the component’s state.</li>
-<li class="fragment">f is the component’s query algebra.</li>
-<li class="fragment">g is a functor integrated into the component’s query algebra that allows embedding of external DSLs or handling of effects</li>
+<li>s is the component’s state.</li>
+<li>f is the component’s query algebra.</li>
+<li>g is a functor integrated into the component’s query algebra that allows embedding of external DSLs or handling of effects</li>
 </ul>
-<div class="sourceCode"><pre class="sourceCode stretch haskell"><code class="sourceCode haskell"><span class="kw">type</span> <span class="dt">Render</span> s f <span class="fu">=</span> s <span class="ot">-&gt;</span> <span class="dt">ComponentHTML</span> f
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">type</span> <span class="dt">Render</span> s f <span class="fu">=</span> s <span class="ot">-&gt;</span> <span class="dt">ComponentHTML</span> f
 <span class="kw">type</span> <span class="dt">ComponentHTML</span> f <span class="fu">=</span> <span class="dt">HTML</span> <span class="dt">Void</span> (f <span class="dt">Unit</span>)</code></pre></div>
 <ul>
-<li class="fragment">A render function takes the component’s current state value and returns a value constructed using Halogen’s type safe HTML DSL, with the ability for elements in the rendered HTML to send actions back to the component, using the query algebra f.</li>
+<li>A render function takes the component’s current state value and returns a value constructed using Halogen’s type safe HTML DSL, with the ability for elements in the rendered HTML to send actions back to the component, using the query algebra f.</li>
 </ul>
 </section><section id="the-counter-example" class="slide level2">
-<h1>The counter example</h1>
+<h2>The counter example</h2>
 <p>From https://github.com/slamdata/purescript-halogen</p>
-<div class="sourceCode"><pre class="sourceCode stretch haskell"><code class="sourceCode haskell"><span class="kw">newtype</span> <span class="dt">State</span> <span class="fu">=</span> <span class="dt">State</span> <span class="dt">Int</span>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">newtype</span> <span class="dt">State</span> <span class="fu">=</span> <span class="dt">State</span> <span class="dt">Int</span>
 
 <span class="ot">initialState ::</span> <span class="dt">State</span>
 initialState <span class="fu">=</span> <span class="dt">State</span> <span class="dv">0</span>
@@ -576,20 +551,20 @@ runApp <span class="fu">=</span> runAff throwException (const (pure unit)) <span
 <span class="ot">setInterval ::</span> forall e a<span class="fu">.</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Aff</span> e a <span class="ot">-&gt;</span> <span class="dt">Aff</span> e <span class="dt">Unit</span>
 setInterval ms a <span class="fu">=</span> later' ms <span class="fu">$</span> a <span class="fu">*&gt;</span> setInterval ms a</code></pre></div>
 </section><section id="echo-client" class="slide level2">
-<h1>Echo Client</h1>
+<h2>Echo Client</h2>
 <ul>
-<li class="fragment">For the GUI
+<li>For the GUI
 <ul>
-<li class="fragment">Select kind of echo end point to query</li>
-<li class="fragment">Input message if needed</li>
-<li class="fragment">Display returned echoed message</li>
+<li>Select kind of echo end point to query</li>
+<li>Input message if needed</li>
+<li>Display returned echoed message</li>
 </ul></li>
-<li class="fragment">Need to do XHR request to server</li>
-<li class="fragment">Need to decode the response</li>
+<li>Need to do XHR request to server</li>
+<li>Need to decode the response</li>
 </ul>
 </section><section id="echo-client-state" class="slide level2">
-<h1>Echo Client State</h1>
-<div class="sourceCode"><pre class="sourceCode stretch haskell"><code class="sourceCode haskell"><span class="kw">type</span> <span class="dt">EchoResponse</span> <span class="fu">=</span>
+<h2>Echo Client State</h2>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">type</span> <span class="dt">EchoResponse</span> <span class="fu">=</span>
   {<span class="ot"> path      ::</span> <span class="dt">String</span>
   ,<span class="ot"> message   ::</span> <span class="dt">String</span>
   ,<span class="ot"> timeStamp ::</span> <span class="dt">String</span>
@@ -601,8 +576,8 @@ setInterval ms a <span class="fu">=</span> later' ms <span class="fu">$</span> a
 
 <span class="kw">type</span> <span class="dt">State</span> <span class="fu">=</span> <span class="dt">MessageType</span></code></pre></div>
 </section><section id="query-algebra-and-effects" class="slide level2">
-<h1>Query Algebra and Effects</h1>
-<div class="sourceCode"><pre class="sourceCode stretch haskell"><code class="sourceCode haskell"> <span class="co">-- The type of effects we can use</span>
+<h2>Query Algebra and Effects</h2>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"> <span class="co">-- The type of effects we can use</span>
 <span class="kw">type</span> <span class="dt">Effects</span> eff <span class="fu">=</span> <span class="dt">HalogenEffects</span> (<span class="ot">console ::</span> <span class="dt">CONSOLE</span>,<span class="ot"> ajax ::</span> <span class="dt">Ajax.AJAX</span> <span class="fu">|</span> eff)
 <span class="co">-- Our query algebra (ways changes can be triggered)</span>
 <span class="kw">data</span> <span class="dt">Query</span> a 
@@ -615,8 +590,8 @@ setInterval ms a <span class="fu">=</span> later' ms <span class="fu">$</span> a
   <span class="fu">|</span> <span class="dt">SendEcho</span> <span class="dt">State</span> a
   <span class="fu">|</span> <span class="dt">SendPath</span> <span class="dt">State</span> a</code></pre></div>
 </section><section id="evaluate-the-query-algebra" class="slide level2">
-<h1>Evaluate the query algebra</h1>
-<div class="sourceCode"><pre class="sourceCode stretch haskell"><code class="sourceCode haskell"><span class="ot">ui ::</span> forall eff<span class="fu">.</span> <span class="dt">Component</span> <span class="dt">State</span> <span class="dt">Query</span> (<span class="dt">Aff</span> (<span class="dt">Effects</span> eff))
+<h2>Evaluate the query algebra</h2>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">ui ::</span> forall eff<span class="fu">.</span> <span class="dt">Component</span> <span class="dt">State</span> <span class="dt">Query</span> (<span class="dt">Aff</span> (<span class="dt">Effects</span> eff))
 ui <span class="fu">=</span> component render eval
   <span class="kw">where</span>
   <span class="co">-- .....</span>
@@ -651,8 +626,8 @@ ui <span class="fu">=</span> component render eval
         modify \_ <span class="ot">-&gt;</span> <span class="dt">PathMessage</span> d{response <span class="fu">=</span> <span class="dt">Just</span> r}
     _ <span class="ot">-&gt;</span> unsafeThrow <span class="st">&quot;Never&quot;</span></code></pre></div>
 </section><section id="do-the-ajax" class="slide level2">
-<h1>Do the Ajax</h1>
-<div class="sourceCode"><pre class="sourceCode stretch haskell"><code class="sourceCode haskell"><span class="kw">newtype</span> <span class="dt">EchoResponseR</span> <span class="fu">=</span> <span class="dt">EchoResponseR</span> <span class="dt">EchoResponse</span>
+<h2>Do the Ajax</h2>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">newtype</span> <span class="dt">EchoResponseR</span> <span class="fu">=</span> <span class="dt">EchoResponseR</span> <span class="dt">EchoResponse</span>
 <span class="kw">instance</span><span class="ot"> respondableEchoResponseR ::</span> <span class="dt">Respondable</span> <span class="dt">EchoResponseR</span> <span class="kw">where</span>
   fromResponse r' <span class="fu">=</span> <span class="kw">do</span>
     r <span class="ot">&lt;-</span> read r' <span class="fu">&gt;&gt;=</span> readJSON
@@ -671,8 +646,8 @@ sendEcho s <span class="fu">=</span>  Ajax.get (<span class="st">&quot;http://lo
 <span class="ot">sendPath ::</span> forall eff<span class="fu">.</span> <span class="dt">Aff</span> (<span class="ot">ajax ::</span> <span class="dt">Ajax.AJAX</span> <span class="fu">|</span> eff) <span class="dt">EchoResponse</span>
 sendPath <span class="fu">=</span>  Ajax.get (<span class="st">&quot;http://localhost:8086/echo/path&quot;</span>) <span class="fu">&lt;#&gt;</span> \a <span class="ot">-&gt;</span> <span class="kw">case</span> a<span class="fu">.</span>response <span class="kw">of</span> <span class="dt">EchoResponseR</span> r <span class="ot">-&gt;</span> r</code></pre></div>
 </section><section id="render-the-main-gui" class="slide level2">
-<h1>Render the main GUI</h1>
-<div class="sourceCode"><pre class="sourceCode stretch haskell"><code class="sourceCode haskell"><span class="ot">ui ::</span> forall eff<span class="fu">.</span> <span class="dt">Component</span> <span class="dt">State</span> <span class="dt">Query</span> (<span class="dt">Aff</span> (<span class="dt">Effects</span> eff))
+<h2>Render the main GUI</h2>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">ui ::</span> forall eff<span class="fu">.</span> <span class="dt">Component</span> <span class="dt">State</span> <span class="dt">Query</span> (<span class="dt">Aff</span> (<span class="dt">Effects</span> eff))
 ui <span class="fu">=</span> component render eval
   <span class="kw">where</span>
 
@@ -696,8 +671,8 @@ ui <span class="fu">=</span> component render eval
   <span class="co">-- ...</span>
   <span class="co">-- ... leaving out some code</span></code></pre></div>
 </section><section id="rendering-message-guis" class="slide level2">
-<h1>Rendering message GUIs</h1>
-<div class="sourceCode"><pre class="sourceCode stretch haskell"><code class="sourceCode haskell"><span class="ot">ui ::</span> forall eff<span class="fu">.</span> <span class="dt">Component</span> <span class="dt">State</span> <span class="dt">Query</span> (<span class="dt">Aff</span> (<span class="dt">Effects</span> eff))
+<h2>Rendering message GUIs</h2>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">ui ::</span> forall eff<span class="fu">.</span> <span class="dt">Component</span> <span class="dt">State</span> <span class="dt">Query</span> (<span class="dt">Aff</span> (<span class="dt">Effects</span> eff))
 ui <span class="fu">=</span> component render eval
   <span class="kw">where</span>
   <span class="co">-- ...</span>
@@ -737,100 +712,205 @@ ui <span class="fu">=</span> component render eval
         ]</code></pre></div>
 </section></section>
 <section><section id="wrap-up" class="titleslide slide level1"><h1>Wrap up</h1></section><section id="my-feelings" class="slide level2">
-<h1>My feelings</h1>
+<h2>My feelings</h2>
 <ul>
-<li class="fragment">Server
+<li>Server
 <ul>
-<li class="fragment">Can’t go wrong with Haskell</li>
-<li class="fragment">Servant is amazing</li>
+<li>Can’t go wrong with Haskell</li>
+<li>Servant is amazing</li>
 </ul></li>
-<li class="fragment">Client
+<li>Client
 <ul>
-<li class="fragment">Webpack really impressed me</li>
-<li class="fragment">PureScript not sure yet</li>
-<li class="fragment">Halogen not sure yet</li>
+<li>Webpack really impressed me</li>
+<li>PureScript not sure yet</li>
+<li>Halogen not sure yet</li>
 </ul></li>
 </ul>
 </section><section id="my-feelings---purescript" class="slide level2">
-<h1>My feelings - PureScript</h1>
+<h2>My feelings - PureScript</h2>
 <p>Generally positive</p>
 <ul>
-<li class="fragment">Its not Haskell ✗
+<li>Its not Haskell ✗
 <ul>
-<li class="fragment">Miss the compiler</li>
-<li class="fragment">Miss my tools</li>
-<li class="fragment">Miss some of my constructs</li>
+<li>Miss the compiler</li>
+<li>Miss my tools</li>
+<li>Miss some of my constructs</li>
 </ul></li>
-<li class="fragment">Similar philosophy to Haskell ✓</li>
-<li class="fragment">Integrates easier on the browser ✓</li>
-<li class="fragment">Looks like its got momentum ✓</li>
-<li class="fragment">API search tool Pursuit is cool ✓</li>
+<li>Similar philosophy to Haskell ✓</li>
+<li>Integrates easier on the browser ✓</li>
+<li>Looks like its got momentum ✓</li>
+<li>API search tool Pursuit is cool ✓</li>
 </ul>
 </section><section id="my-feelings---halogen" class="slide level2">
-<h1>My feelings - Halogen</h1>
+<h2>My feelings - Halogen</h2>
 <p>Generally positive</p>
 <ul>
-<li class="fragment">Need to use it more for something bigger</li>
-<li class="fragment">Special types for parent child relationships ✗</li>
-<li class="fragment">Seems to have some commercial backing / users ✓</li>
-<li class="fragment">Seems to have user buy in ✓</li>
+<li>Need to use it more for something bigger</li>
+<li>Special types for parent child relationships ✗</li>
+<li>Seems to have some commercial backing / users ✓</li>
+<li>Seems to have user buy in ✓</li>
 </ul>
 </section><section id="some-links" class="slide level2">
-<h1>Some links</h1>
+<h2>Some links</h2>
 <ul>
-<li class="fragment">SurviveJs is a good guide for front end WebDev (good section on WebPack) <a href>https://survivejs.com/</a></li>
-<li class="fragment">Documentation and example for PureScript loader <a href>https://github.com/ethul/purs-loader</a></li>
-<li class="fragment">Documentation and examples for Halogen <a href>https://github.com/slamdata/purescript-halogen</a></li>
-<li class="fragment">A guide to use purescript-routing with purescript-halogen <a href>http://www.parsonsmatt.org/programming/2015/10/22/purescript_router.html</a></li>
-<li class="fragment">The PureScript book <a href>https://leanpub.com/purescript/read</a></li>
-<li class="fragment">The Pursuit search engine <a href>http://pursuit.purescript.org/</a></li>
+<li>SurviveJs is a good guide for front end WebDev (good section on WebPack) <a href>https://survivejs.com/</a></li>
+<li>Documentation and example for PureScript loader <a href>https://github.com/ethul/purs-loader</a></li>
+<li>Documentation and examples for Halogen <a href>https://github.com/slamdata/purescript-halogen</a></li>
+<li>A guide to use purescript-routing with purescript-halogen <a href>http://www.parsonsmatt.org/programming/2015/10/22/purescript_router.html</a></li>
+<li>The PureScript book <a href>https://leanpub.com/purescript/read</a></li>
+<li>The Pursuit search engine <a href>http://pursuit.purescript.org/</a></li>
 </ul>
 </section><section id="end" class="slide level2">
-<h1>END</h1>
+<h2>END</h2>
 </section></section>
-			</div>
-		</div>
+      </div>
+    </div>
+    
 
-		<script src="../lib/js/head.min.js"></script>
-		<script src="../js/reveal.js"></script>
+    <script src="../lib/js/head.min.js"></script>
+    <script src="../js/reveal.js"></script>
 
-		<script>
+    <script>
 
-			// Full list of configuration options available at:
-			// https://github.com/hakimel/reveal.js#configuration
-			Reveal.initialize({
-				controls: true,
-				progress: true,
-				history: true,
-				center: true,
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
 
-				transition: 'convex', // none/fade/slide/convex/concave/zoom
-				// The "normal" size of the presentation, aspect ratio will be preserved
-				// when the presentation is scaled to fit different resolutions. Can be
-				// specified using percentage units.
-				// width: 1160,
-				// height: 720,
-				width: 1920,
-				height: 1080,
-				// Factor of the display size that should remain empty around the content
-				margin: 0.01,
+        // // The "normal" size of the presentation, aspect ratio will be preserved
+        // // when the presentation is scaled to fit different resolutions. Can be
+        // // specified using percentage units.
+        // width: 960,
+        // height: 700,
 
-				// Bounds for smallest/largest possible scale to apply to content
-				minScale: 0.05,
-				maxScale: 1.5,
+        // // Factor of the display size that should remain empty around the content
+        // margin: 0.0,
 
-				// Optional reveal.js plugins
-				dependencies: [
-					{ src: '../lib/js/classList.js', condition: function() { return !document.body.classList; } },
-					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-					{ src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
-					{ src: 'plugin/zoom-js/zoom.js', async: true },
-					{ src: 'plugin/notes/notes.js', async: true }
-				]
-			});
+        // // Bounds for smallest/largest possible scale to apply to content
+        // minScale: 0.1,
+        // maxScale: 2.5,
 
-		</script>
+        // with sizing
+        width: 1000, height: 1350, margin: 0.1, minScale: 0.1, maxScale: 3,
 
-	</body>
+        // no sizing
+        // width: "100%", height: "100%", margin: 0, minScale: 1, maxScale: 1,
+
+        // Display controls in the bottom right corner
+        
+        controls: true,
+        
+
+
+        // Display a presentation progress bar
+        
+        progress: true,
+        
+
+        // Set default timing of 2 minutes per slide
+        defaultTiming: 120,
+
+        // Display the page number of the current slide
+        slideNumber: false,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: true,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autolaying embedded media (video/audio/iframe)
+        // - null: Media will only autoplay if data-autoplay is present
+        // - true: All media will autoplay, regardless of individual setting
+        // - false: No media will autoplay, regardless of individual setting
+        autoPlayMedia: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: Reveal.navigateNext,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // Hides the address bar on mobile devices
+        hideAddressBar: true,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style
+        transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+        // Transition speed
+        transitionSpeed: 'default', // default/fast/slow
+
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'fade', // none/fade/slide/convex/concave/zoom
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Parallax background image
+        parallaxBackgroundImage: '', // e.g. "'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg'"
+
+        // Parallax background size
+        parallaxBackgroundSize: '', // CSS syntax, e.g. "2100px 900px"
+
+        // Number of pixels to move the parallax background per slide
+        // - Calculated automatically unless specified
+        // - Set to 0 to disable movement along an axis
+        parallaxBackgroundHorizontal: null,
+        parallaxBackgroundVertical: null,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Optional reveal.js plugins
+        dependencies: [
+          { src: '../lib/js/classList.js', condition: function() { return !document.body.classList; } },
+          { src: '../plugin/notes/notes.js', async: true }
+        ]
+      });
+
+    </script>
+
+  </body>
 </html>

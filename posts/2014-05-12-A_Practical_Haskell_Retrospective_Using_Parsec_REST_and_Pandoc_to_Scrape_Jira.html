@@ -66,29 +66,29 @@
 </colgroup>
 <thead>
 <tr class="header">
-<th align="left">Resource</th>
-<th align="left">GET</th>
-<th align="left">PUT</th>
-<th align="left">POST</th>
-<th align="left">DELETE</th>
+<th>Resource</th>
+<th>GET</th>
+<th>PUT</th>
+<th>POST</th>
+<th>DELETE</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left"><p>Collection</p>
+<td><p>Collection</p>
 <p>http://eg.com/resources</p></td>
-<td align="left"><p>List the URIs and other details of elements.</p></td>
-<td align="left"><p>Replace the entire collection.</p></td>
-<td align="left"><p>Add a new entry to the collection. URI is assigned automatically.</p></td>
-<td align="left"><p>Delete the entire collection.</p></td>
+<td><p>List the URIs and other details of elements.</p></td>
+<td><p>Replace the entire collection.</p></td>
+<td><p>Add a new entry to the collection. URI is assigned automatically.</p></td>
+<td><p>Delete the entire collection.</p></td>
 </tr>
 <tr class="even">
-<td align="left"><p>Element</p>
+<td><p>Element</p>
 <p>http://eg.com/resources/item17</p></td>
-<td align="left"><p>Retrieve addressed element expressed in appropriate media type</p></td>
-<td align="left"><p>Replace element or if it does not exist the create it.</p></td>
-<td align="left"><p>Not generally used. Treat element as collection and create new entry</p></td>
-<td align="left"><p>Delete the item from the colleciton.</p></td>
+<td><p>Retrieve addressed element expressed in appropriate media type</p></td>
+<td><p>Replace element or if it does not exist the create it.</p></td>
+<td><p>Not generally used. Treat element as collection and create new entry</p></td>
+<td><p>Delete the item from the colleciton.</p></td>
 </tr>
 </tbody>
 </table></li>
@@ -205,10 +205,10 @@ fetchTestIssue <span class="fu">=</span> <span class="kw">do</span>
    <span class="co">-- Print the resultant ByteString to the console </span>
    B.putStrLn <span class="fu">.</span> YAML.encode <span class="fu">.</span> fmap issueFromResponse <span class="fu">.</span> AS.decode <span class="fu">.</span> responseBody <span class="fu">$</span> response</code></pre></div>
 <p>The result printed out would look like this:</p>
-<div class="sourceCode"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span class="fu">issueDescription:</span> You have to delete zero first before you can put in your Dosage
-<span class="fu">issueId:</span> 333132
-<span class="fu">issueKey:</span> DEMO-3083
-<span class="fu">issueSummary:</span> ! 'Backspace to delete zero to enter your dosage '</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span class="fu">issueDescription:</span><span class="at"> You have to delete zero first before you can put in your Dosage</span>
+<span class="fu">issueId:</span><span class="at"> 333132</span>
+<span class="fu">issueKey:</span><span class="at"> DEMO-3083</span>
+<span class="fu">issueSummary:</span><span class="at"> ! 'Backspace to delete zero to enter your dosage '</span></code></pre></div>
 <h1 id="creating-the-document">Creating the document</h1>
 <h2 id="pandoc">Pandoc</h2>
 <p><a href="http://johnmacfarlane.net/pandoc/">Pandoc</a> is a Haskell library and command line utility that allows you to read several markup formats and write several markup/document formats.</p>

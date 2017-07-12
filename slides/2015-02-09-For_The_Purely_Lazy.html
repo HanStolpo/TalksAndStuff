@@ -1,56 +1,31 @@
 <!doctype html>
 <html lang="en">
 
-	<head>
-		<meta charset="utf-8">
+  <head>
+    <meta charset="utf-8">
 
-		<title>reveal.js - The HTML Presentation Framework</title>
+    <title>For the Purely Lazy</title>
 
-		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
-		<meta name="author" content="Hakim El Hattab">
+    <!-- reveal js -->
+    <link rel="stylesheet" href="../css/reveal.css">
+    
+    <link rel="stylesheet" href="../css/theme/serif.css" id="theme">
+    
 
-		<meta name="apple-mobile-web-app-capable" content="yes" />
-		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <!-- Code syntax highlighting -->
+    <link rel="stylesheet" type="text/css" href="../css/highlighting.css" />
 
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
-      <!--beige.css*-->
-      <!--black.css*-->
-      <!--blood.css*-->
-      <!--league.css*-->
-      <!--moon.css*-->
-      <!--night.css*-->
-      <!--serif.css*-->
-      <!--simple.css*-->
-      <!--sky.css*-->
-      <!--solarized.css*-->
-      <!--white.css*-->
-		<link rel="stylesheet" href="../css/reveal.css">
-		<link rel="stylesheet" href="../css/theme/serif.css" id="theme">
-		<link rel="stylesheet" type="text/css" href="../css/highlighting.css" />
+    <!--[if lt IE 9]>
+    <script src="../lib/js/html5shiv.js"></script>
+    <![endif]-->
 
-		<!-- Code syntax highlighting -->
-		<link rel="stylesheet" href="../lib/css/zenburn.css">
+  </head>
 
-		<!-- Printing and PDF exports -->
-		<script>
-			var link = document.createElement( 'link' );
-			link.rel = 'stylesheet';
-			link.type = 'text/css';
-			link.href = window.location.search.match( /print-pdf/gi ) ? '../css/print/pdf.css' : '../css/print/paper.css';
-			document.getElementsByTagName( 'head' )[0].appendChild( link );
-		</script>
-
-		<!--[if lt IE 9]>
-		<script src="../lib/js/html5shiv.js"></script>
-		<![endif]-->
-	</head>
-
-	<body>
-
-		<div class="reveal">
-			<div class="slides">
+  <body>
+    <div class="reveal">
+      <div class="slides">
 <section><section id="for-the-purely-lazy" class="titleslide slide level1"><h1>For the Purely Lazy</h1></section><section id="the-low-down" class="slide level2">
-<h1>The Low Down</h1>
+<h2>The Low Down</h2>
 <ul>
 <li>Looking at Lazy Evaluation in the purely functional language Haskell.</li>
 <li>All about the lazy, purity just along for the ride.</li>
@@ -60,7 +35,7 @@
 </ul>
 </section></section>
 <section><section id="evaluation-strategies" class="titleslide slide level1"><h1>Evaluation strategies</h1></section><section id="eager-or-lazy" class="slide level2">
-<h1>Eager or Lazy</h1>
+<h2>Eager or Lazy</h2>
 <ul>
 <li><p>In Haskell like languages evaluation is reducing expressions to their simplest form.<br />
 <span style="color:lightblue"><code>(5 + 4 - 2) * (5 + 4 - 2) ⇒ 49</code></span></p></li>
@@ -68,9 +43,9 @@
 <span style="color:lightblue"><code>square (5 + 4 - 2) ⇒ 49</code></span></p>
 <ul>
 <li><p><span style="color:red"> Reduce arguments first (<em>Innermost reduction / Eager Evaluation</em>)</span><br />
- <span style="color:firebrick"> <code>square (5 + 4 - 2) ⇒ square(7) ⇒ 7 * 7 ⇒ 49</code> </span></p></li>
+<span style="color:firebrick"> <code>square (5 + 4 - 2) ⇒ square(7) ⇒ 7 * 7 ⇒ 49</code> </span></p></li>
 <li><p><span style="color:limegreen"> Apply function first (<em>Outermost reduction / Lazy Evaluation</em>)</span><br />
- <span style="color:olivedrab"> <code>square (5 + 4 - 2) ⇒ (5 + 4 - 2) * (5 + 4 - 2) ⇒ 7 * 7 ⇒ 49</code> </span></p></li>
+<span style="color:olivedrab"> <code>square (5 + 4 - 2) ⇒ (5 + 4 - 2) * (5 + 4 - 2) ⇒ 7 * 7 ⇒ 49</code> </span></p></li>
 </ul></li>
 <li>Final answer == expression in normal form<br />
 <span style="color:lightblue"><code>49</code></span> is the normal form of <span style="color:lightblue"><code>square (5 + 4 - 2)</code></span></li>
@@ -86,7 +61,7 @@
 <p>Inner most reduction / outer most reduction from [Thinking Functionally with Haskell][] page 27.</p>
 </aside>
 </section><section id="lazy-is-a-bit-more-involved" class="slide level2">
-<h1>Lazy is a bit more involved</h1>
+<h2>Lazy is a bit more involved</h2>
 <div style="width: 50%;float: left;">
 <ul>
 <li>Outermost reduction</li>
@@ -113,7 +88,7 @@
 
 
 </section><section id="whats-the-difference" class="slide level2">
-<h1>Whats the difference</h1>
+<h2>Whats the difference</h2>
 <div style="width: 50%;float: left;">
 <p>Given</p>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">fst (a, b) <span class="fu">=</span> a
@@ -164,7 +139,7 @@ fst (<span class="dv">0</span>, square (<span class="dv">5</span> <span class="f
 </ul>
 </div>
 </section><section id="lazy-always-best-well-no." class="slide level2">
-<h1>Lazy always best! Well no.</h1>
+<h2>Lazy always best! Well no.</h2>
 <div style="width: 30%;float: left;">
 <ul>
 <li>Lazy evaluation has a bookkeeping overhead</li>
@@ -181,7 +156,7 @@ fst (<span class="dv">0</span>, square (<span class="dv">5</span> <span class="f
 </div>
 </section></section>
 <section><section id="the-good-the-bad-and-the-smugly" class="titleslide slide level1"><h1>The Good, The Bad and The Smugly</h1></section><section id="the-good-and-bad" class="slide level2">
-<h1>The Good and Bad</h1>
+<h2>The Good and Bad</h2>
 <div style="width: 50%;float: left;">
 <p>### Pros * More efficient ? * This is a red herring. * It could be or it couldn’t. * Modularity! * This is the real reason * John Hughes - <a href="http://www.cs.kent.ac.uk/people/staff/dat/miranda/whyfp90.pdf" title="Why Functional Programming Matters">Why Functional Programming Matters</a> * Glue allowing composition of functional programs * Efficient tricks for pure languages. * Again ? Contradiction ? Nope. * Memoization preserving purity and abstraction. * Caching preserving purity and abstraction.</p>
 </div>
@@ -192,7 +167,7 @@ fst (<span class="dv">0</span>, square (<span class="dv">5</span> <span class="f
 
 </aside>
 </section><section id="so-dont-be-smug" class="slide level2">
-<h1>So Don’t be Smug</h1>
+<h2>So Don’t be Smug</h2>
 <ul>
 <li>Laziness is not a silver bullet.</li>
 <li>Laziness is not a scarlet letter.</li>
@@ -201,7 +176,7 @@ fst (<span class="dv">0</span>, square (<span class="dv">5</span> <span class="f
 </ul>
 </section></section>
 <section><section id="modularity" class="titleslide slide level1"><h1>Modularity</h1></section><section id="lazy-aids-composition" class="slide level2">
-<h1>Lazy Aids Composition</h1>
+<h2>Lazy Aids Composition</h2>
 <ul>
 <li>From Why <a href="http://www.cs.kent.ac.uk/people/staff/dat/miranda/whyfp90.pdf" title="Why Functional Programming Matters">Functional Programming Matters</a></li>
 <li>Can structured whole programs as function composition</li>
@@ -214,7 +189,7 @@ fst (<span class="dv">0</span>, square (<span class="dv">5</span> <span class="f
 <li>Can modularise as generators and selectors.</li>
 </ul>
 </section><section id="lazy-composition-sqrt" class="slide level2">
-<h1>Lazy Composition Sqrt</h1>
+<h2>Lazy Composition Sqrt</h2>
 <div style="height: 50%; float: top">
 <ul>
 <li>Example from Why <a href="http://www.cs.kent.ac.uk/people/staff/dat/miranda/whyfp90.pdf" title="Why Functional Programming Matters">Functional Programming Matters</a></li>
@@ -245,7 +220,7 @@ relative eps (a<span class="fu">:</span>b<span class="fu">:</span>bs) <span clas
 relativeSqrt eps n <span class="fu">=</span> within eps (sqrtApprox n)</code></pre></div>
 </div>
 </section><section id="caveats-about-lazy-composition" class="slide level2">
-<h1>Caveats about Lazy Composition</h1>
+<h2>Caveats about Lazy Composition</h2>
 <ul>
 <li>When using Lazy IO
 <ul>
@@ -259,7 +234,7 @@ relativeSqrt eps n <span class="fu">=</span> within eps (sqrtApprox n)</code></p
 </ul>
 </section></section>
 <section><section id="lazy-tricks" class="titleslide slide level1"><h1>Lazy Tricks</h1></section><section id="memoization" class="slide level2">
-<h1>Memoization</h1>
+<h2>Memoization</h2>
 <div style="width: 30%; float: left">
 <ul>
 <li>Use Laziness to incrementally build the list of all Fibonacci numbers.</li>
@@ -284,7 +259,7 @@ True
 *Main&gt; </code></pre>
 </div>
 </section><section id="caching" class="slide level2">
-<h1>Caching</h1>
+<h2>Caching</h2>
 <ul>
 <li>So you have some data/results and some expensive queries against it.</li>
 <li>You want to perform the queries only when they are needed.</li>
@@ -345,7 +320,7 @@ makeFibber a <span class="fu">=</span> <span class="dt">Fibber</span> a (fib_wor
 </div>
 </section></section>
 <section><section id="time-and-space" class="titleslide slide level1"><h1>Time and Space</h1></section><section id="times-up" class="slide level2">
-<h1>Times up</h1>
+<h2>Times up</h2>
 <ul>
 <li>Algorithmic complexity of Lazy evaluation is never more than Eager.</li>
 <li>Consider Eager behaviour for upper bound.</li>
@@ -355,7 +330,7 @@ makeFibber a <span class="fu">=</span> <span class="dt">Fibber</span> a (fib_wor
 <li>See <a href="httP://http://community.haskell.org/~simonmar/pcph/" title="Parallel and Concurrent Programming in Haskell: Techniques for Multicore and Multithreaded Programming">Parallel and Concurrent Programming in Haskell</a></li>
 </ul>
 </section><section id="space-leaks" class="slide level2">
-<h1>Space Leaks</h1>
+<h2>Space Leaks</h2>
 <ul>
 <li>Space Leak - program / expression uses more memory than required.
 <ul>
@@ -369,7 +344,7 @@ makeFibber a <span class="fu">=</span> <span class="dt">Fibber</span> a (fib_wor
 <li>Most other Haskell code should only be able to Space Leak (mostly no Memory Leak).</li>
 </ul>
 </section><section id="examples-from-leaking-space" class="slide level2">
-<h1>Examples from “Leaking Space”</h1>
+<h2>Examples from “Leaking Space”</h2>
 <ul>
 <li><p>Some space leak examples from [Leaking Space - Eliminating memory hogs][8]</p>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">xs <span class="fu">=</span> delete <span class="st">&quot;dead&quot;</span> [<span class="st">&quot;alive&quot;</span>, <span class="st">&quot;dead&quot;</span>]</code></pre></div></li>
@@ -408,7 +383,7 @@ sum1 [] <span class="fu">=</span> <span class="dv">0</span></code></pre></div></
 <li><p>The article has more examples of space leaks. [8]: http://queue.acm.org/detail.cfm?id=2538488 (Leaking Space - Eliminating memory hogs: By Neil Mitchell)</p></li>
 </ul>
 </section><section id="when-strictness-can-make-things-slow" class="slide level2">
-<h1>When Strictness can make things slow</h1>
+<h2>When Strictness can make things slow</h2>
 <div style="float: top;">
 <ul>
 <li>Maybe one should just through strictness in everywhere</li>
@@ -455,7 +430,7 @@ splitAt_lp n xs <span class="fu">=</span> (<span class="st">&quot;splitAt_lp &qu
 (0.00 secs, 0 bytes)</code></pre>
 </div>
 </section><section id="what-to-do-with-thorny-space-leaks" class="slide level2">
-<h1>What to do with thorny space leaks</h1>
+<h2>What to do with thorny space leaks</h2>
 <ul>
 <li>Pinpoint leaks using GHC’s profiling tools.</li>
 <li>For some domains libraries exist that eliminate large classes of space leaks by design
@@ -473,49 +448,154 @@ splitAt_lp n xs <span class="fu">=</span> (<span class="st">&quot;splitAt_lp &qu
 </ul>
 </section></section>
 <section><section id="further-reading" class="titleslide slide level1"><h1>Further reading</h1></section></section>
-			</div>
-		</div>
+      </div>
+    </div>
+    
 
-		<script src="../lib/js/head.min.js"></script>
-		<script src="../js/reveal.js"></script>
+    <script src="../lib/js/head.min.js"></script>
+    <script src="../js/reveal.js"></script>
 
-		<script>
+    <script>
 
-			// Full list of configuration options available at:
-			// https://github.com/hakimel/reveal.js#configuration
-			Reveal.initialize({
-				controls: true,
-				progress: true,
-				history: true,
-				center: true,
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
 
-				transition: 'convex', // none/fade/slide/convex/concave/zoom
-				// The "normal" size of the presentation, aspect ratio will be preserved
-				// when the presentation is scaled to fit different resolutions. Can be
-				// specified using percentage units.
-				// width: 1160,
-				// height: 720,
-				width: 1920,
-				height: 1080,
-				// Factor of the display size that should remain empty around the content
-				margin: 0.01,
+        // // The "normal" size of the presentation, aspect ratio will be preserved
+        // // when the presentation is scaled to fit different resolutions. Can be
+        // // specified using percentage units.
+        // width: 960,
+        // height: 700,
 
-				// Bounds for smallest/largest possible scale to apply to content
-				minScale: 0.05,
-				maxScale: 1.5,
+        // // Factor of the display size that should remain empty around the content
+        // margin: 0.0,
 
-				// Optional reveal.js plugins
-				dependencies: [
-					{ src: '../lib/js/classList.js', condition: function() { return !document.body.classList; } },
-					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-					{ src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
-					{ src: 'plugin/zoom-js/zoom.js', async: true },
-					{ src: 'plugin/notes/notes.js', async: true }
-				]
-			});
+        // // Bounds for smallest/largest possible scale to apply to content
+        // minScale: 0.1,
+        // maxScale: 2.5,
 
-		</script>
+        // with sizing
+        width: 1000, height: 1220, margin: 0.1, minScale: 0.1, maxScale: 3,
 
-	</body>
+        // no sizing
+        // width: "100%", height: "100%", margin: 0, minScale: 1, maxScale: 1,
+
+        // Display controls in the bottom right corner
+        
+        controls: true,
+        
+
+
+        // Display a presentation progress bar
+        
+        progress: true,
+        
+
+        // Set default timing of 2 minutes per slide
+        defaultTiming: 120,
+
+        // Display the page number of the current slide
+        slideNumber: false,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: true,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autolaying embedded media (video/audio/iframe)
+        // - null: Media will only autoplay if data-autoplay is present
+        // - true: All media will autoplay, regardless of individual setting
+        // - false: No media will autoplay, regardless of individual setting
+        autoPlayMedia: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: Reveal.navigateNext,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // Hides the address bar on mobile devices
+        hideAddressBar: true,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style
+        transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+        // Transition speed
+        transitionSpeed: 'default', // default/fast/slow
+
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'fade', // none/fade/slide/convex/concave/zoom
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Parallax background image
+        parallaxBackgroundImage: '', // e.g. "'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg'"
+
+        // Parallax background size
+        parallaxBackgroundSize: '', // CSS syntax, e.g. "2100px 900px"
+
+        // Number of pixels to move the parallax background per slide
+        // - Calculated automatically unless specified
+        // - Set to 0 to disable movement along an axis
+        parallaxBackgroundHorizontal: null,
+        parallaxBackgroundVertical: null,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Optional reveal.js plugins
+        dependencies: [
+          { src: '../lib/js/classList.js', condition: function() { return !document.body.classList; } },
+          { src: '../plugin/notes/notes.js', async: true }
+        ]
+      });
+
+    </script>
+
+  </body>
 </html>

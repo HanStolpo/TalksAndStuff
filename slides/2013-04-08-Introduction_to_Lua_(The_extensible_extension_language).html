@@ -10,7 +10,7 @@
   </head>
   <body>
       <div id="introduction" class="titleslide slide section level1"><h1>Introduction</h1></div><div id="what-is-lua" class="slide section level2">
-<h1>What is Lua</h1>
+<h2>What is Lua</h2>
 <ul>
 <li>It is an embeddable scripting language</li>
 <li>It is dynamically typed</li>
@@ -31,7 +31,7 @@
 </ul></li>
 </ul>
 </div><div id="where-did-come-from-where-is-it-used" class="slide section level2">
-<h1>Where did come from where is it used</h1>
+<h2>Where did come from where is it used</h2>
 <ul>
 <li>Tecgraf group at PUC-Rio Brazil</li>
 <li>Lua means moon in Portugese</li>
@@ -50,7 +50,7 @@
 <li>Mobile - Supported on iOS and Android</li>
 </ul>
 </div><div id="what-flavours-are-there" class="slide section level2">
-<h1>What flavours are there</h1>
+<h2>What flavours are there</h2>
 <dl>
 <dt>Lua 5.1.x</dt>
 <dd>Most widely used standard Lua distribution
@@ -87,7 +87,7 @@
 </dd>
 </dl>
 </div><div id="how-to-get-it" class="slide section level2">
-<h1>How to get it</h1>
+<h2>How to get it</h2>
 <ul>
 <li>Get the source and compile into your application
 <ul>
@@ -109,61 +109,61 @@
 </ul>
 </div>
 <div id="the-language" class="titleslide slide section level1"><h1>The Language</h1></div><div id="comments" class="slide section level2">
-<h1>Comments</h1>
-<div class="sourceCode"><pre class="sourceCode stretch lua"><code class="sourceCode lua"><span class="co">-- This is a single line comment</span>
-<span class="co">--[[ This is a multiline </span>
-<span class="co">     comment</span>
-<span class="co">--]]</span>
-<span class="co">--[=[ This is a multiline </span>
-<span class="co">     comment</span>
-<span class="co">    --[[ </span>
-<span class="co">        With a nested multiline </span>
-<span class="co">        comment</span>
-<span class="co">    --]]</span>
+<h2>Comments</h2>
+<div class="sourceCode"><pre class="sourceCode stretch lua"><code class="sourceCode lua"><span class="do">-- This is a single line comment</span>
+<span class="do">--[[ This is a multiline </span>
+<span class="do">     comment</span>
+<span class="do">--]]</span>
+<span class="do">--[=[ This is a multiline </span>
+<span class="do">     comment</span>
+<span class="do">    --[[ </span>
+<span class="do">        With a nested multiline </span>
+<span class="do">        comment</span>
+<span class="do">    --]]</span>
 
-<span class="co">    Any amount of `=` allowed the start and end count must just match</span>
-<span class="co">--]=]</span></code></pre></div>
+<span class="do">    Any amount of `=` allowed the start and end count must just match</span>
+<span class="do">--]=]</span></code></pre></div>
 </div><div id="statements" class="slide section level2">
-<h1>Statements</h1>
+<h2>Statements</h2>
 <ul>
 <li><p>Each line is a new statement and default scope is global</p>
-<div class="sourceCode"><pre class="sourceCode stretch lua"><code class="sourceCode lua">a <span class="ot">=</span> <span class="dv">1</span>       <span class="co">-- global variable </span>
-<span class="kw">local</span> b <span class="ot">=</span> <span class="dv">2</span> <span class="co">-- prepend with 'local' to bind to lexical scope</span></code></pre></div></li>
+<div class="sourceCode"><pre class="sourceCode stretch lua"><code class="sourceCode lua">a <span class="ot">=</span> <span class="dv">1</span>       <span class="do">-- global variable </span>
+<span class="kw">local</span> b <span class="ot">=</span> <span class="dv">2</span> <span class="do">-- prepend with 'local' to bind to lexical scope</span></code></pre></div></li>
 <li><p>Standard standard <em>C</em> and <em>Pascal</em> like binary operators</p>
-<div class="sourceCode"><pre class="sourceCode stretch lua"><code class="sourceCode lua">e <span class="ot">=</span> a <span class="ot">+</span> b       <span class="co">-- add</span>
-e <span class="ot">=</span> a <span class="ot">-</span> b       <span class="co">-- subtract</span>
-e <span class="ot">=</span> a <span class="ot">*</span> b       <span class="co">-- multiply</span>
-e <span class="ot">=</span> a % b       <span class="co">-- modulus</span>
-e <span class="ot">=</span> a <span class="ot">^</span> b       <span class="co">-- a to power b</span>
-e <span class="ot">=</span> a <span class="ot">==</span> b      <span class="co">-- equality</span>
-e <span class="ot">=</span> a <span class="ot">~=</span> b      <span class="co">-- inequality</span>
-e <span class="ot">=</span> a <span class="ot">&lt;</span> b       <span class="co">-- less than</span>
-e <span class="ot">=</span> a <span class="ot">&gt;</span> b       <span class="co">-- greater than</span>
-e <span class="ot">=</span> a <span class="ot">&lt;=</span> b      <span class="co">-- less than equal</span>
-e <span class="ot">=</span> a <span class="ot">&gt;=</span> b<span class="ot">;</span>     <span class="co">-- greater than equal</span>
-e <span class="ot">=</span> <span class="st">&quot;ss&quot;</span> <span class="ot">..</span> <span class="st">&quot;XX&quot;</span><span class="co">-- string concatenation</span></code></pre></div></li>
+<div class="sourceCode"><pre class="sourceCode stretch lua"><code class="sourceCode lua">e <span class="ot">=</span> a <span class="ot">+</span> b       <span class="do">-- add</span>
+e <span class="ot">=</span> a <span class="ot">-</span> b       <span class="do">-- subtract</span>
+e <span class="ot">=</span> a <span class="ot">*</span> b       <span class="do">-- multiply</span>
+e <span class="ot">=</span> a % b       <span class="do">-- modulus</span>
+e <span class="ot">=</span> a <span class="ot">^</span> b       <span class="do">-- a to power b</span>
+e <span class="ot">=</span> a <span class="ot">==</span> b      <span class="do">-- equality</span>
+e <span class="ot">=</span> a <span class="ot">~=</span> b      <span class="do">-- inequality</span>
+e <span class="ot">=</span> a <span class="ot">&lt;</span> b       <span class="do">-- less than</span>
+e <span class="ot">=</span> a <span class="ot">&gt;</span> b       <span class="do">-- greater than</span>
+e <span class="ot">=</span> a <span class="ot">&lt;=</span> b      <span class="do">-- less than equal</span>
+e <span class="ot">=</span> a <span class="ot">&gt;=</span> b<span class="ot">;</span>     <span class="do">-- greater than equal</span>
+e <span class="ot">=</span> <span class="st">&quot;ss&quot;</span> <span class="ot">..</span> <span class="st">&quot;XX&quot;</span><span class="do">-- string concatenation</span></code></pre></div></li>
 </ul>
 </div><div id="statements-continued" class="slide section level2">
-<h1>Statements continued</h1>
+<h2>Statements continued</h2>
 <ul>
 <li><p>Multiple assignment supported and multiple statements per line separated by <strong>;</strong></p>
-<div class="sourceCode"><pre class="sourceCode stretch lua"><code class="sourceCode lua">a<span class="ot">,</span> b <span class="ot">=</span> b<span class="ot">,</span> a         <span class="co">-- this swaps the values of a and b</span>
-<span class="kw">local</span> c <span class="ot">=</span> <span class="dv">3</span><span class="ot">;</span> d <span class="ot">=</span> <span class="dv">4</span><span class="ot">;</span> <span class="co">-- multiple statements per line</span>
-<span class="co">-- define local variable e with no value bound to it</span>
-<span class="kw">local</span> e<span class="ot">;</span>            <span class="co">-- ';' not necessary but OK.</span></code></pre></div></li>
+<div class="sourceCode"><pre class="sourceCode stretch lua"><code class="sourceCode lua">a<span class="ot">,</span> b <span class="ot">=</span> b<span class="ot">,</span> a         <span class="do">-- this swaps the values of a and b</span>
+<span class="kw">local</span> c <span class="ot">=</span> <span class="dv">3</span><span class="ot">;</span> d <span class="ot">=</span> <span class="dv">4</span><span class="ot">;</span> <span class="do">-- multiple statements per line</span>
+<span class="do">-- define local variable e with no value bound to it</span>
+<span class="kw">local</span> e<span class="ot">;</span>            <span class="do">-- ';' not necessary but OK.</span></code></pre></div></li>
 <li><p>Logical operators a bit different (<strong>nil</strong> and <strong>false</strong> is false everything else is true)</p>
-<div class="sourceCode"><pre class="sourceCode stretch lua"><code class="sourceCode lua"><span class="co">-- stops on false or nil , returns last evaluated value</span>
-e <span class="ot">=</span> a <span class="kw">and</span> b         <span class="co">-- if a true then b else false</span>
-<span class="co">-- stops on true (not false or nil ), returns last evaluated value</span>
-e <span class="ot">=</span> a <span class="kw">or</span> b          <span class="co">-- if a true then a else b</span>
-<span class="co">-- Logically invert </span>
-e <span class="ot">=</span> <span class="kw">not</span> a           <span class="co">-- if a false then true else false</span>
-<span class="co">-- using and and or for conditional assignment</span>
-e <span class="ot">=</span> IAmNotDefined <span class="kw">or</span> <span class="st">'So default value'</span> <span class="co">-- result is the string</span>
-e <span class="ot">=</span> IamNotDefined <span class="kw">and</span> IamNotDefined<span class="ot">()</span>   <span class="co">-- this does not crash </span></code></pre></div></li>
+<div class="sourceCode"><pre class="sourceCode stretch lua"><code class="sourceCode lua"><span class="do">-- stops on false or nil , returns last evaluated value</span>
+e <span class="ot">=</span> a <span class="kw">and</span> b         <span class="do">-- if a true then b else false</span>
+<span class="do">-- stops on true (not false or nil ), returns last evaluated value</span>
+e <span class="ot">=</span> a <span class="kw">or</span> b          <span class="do">-- if a true then a else b</span>
+<span class="do">-- Logically invert </span>
+e <span class="ot">=</span> <span class="kw">not</span> a           <span class="do">-- if a false then true else false</span>
+<span class="do">-- using and and or for conditional assignment</span>
+e <span class="ot">=</span> IAmNotDefined <span class="kw">or</span> <span class="st">'So default value'</span> <span class="do">-- result is the string</span>
+e <span class="ot">=</span> IamNotDefined <span class="kw">and</span> IamNotDefined<span class="ot">()</span>   <span class="do">-- this does not crash </span></code></pre></div></li>
 </ul>
 </div><div id="types" class="slide section level2">
-<h1>Types</h1>
+<h2>Types</h2>
 <p>All values in Lua are <em>first-class</em> (stored in variables; passed as arguments; returned as results)</p>
 <dl>
 <dt>nil</dt>
@@ -183,7 +183,7 @@ e <span class="ot">=</span> IamNotDefined <span class="kw">and</span> IamNotDefi
 </dd>
 </dl>
 </div><div id="types-continued" class="slide section level2">
-<h1>Types continued</h1>
+<h2>Types continued</h2>
 <dl>
 <dt>function</dt>
 <dd>Any function defined in <em>Lua</em>
@@ -208,7 +208,7 @@ e <span class="ot">=</span> IamNotDefined <span class="kw">and</span> IamNotDefi
 </dd>
 </dl>
 </div><div id="strings" class="slide section level2">
-<h1>Strings</h1>
+<h2>Strings</h2>
 <ul>
 <li>Escaped strings
 <ul>
@@ -226,37 +226,37 @@ e <span class="ot">=</span> IamNotDefined <span class="kw">and</span> IamNotDefi
 <span class="st">the string ends here]=]</span></code></pre></div></li>
 </ul>
 </div><div id="tables" class="slide section level2">
-<h1>Tables</h1>
+<h2>Tables</h2>
 <ul>
 <li><p>Indexing</p>
-<div class="sourceCode"><pre class="sourceCode stretch lua"><code class="sourceCode lua">a <span class="ot">=</span> t<span class="ot">[</span><span class="dv">1</span><span class="ot">]</span>        <span class="co">-- access array element 1</span>
-a <span class="ot">=</span> t<span class="ot">[</span><span class="st">'blah'</span><span class="ot">]</span>   <span class="co">-- access element string key 'blah'</span>
-a <span class="ot">=</span> t<span class="ot">.</span>blah      <span class="co">-- syntactic sugar for t['blah']</span></code></pre></div></li>
+<div class="sourceCode"><pre class="sourceCode stretch lua"><code class="sourceCode lua">a <span class="ot">=</span> t<span class="ot">[</span><span class="dv">1</span><span class="ot">]</span>        <span class="do">-- access array element 1</span>
+a <span class="ot">=</span> t<span class="ot">[</span><span class="st">'blah'</span><span class="ot">]</span>   <span class="do">-- access element string key 'blah'</span>
+a <span class="ot">=</span> t<span class="ot">.</span>blah      <span class="do">-- syntactic sugar for t['blah']</span></code></pre></div></li>
 <li><p>Constructors</p>
-<div class="sourceCode"><pre class="sourceCode stretch lua"><code class="sourceCode lua"><span class="co">-- empty table</span>
+<div class="sourceCode"><pre class="sourceCode stretch lua"><code class="sourceCode lua"><span class="do">-- empty table</span>
 t <span class="ot">=</span> <span class="ot">{}</span>
 
-<span class="co">-- simple array elements are t[1], t[2], t[3]</span>
+<span class="do">-- simple array elements are t[1], t[2], t[3]</span>
 t <span class="ot">=</span> <span class="ot">{</span><span class="st">&quot;blah&quot;</span><span class="ot">,</span> <span class="dv">1</span><span class="ot">,</span> <span class="kw">true</span><span class="ot">}</span>
 
-<span class="co">-- simple map elements t['blah'], t['foo']</span>
+<span class="do">-- simple map elements t['blah'], t['foo']</span>
 t <span class="ot">=</span> <span class="ot">{</span>blah <span class="ot">=</span> <span class="dv">5</span><span class="ot">,</span> foo<span class="ot">=</span><span class="kw">true</span><span class="ot">}</span>
 
-<span class="co">-- Explicit keys</span>
+<span class="do">-- Explicit keys</span>
 t <span class="ot">=</span> <span class="ot">{[</span><span class="st">'blah'</span><span class="ot">]</span> <span class="ot">=</span> <span class="dv">5</span><span class="ot">,</span> <span class="ot">[</span><span class="dv">100</span><span class="ot">]</span> <span class="ot">=</span> <span class="kw">true</span><span class="ot">}</span>
 
-<span class="co">-- mixed elements at t[1], t[2], t[100], t.foo t.bar</span>
+<span class="do">-- mixed elements at t[1], t[2], t[100], t.foo t.bar</span>
 t <span class="ot">=</span> 
-<span class="ot">{</span>   <span class="st">'alpha'</span><span class="ot">,</span> <span class="st">'bravo'</span><span class="ot">;</span>   <span class="co">-- element separator either , or ;</span>
+<span class="ot">{</span>   <span class="st">'alpha'</span><span class="ot">,</span> <span class="st">'bravo'</span><span class="ot">;</span>   <span class="do">-- element separator either , or ;</span>
     foo <span class="ot">=</span> <span class="dv">5</span><span class="ot">;</span> bar<span class="ot">=</span><span class="dv">4</span><span class="ot">,</span>
     <span class="ot">[</span><span class="dv">100</span><span class="ot">]</span> <span class="ot">=</span> <span class="kw">false</span><span class="ot">,</span>
 <span class="ot">}</span></code></pre></div></li>
 <li><p>Insertion and deletion</p>
-<div class="sourceCode"><pre class="sourceCode stretch lua"><code class="sourceCode lua">t<span class="ot">.</span>foo <span class="ot">=</span> <span class="dv">5</span>   <span class="co">-- Insert value 5 at key foo</span>
-t<span class="ot">.</span>foo <span class="ot">=</span> <span class="kw">nil</span> <span class="co">-- Delete key foo from table</span></code></pre></div></li>
+<div class="sourceCode"><pre class="sourceCode stretch lua"><code class="sourceCode lua">t<span class="ot">.</span>foo <span class="ot">=</span> <span class="dv">5</span>   <span class="do">-- Insert value 5 at key foo</span>
+t<span class="ot">.</span>foo <span class="ot">=</span> <span class="kw">nil</span> <span class="do">-- Delete key foo from table</span></code></pre></div></li>
 </ul>
 </div><div id="functions" class="slide section level2">
-<h1>Functions</h1>
+<h2>Functions</h2>
 <ul>
 <li>All functions have an environment
 <ul>
@@ -276,61 +276,61 @@ t<span class="ot">.</span>foo <span class="ot">=</span> <span class="kw">nil</sp
 <li>Optional keyword <code>return</code> returns functions result</li>
 </ul></li>
 <li><p>Global function assignment</p>
-<div class="sourceCode"><pre class="sourceCode stretch lua"><code class="sourceCode lua"><span class="co">-- This is syntax sugar</span>
+<div class="sourceCode"><pre class="sourceCode stretch lua"><code class="sourceCode lua"><span class="do">-- This is syntax sugar</span>
 <span class="kw">function</span> arb <span class="ot">(</span>arg1<span class="ot">,</span> arg2<span class="ot">)</span> <span class="kw">return</span> arg1 <span class="ot">+</span> arg2 <span class="kw">end</span>
-<span class="co">-- for this assignment of a function to the global 'arb'</span>
+<span class="do">-- for this assignment of a function to the global 'arb'</span>
 arb <span class="ot">=</span> <span class="kw">function</span> <span class="ot">(</span>arg1<span class="ot">,</span> arg2<span class="ot">)</span> <span class="kw">return</span> arg1 <span class="ot">+</span> arg2 <span class="kw">end</span> </code></pre></div></li>
 <li><p>Local function assignment</p>
-<div class="sourceCode"><pre class="sourceCode stretch lua"><code class="sourceCode lua"><span class="co">-- This is syntax sugar</span>
+<div class="sourceCode"><pre class="sourceCode stretch lua"><code class="sourceCode lua"><span class="do">-- This is syntax sugar</span>
 <span class="kw">local</span> <span class="kw">function</span> arb <span class="ot">(</span>arg1<span class="ot">,</span> arg2<span class="ot">)</span> <span class="kw">return</span> arg1 <span class="ot">+</span> arg2 <span class="kw">end</span>
-<span class="co">-- for this assignment of a function to the local 'arb'</span>
+<span class="do">-- for this assignment of a function to the local 'arb'</span>
 <span class="kw">local</span> arb <span class="ot">=</span> <span class="kw">function</span> <span class="ot">(</span>arg1<span class="ot">,</span> arg2<span class="ot">)</span> <span class="kw">return</span> arg1 <span class="ot">+</span> arg2 <span class="kw">end</span> </code></pre></div></li>
 </ul>
 </div><div id="functions-continued" class="slide section level2">
-<h1>Functions continued</h1>
+<h2>Functions continued</h2>
 <ul>
 <li><p>Table function insertion</p>
-<div class="sourceCode"><pre class="sourceCode stretch lua"><code class="sourceCode lua"><span class="co">-- This is syntax sugar</span>
+<div class="sourceCode"><pre class="sourceCode stretch lua"><code class="sourceCode lua"><span class="do">-- This is syntax sugar</span>
 <span class="kw">function</span> t<span class="ot">.</span>arb <span class="ot">(</span>arg1<span class="ot">,</span> arg2<span class="ot">)</span> <span class="kw">return</span> arg1 <span class="ot">+</span> arg2 <span class="kw">end</span>
-<span class="co">-- for this insertion of a function into table t at key arb</span>
+<span class="do">-- for this insertion of a function into table t at key arb</span>
 t<span class="ot">[</span><span class="st">'arb'</span><span class="ot">]</span> <span class="ot">=</span> <span class="kw">function</span> <span class="ot">(</span>arg1<span class="ot">,</span> arg2<span class="ot">)</span> <span class="kw">return</span> arg1 <span class="ot">+</span> arg2 <span class="kw">end</span></code></pre></div></li>
 <li><p>Table function insertion with implicit <code>self</code></p>
-<div class="sourceCode"><pre class="sourceCode stretch lua"><code class="sourceCode lua"><span class="co">-- This is syntax sugar</span>
+<div class="sourceCode"><pre class="sourceCode stretch lua"><code class="sourceCode lua"><span class="do">-- This is syntax sugar</span>
 <span class="kw">function</span> t:arb <span class="ot">(</span>arg1<span class="ot">,</span> arg2<span class="ot">)</span> 
     <span class="kw">return</span> arg1 <span class="ot">+</span> arg2 <span class="ot">+</span> self<span class="ot">[</span><span class="dv">1</span><span class="ot">]</span>
 <span class="kw">end</span>
-<span class="co">-- for this insertion of a function into table t at key arb</span>
-<span class="co">-- and explicit self parameter</span>
+<span class="do">-- for this insertion of a function into table t at key arb</span>
+<span class="do">-- and explicit self parameter</span>
 t<span class="ot">[</span><span class="st">'arb'</span><span class="ot">]</span> <span class="ot">=</span> <span class="kw">function</span> <span class="ot">(</span>self<span class="ot">,</span> arg1<span class="ot">,</span> arg2<span class="ot">)</span> 
     <span class="kw">return</span> arg1 <span class="ot">+</span> arg2 <span class="ot">+</span> self<span class="ot">[</span><span class="dv">1</span><span class="ot">]</span>
 <span class="kw">end</span></code></pre></div></li>
 <li><p>Function called by applying argument list to function value</p>
 <div class="sourceCode"><pre class="sourceCode stretch lua"><code class="sourceCode lua"><span class="kw">local</span> arb <span class="ot">=</span> <span class="kw">function</span> <span class="ot">(</span>a<span class="ot">)</span> <span class="kw">return</span> a <span class="ot">+</span> a <span class="kw">end</span>
-<span class="kw">local</span> x <span class="ot">=</span> arb<span class="ot">(</span><span class="dv">2</span><span class="ot">)</span>    <span class="co">-- x is 4</span></code></pre></div></li>
+<span class="kw">local</span> x <span class="ot">=</span> arb<span class="ot">(</span><span class="dv">2</span><span class="ot">)</span>    <span class="do">-- x is 4</span></code></pre></div></li>
 <li><p>Calling function implicitly passing <code>self</code></p>
 <div class="sourceCode"><pre class="sourceCode stretch lua"><code class="sourceCode lua"><span class="kw">local</span> t <span class="ot">=</span> <span class="ot">{</span>
     arb <span class="ot">=</span> <span class="kw">function</span><span class="ot">(</span>self<span class="ot">,</span> a<span class="ot">)</span> 
         <span class="kw">return</span> self<span class="ot">.</span>x <span class="ot">+</span> a 
     <span class="kw">end</span><span class="ot">;</span> 
-    x <span class="ot">=</span> <span class="dv">1</span><span class="ot">;</span> <span class="co">-- trailing delimiter is fine</span>
+    x <span class="ot">=</span> <span class="dv">1</span><span class="ot">;</span> <span class="do">-- trailing delimiter is fine</span>
 <span class="ot">}</span>
-<span class="co">-- This is syntax sugar for </span>
+<span class="do">-- This is syntax sugar for </span>
 <span class="kw">local</span> b <span class="ot">=</span> t:arb<span class="ot">(</span><span class="dv">2</span><span class="ot">)</span>
-<span class="co">-- this lookup of arb in t and passing it t and 2</span>
+<span class="do">-- this lookup of arb in t and passing it t and 2</span>
 <span class="kw">local</span> c <span class="ot">=</span> t<span class="ot">.</span>arb<span class="ot">(</span>t<span class="ot">,</span> <span class="dv">2</span><span class="ot">)</span></code></pre></div></li>
 </ul>
 </div><div id="functions-continued-1" class="slide section level2">
-<h1>Functions continued</h1>
+<h2>Functions continued</h2>
 <ul>
 <li><p>Parentheses optional when calling function with literal string</p>
-<div class="sourceCode"><pre class="sourceCode stretch lua"><code class="sourceCode lua"><span class="co">-- This is syntax sugar</span>
+<div class="sourceCode"><pre class="sourceCode stretch lua"><code class="sourceCode lua"><span class="do">-- This is syntax sugar</span>
 <span class="fu">print</span> <span class="st">&quot;blah&quot;</span>
-<span class="co">-- for this</span>
+<span class="do">-- for this</span>
 <span class="fu">print</span><span class="ot">(</span><span class="st">&quot;blah&quot;</span><span class="ot">)</span></code></pre></div></li>
 <li><p>Parentheses optional when calling function with table constructor</p>
-<div class="sourceCode"><pre class="sourceCode stretch lua"><code class="sourceCode lua"><span class="co">-- This is syntax sugar</span>
+<div class="sourceCode"><pre class="sourceCode stretch lua"><code class="sourceCode lua"><span class="do">-- This is syntax sugar</span>
 <span class="fu">ipairs</span> <span class="ot">{</span><span class="dv">1</span><span class="ot">,</span><span class="dv">2</span><span class="ot">,</span><span class="dv">3</span><span class="ot">,</span><span class="dv">4</span><span class="ot">}</span>
-<span class="co">-- for this</span>
+<span class="do">-- for this</span>
 <span class="fu">ipairs</span> <span class="ot">({</span><span class="dv">1</span><span class="ot">,</span><span class="dv">2</span><span class="ot">,</span><span class="dv">3</span><span class="ot">,</span><span class="dv">4</span><span class="ot">})</span></code></pre></div></li>
 <li><p>Function return types are dynamic</p>
 <div class="sourceCode"><pre class="sourceCode stretch lua"><code class="sourceCode lua"><span class="kw">function</span> arb<span class="ot">(</span>x<span class="ot">)</span>
@@ -339,38 +339,38 @@ t<span class="ot">[</span><span class="st">'arb'</span><span class="ot">]</span>
     <span class="kw">elseif</span>  x <span class="ot">==</span> <span class="st">'m'</span>    <span class="kw">then</span>   <span class="kw">return</span> <span class="kw">nil</span><span class="ot">,</span><span class="st">'s'</span>
     <span class="kw">elseif</span>  x <span class="ot">==</span> <span class="dv">2</span>      <span class="kw">then</span>   <span class="kw">return</span> <span class="dv">4</span>
     <span class="kw">else</span>
-        <span class="co">-- returning nothing</span>
+        <span class="do">-- returning nothing</span>
     <span class="kw">end</span>
 <span class="kw">end</span>
-a<span class="ot">,</span>b <span class="ot">=</span> arb<span class="ot">(</span><span class="dv">1</span><span class="ot">)</span>    <span class="co">-- a == 3, b == 4</span>
-a<span class="ot">,</span>b <span class="ot">=</span> arb<span class="ot">(</span><span class="st">'j'</span><span class="ot">)</span>  <span class="co">-- a == 'bob', b == 8</span>
-a<span class="ot">,</span>b <span class="ot">=</span> arb<span class="ot">(</span><span class="st">'m'</span><span class="ot">)</span>  <span class="co">-- a == nil, b == 's'</span>
-a<span class="ot">,</span>b <span class="ot">=</span> arb<span class="ot">(</span><span class="dv">2</span><span class="ot">)</span>    <span class="co">-- a == 4, b == nil</span>
-a<span class="ot">,</span>b <span class="ot">=</span> arb<span class="ot">(</span><span class="dv">3</span><span class="ot">)</span>    <span class="co">-- a == nil, b == nil</span></code></pre></div></li>
+a<span class="ot">,</span>b <span class="ot">=</span> arb<span class="ot">(</span><span class="dv">1</span><span class="ot">)</span>    <span class="do">-- a == 3, b == 4</span>
+a<span class="ot">,</span>b <span class="ot">=</span> arb<span class="ot">(</span><span class="st">'j'</span><span class="ot">)</span>  <span class="do">-- a == 'bob', b == 8</span>
+a<span class="ot">,</span>b <span class="ot">=</span> arb<span class="ot">(</span><span class="st">'m'</span><span class="ot">)</span>  <span class="do">-- a == nil, b == 's'</span>
+a<span class="ot">,</span>b <span class="ot">=</span> arb<span class="ot">(</span><span class="dv">2</span><span class="ot">)</span>    <span class="do">-- a == 4, b == nil</span>
+a<span class="ot">,</span>b <span class="ot">=</span> arb<span class="ot">(</span><span class="dv">3</span><span class="ot">)</span>    <span class="do">-- a == nil, b == nil</span></code></pre></div></li>
 </ul>
 </div><div id="functions-continued-2" class="slide section level2">
-<h1>Functions continued</h1>
+<h2>Functions continued</h2>
 <ul>
 <li><p>Functions support closures</p>
 <div class="sourceCode"><pre class="sourceCode stretch lua"><code class="sourceCode lua"><span class="kw">local</span> <span class="kw">function</span> makeCounter<span class="ot">()</span>
-    <span class="kw">local</span> count <span class="ot">=</span> <span class="ot">-</span><span class="dv">1</span>            <span class="co">-- local variable</span>
-    <span class="kw">return</span> <span class="kw">function</span> <span class="ot">()</span>          <span class="co">-- return the function</span>
-        <span class="co">-- capture `count` updating on each invocation</span>
+    <span class="kw">local</span> count <span class="ot">=</span> <span class="ot">-</span><span class="dv">1</span>            <span class="do">-- local variable</span>
+    <span class="kw">return</span> <span class="kw">function</span> <span class="ot">()</span>          <span class="do">-- return the function</span>
+        <span class="do">-- capture `count` updating on each invocation</span>
         <span class="kw">return</span> count <span class="ot">=</span> count <span class="ot">+</span> <span class="dv">1</span>
     <span class="kw">end</span>
 <span class="kw">end</span>
 <span class="kw">local</span> c1 <span class="ot">=</span> makeCounter<span class="ot">()</span>
-<span class="kw">local</span> _1<span class="ot">,</span> _2<span class="ot">,</span> _3 <span class="ot">=</span> c1<span class="ot">(),</span> c1<span class="ot">(),</span> c1<span class="ot">()</span> <span class="co">-- _1 == 0, _2 == 1, _3 == 2</span>
+<span class="kw">local</span> _<span class="dv">1</span><span class="ot">,</span> _<span class="dv">2</span><span class="ot">,</span> _<span class="dv">3</span> <span class="ot">=</span> c1<span class="ot">(),</span> c1<span class="ot">(),</span> c1<span class="ot">()</span> <span class="do">-- _1 == 0, _2 == 1, _3 == 2</span>
 <span class="kw">local</span> c2 <span class="ot">=</span> makeCounter<span class="ot">()</span>
-_1<span class="ot">,</span> _2<span class="ot">,</span> _3 <span class="ot">=</span> c2<span class="ot">(),</span> c1<span class="ot">(),</span> c2<span class="ot">()</span>       <span class="co">-- _1 == 0, _2 == 4, _3 == 1</span></code></pre></div></li>
+_<span class="dv">1</span><span class="ot">,</span> _<span class="dv">2</span><span class="ot">,</span> _<span class="dv">3</span> <span class="ot">=</span> c2<span class="ot">(),</span> c1<span class="ot">(),</span> c2<span class="ot">()</span>       <span class="do">-- _1 == 0, _2 == 4, _3 == 1</span></code></pre></div></li>
 <li><p>Functions support tail call recursion</p>
 <div class="sourceCode"><pre class="sourceCode stretch lua"><code class="sourceCode lua"><span class="kw">function</span> fib<span class="ot">(</span>n<span class="ot">)</span>
     <span class="kw">local</span> <span class="kw">function</span> _fib<span class="ot">(</span>fn2<span class="ot">,</span> fn1<span class="ot">,</span> at<span class="ot">)</span>
         <span class="kw">if</span> at <span class="ot">==</span> n <span class="kw">then</span> 
             <span class="kw">return</span> fn1 <span class="ot">+</span> fn2
         <span class="kw">else</span>
-            <span class="co">-- calls it self recursively as a tail call</span>
-            <span class="co">-- so it will reuse the same stack frame</span>
+            <span class="do">-- calls it self recursively as a tail call</span>
+            <span class="do">-- so it will reuse the same stack frame</span>
             <span class="kw">return</span> _fib<span class="ot">(</span>fn1<span class="ot">,</span> fn1 <span class="ot">+</span> fn2<span class="ot">,</span> at<span class="ot">+</span><span class="dv">1</span><span class="ot">)</span>
         <span class="kw">end</span>
     <span class="kw">end</span>
@@ -378,13 +378,13 @@ _1<span class="ot">,</span> _2<span class="ot">,</span> _3 <span class="ot">=</s
     <span class="kw">elseif</span> n <span class="ot">==</span> <span class="dv">1</span> <span class="kw">then</span> <span class="kw">return</span> <span class="dv">1</span>
     <span class="kw">else</span> <span class="kw">return</span> _fib<span class="ot">(</span><span class="dv">0</span><span class="ot">,</span> <span class="dv">1</span><span class="ot">,</span> <span class="dv">2</span><span class="ot">)</span> <span class="kw">end</span>
 <span class="kw">end</span>
-<span class="co">-- no stack overflow</span>
-<span class="co">-- prints : n4 = 2 n8 = 13 n1000 = 2.6863810024485e+208 n10000 = 1.#INF</span>
+<span class="do">-- no stack overflow</span>
+<span class="do">-- prints : n4 = 2 n8 = 13 n1000 = 2.6863810024485e+208 n10000 = 1.#INF</span>
 <span class="fu">print</span> <span class="ot">(</span><span class="st">'n4 = '</span> <span class="ot">..</span> fib<span class="ot">(</span><span class="dv">4</span><span class="ot">)</span> <span class="ot">..</span> <span class="st">' n8 = '</span><span class="ot">..</span> fib<span class="ot">(</span><span class="dv">8</span><span class="ot">)</span> <span class="ot">..</span> <span class="st">' n1000 = '</span> <span class="ot">..</span> fib<span class="ot">(</span><span class="dv">1000</span><span class="ot">)</span>
     <span class="ot">..</span> <span class="st">' n10000 = '</span> <span class="ot">..</span> fib<span class="ot">(</span><span class="dv">10000</span><span class="ot">))</span></code></pre></div></li>
 </ul>
 </div><div id="control-structures" class="slide section level2">
-<h1>Control structures</h1>
+<h2>Control structures</h2>
 <dl>
 <dt>do block end</dt>
 <dd><p>Introduces local scope</p>
@@ -394,30 +394,30 @@ _1<span class="ot">,</span> _2<span class="ot">,</span> _3 <span class="ot">=</s
 <p>if then else</p>
 </dd>
 <dd><p>Conditional branching with each branch introducing a local scope.</p>
-<div class="sourceCode"><pre class="sourceCode stretch lua"><code class="sourceCode lua"><span class="kw">if</span> a <span class="ot">==</span> b <span class="kw">then</span>      <span class="co">-- start if branch</span>
+<div class="sourceCode"><pre class="sourceCode stretch lua"><code class="sourceCode lua"><span class="kw">if</span> a <span class="ot">==</span> b <span class="kw">then</span>      <span class="do">-- start if branch</span>
     e <span class="ot">=</span> <span class="dv">2</span>
-<span class="kw">elseif</span> a <span class="ot">==</span> c <span class="kw">then</span>  <span class="co">-- optional else if branch</span>
+<span class="kw">elseif</span> a <span class="ot">==</span> c <span class="kw">then</span>  <span class="do">-- optional else if branch</span>
     e <span class="ot">=</span> <span class="dv">3</span> 
-<span class="kw">else</span>                <span class="co">-- optional else branch</span>
+<span class="kw">else</span>                <span class="do">-- optional else branch</span>
     e <span class="ot">=</span> <span class="dv">4</span>
-<span class="kw">end</span>                 <span class="co">-- required terminator</span></code></pre></div>
+<span class="kw">end</span>                 <span class="do">-- required terminator</span></code></pre></div>
 </dd>
 </dl>
 </div><div id="control-structures-continued" class="slide section level2">
-<h1>Control structures continued</h1>
+<h2>Control structures continued</h2>
 <dl>
 <dt>while</dt>
 <dd><p>If condition is true then repeatedly execute block until false</p>
 <div class="sourceCode"><pre class="sourceCode stretch lua"><code class="sourceCode lua"><span class="kw">local</span> a<span class="ot">,</span>b <span class="ot">=</span> <span class="dv">1</span><span class="ot">,</span><span class="dv">5</span>
 <span class="kw">while</span> a <span class="ot">&lt;</span> b <span class="kw">do</span>
-    a <span class="ot">=</span> a <span class="ot">+</span> <span class="dv">1</span>       <span class="co">-- executes 4 times</span>
+    a <span class="ot">=</span> a <span class="ot">+</span> <span class="dv">1</span>       <span class="do">-- executes 4 times</span>
 <span class="kw">end</span></code></pre></div>
 <p>repeat</p>
 </dd>
 <dd><p>Execute block and if condition is true repeat until false</p>
 <div class="sourceCode"><pre class="sourceCode stretch lua"><code class="sourceCode lua"><span class="kw">local</span> a<span class="ot">,</span>b <span class="ot">=</span> <span class="dv">4</span><span class="ot">,</span><span class="dv">5</span>
 <span class="kw">repeat</span>
-   a <span class="ot">=</span> a <span class="ot">+</span> <span class="dv">1</span>        <span class="co">-- executes 2 times</span>
+   a <span class="ot">=</span> a <span class="ot">+</span> <span class="dv">1</span>        <span class="do">-- executes 2 times</span>
 <span class="kw">until</span> a <span class="ot">==</span> b</code></pre></div>
 <p>break</p>
 </dd>
@@ -425,33 +425,33 @@ _1<span class="ot">,</span> _2<span class="ot">,</span> _3 <span class="ot">=</s
 <div class="sourceCode"><pre class="sourceCode stretch lua"><code class="sourceCode lua"><span class="kw">local</span> a <span class="ot">=</span> <span class="dv">1</span>
 <span class="kw">while</span> <span class="kw">true</span> <span class="kw">do</span>
     <span class="kw">break</span>
-    a <span class="ot">=</span> a <span class="ot">+</span> <span class="dv">1</span>       <span class="co">-- never executes a remains 1</span>
+    a <span class="ot">=</span> a <span class="ot">+</span> <span class="dv">1</span>       <span class="do">-- never executes a remains 1</span>
 <span class="kw">end</span></code></pre></div>
 </dd>
 </dl>
 </div><div id="control-structures-continued-1" class="slide section level2">
-<h1>Control structures continued</h1>
+<h2>Control structures continued</h2>
 <dl>
 <dt>numerical for</dt>
 <dd><p>Repeat the block until initial value passes limit incrementing by optional step size. Default step size is 1.</p>
 <div class="sourceCode"><pre class="sourceCode stretch lua"><code class="sourceCode lua"><span class="kw">local</span> a <span class="ot">=</span> <span class="dv">1</span>
 <span class="kw">for</span> u<span class="ot">=</span><span class="dv">1</span><span class="ot">,</span><span class="dv">10</span> <span class="kw">do</span>
-    a <span class="ot">=</span> u       <span class="co">-- executes 10 times (at end a == 10)</span>
+    a <span class="ot">=</span> u       <span class="do">-- executes 10 times (at end a == 10)</span>
 <span class="kw">end</span>
 <span class="kw">for</span> u<span class="ot">=</span><span class="dv">10</span><span class="ot">,</span><span class="dv">1</span><span class="ot">,-</span><span class="dv">1</span> <span class="kw">do</span>
-    a <span class="ot">=</span> u       <span class="co">-- executes 10 times (at end a == 1)</span>
+    a <span class="ot">=</span> u       <span class="do">-- executes 10 times (at end a == 1)</span>
 <span class="kw">end</span></code></pre></div>
 </dd>
 <dt>generic for</dt>
 <dd><p>The generic for loop works over functions called iterators. On each iteration, the iterator function is called to produce a new value, stopping when this new value is nil.</p>
 <div class="sourceCode"><pre class="sourceCode stretch lua"><code class="sourceCode lua"><span class="kw">local</span> a <span class="ot">=</span> <span class="dv">1</span>
 <span class="kw">for</span> k<span class="ot">,</span>v <span class="kw">in</span> <span class="fu">ipairs</span> <span class="ot">{</span><span class="dv">0</span><span class="ot">,</span><span class="dv">1</span><span class="ot">,</span><span class="dv">2</span><span class="ot">,</span><span class="dv">3</span><span class="ot">,</span><span class="dv">4</span><span class="ot">,</span><span class="dv">5</span><span class="ot">,</span><span class="dv">6</span><span class="ot">,</span><span class="dv">7</span><span class="ot">,</span><span class="dv">8</span><span class="ot">,</span><span class="dv">9</span><span class="ot">}</span> <span class="kw">do</span>
-    a <span class="ot">=</span> k <span class="ot">+</span> v       <span class="co">-- executes 10 times (at end a == 10 + 9)</span>
+    a <span class="ot">=</span> k <span class="ot">+</span> v       <span class="do">-- executes 10 times (at end a == 10 + 9)</span>
 <span class="kw">end</span></code></pre></div>
 </dd>
 </dl>
 </div><div id="extensibility-meta-table" class="slide section level2">
-<h1>Extensibility (Meta table)</h1>
+<h2>Extensibility (Meta table)</h2>
 <ul>
 <li>Can extend tables and userdata using meta tables</li>
 <li>Meta table is a plain <em>Lua</em> table</li>
@@ -467,7 +467,7 @@ _1<span class="ot">,</span> _2<span class="ot">,</span> _3 <span class="ot">=</s
 <li>The meta table mechanism is used to extend <em>Lua</em> semantically as needed.</li>
 </ul>
 </div><div id="metatable-example" class="slide section level2">
-<h1>Metatable example</h1>
+<h2>Metatable example</h2>
 <ul>
 <li>Fibber object based on some number <code>n</code></li>
 <li>Fibbers can be added or subtracked</li>
@@ -502,11 +502,11 @@ _1<span class="ot">,</span> _2<span class="ot">,</span> _3 <span class="ot">=</s
 <span class="kw">local</span> f2 <span class="ot">=</span> makeFibber<span class="ot">(</span><span class="dv">5</span><span class="ot">)</span>
 <span class="kw">local</span> f3 <span class="ot">=</span> makeFibber<span class="ot">(</span><span class="dv">100</span><span class="ot">)</span>
 <span class="kw">local</span> f4 <span class="ot">=</span> <span class="ot">(</span>f3 <span class="ot">+</span> f2 <span class="ot">-</span> f1<span class="ot">)</span>
-<span class="co">-- The 95th fibonacci is 3.194043463499e+019</span>
+<span class="do">-- The 95th fibonacci is 3.194043463499e+019</span>
 <span class="fu">print</span> <span class="ot">(</span><span class="st">&quot;The &quot;</span> <span class="ot">..</span> f4<span class="ot">.</span>n <span class="ot">..</span> <span class="st">&quot;nth fibonacci number is &quot;</span> <span class="ot">..</span> f4<span class="ot">())</span></code></pre></div>
 </div>
 <div id="addons" class="titleslide slide section level1"><h1>Addons</h1></div><div id="iup" class="slide section level2">
-<h1>IUP</h1>
+<h2>IUP</h2>
 <ul>
 <li>Cross platform native GUI toolkit.</li>
 <li>Supports declarative way of GUI definition.</li>
@@ -554,7 +554,7 @@ dlg <span class="ot">=</span> iup<span class="ot">.</span>dialog
 <span class="ot">}</span>
 dlg:popup<span class="ot">()</span></code></pre></div>
 </div><div id="cosmo" class="slide section level2">
-<h1>Cosmo</h1>
+<h2>Cosmo</h2>
 <ul>
 <li>Cosmo is a “safe templates” engine.</li>
 <li>It allows you to fill nested templates.</li>
@@ -566,17 +566,17 @@ mycards <span class="ot">=</span> <span class="ot">{</span> <span class="ot">{</
           <span class="ot">,</span> <span class="ot">{</span>rank<span class="ot">=</span><span class="st">&quot;10&quot;</span><span class="ot">,</span> suit<span class="ot">=</span><span class="st">&quot;Hearts&quot;</span><span class="ot">}</span> 
           <span class="ot">}</span> 
 template <span class="ot">=</span> <span class="st">&quot;$do_cards[[$rank of $suit, ]]&quot;</span>
-<span class="co">-- prints Ace of Spades, Queen of Diamonds, 10 of Hearts,</span>
+<span class="do">-- prints Ace of Spades, Queen of Diamonds, 10 of Hearts,</span>
 <span class="fu">print</span> <span class="ot">(</span>cosmo<span class="ot">.</span>fill<span class="ot">(</span>template<span class="ot">,</span> <span class="ot">{</span>do_cards <span class="ot">=</span> mycards<span class="ot">}))</span></code></pre></div>
 </div><div id="penlight" class="slide section level2">
-<h1>Penlight</h1>
+<h2>Penlight</h2>
 <ul>
 <li>Your batteries for general development</li>
 <li>Adds support for functional style</li>
 </ul>
 <div class="sourceCode"><pre class="sourceCode stretch lua"><code class="sourceCode lua"><span class="kw">local</span> List <span class="ot">=</span> <span class="fu">require</span> <span class="st">'pl.List'</span>  
 <span class="kw">local</span> func <span class="ot">=</span> <span class="fu">require</span> <span class="st">'pl.func'</span>  
-<span class="fu">print</span> <span class="ot">(</span>List<span class="ot">{</span><span class="dv">10</span><span class="ot">,</span><span class="dv">20</span><span class="ot">,</span><span class="dv">30</span><span class="ot">}</span>:map<span class="ot">(</span>_1<span class="ot">+</span><span class="dv">1</span><span class="ot">)</span>:reduce <span class="st">'+'</span><span class="ot">)</span> <span class="co">-- prints 63</span></code></pre></div>
+<span class="fu">print</span> <span class="ot">(</span>List<span class="ot">{</span><span class="dv">10</span><span class="ot">,</span><span class="dv">20</span><span class="ot">,</span><span class="dv">30</span><span class="ot">}</span>:map<span class="ot">(</span>_<span class="dv">1</span><span class="ot">+</span><span class="dv">1</span><span class="ot">)</span>:reduce <span class="st">'+'</span><span class="ot">)</span> <span class="do">-- prints 63</span></code></pre></div>
 <ul>
 <li>Standard class system using meta tables</li>
 </ul>
@@ -597,7 +597,7 @@ template <span class="ot">=</span> <span class="st">&quot;$do_cards[[$rank of $s
 
  class<span class="ot">.</span>Cat<span class="ot">(</span>Animal<span class="ot">)</span>
  <span class="kw">function</span> Cat:_init<span class="ot">(</span>name<span class="ot">,</span>breed<span class="ot">)</span>
-     self:super<span class="ot">(</span>name<span class="ot">)</span>  <span class="co">-- must init base!</span>
+     self:super<span class="ot">(</span>name<span class="ot">)</span>  <span class="do">-- must init base!</span>
      self<span class="ot">.</span>breed <span class="ot">=</span> breed
  <span class="kw">end</span>
  <span class="kw">function</span> Cat:speak<span class="ot">()</span>
@@ -607,12 +607,12 @@ template <span class="ot">=</span> <span class="st">&quot;$do_cards[[$rank of $s
 fido <span class="ot">=</span> Dog<span class="ot">(</span><span class="st">'Fido'</span><span class="ot">)</span>
 felix <span class="ot">=</span> Cat<span class="ot">(</span><span class="st">'Felix'</span><span class="ot">,</span><span class="st">'Tabby'</span><span class="ot">)</span>
 
-<span class="fu">print</span><span class="ot">(</span>fido<span class="ot">,</span>felix<span class="ot">)</span>        <span class="co">-- Fido: bark Felix: meow</span>
-<span class="fu">print</span><span class="ot">(</span>felix:is_a<span class="ot">(</span>Animal<span class="ot">)</span> <span class="co">-- true</span>
-<span class="fu">print</span><span class="ot">(</span>felix:is_a<span class="ot">(</span>Dog<span class="ot">))</span>   <span class="co">-- false</span>
-<span class="fu">print</span><span class="ot">(</span>felix:is_a<span class="ot">(</span>Cat<span class="ot">))</span>   <span class="co">-- true</span></code></pre></div>
+<span class="fu">print</span><span class="ot">(</span>fido<span class="ot">,</span>felix<span class="ot">)</span>        <span class="do">-- Fido: bark Felix: meow</span>
+<span class="fu">print</span><span class="ot">(</span>felix:is_a<span class="ot">(</span>Animal<span class="ot">)</span> <span class="do">-- true</span>
+<span class="fu">print</span><span class="ot">(</span>felix:is_a<span class="ot">(</span>Dog<span class="ot">))</span>   <span class="do">-- false</span>
+<span class="fu">print</span><span class="ot">(</span>felix:is_a<span class="ot">(</span>Cat<span class="ot">))</span>   <span class="do">-- true</span></code></pre></div>
 </div><div id="metalua" class="slide section level2">
-<h1>MetaLua</h1>
+<h2>MetaLua</h2>
 <ul>
 <li>Static meta programming system for Lua</li>
 <li>Alter compilation process in arbitrary, powerful and maintainable ways</li>
@@ -624,10 +624,10 @@ felix <span class="ot">=</span> Cat<span class="ot">(</span><span class="st">'Fe
 </ul>
 <div class="sourceCode"><pre class="sourceCode stretch lua"><code class="sourceCode lua"><span class="ot">-{</span>extension <span class="st">&quot;clist&quot;</span><span class="ot">}</span>
 
-<span class="co">-- integers from 2 to 50, by steps of 2:</span>
+<span class="do">-- integers from 2 to 50, by steps of 2:</span>
 x <span class="ot">=</span> <span class="ot">{</span> i <span class="kw">for</span> i <span class="ot">=</span> <span class="dv">2</span><span class="ot">,</span> <span class="dv">50</span><span class="ot">,</span> <span class="dv">2</span> <span class="ot">}</span>
 
-<span class="co">-- the same, obtained by filtering over all integers &lt;= 50:</span>
+<span class="do">-- the same, obtained by filtering over all integers &lt;= 50:</span>
 y <span class="ot">=</span> <span class="ot">{</span> i <span class="kw">for</span> i <span class="ot">=</span> <span class="dv">1</span><span class="ot">,</span> <span class="dv">50</span> <span class="kw">if</span> i%<span class="dv">2</span><span class="ot">==</span><span class="dv">0</span> <span class="ot">}</span>
 
 
@@ -643,14 +643,14 @@ match <span class="ot">{</span> <span class="ot">{</span> <span class="st">'o'</
 <span class="kw">end</span></code></pre></div>
 </div>
 <div id="how-do-we-use-it" class="titleslide slide section level1"><h1>How do we use it</h1></div><div id="build-automation" class="slide section level2">
-<h1>Build Automation</h1>
+<h2>Build Automation</h2>
 <ul>
 <li>Scripts to pull repository version info into builds</li>
 <li>Scripts to generate project skeletons</li>
 <li>Scripts to generate code</li>
 </ul>
 </div><div id="data-definition-language" class="slide section level2">
-<h1>Data definition language</h1>
+<h2>Data definition language</h2>
 <ul>
 <li>Instead of writing a compiler</li>
 <li>We defined a DSL based on <em>Lua</em> tables</li>
@@ -689,7 +689,7 @@ match <span class="ot">{</span> <span class="ot">{</span> <span class="st">'o'</
  <span class="ot">};</span>
 <span class="ot">};</span></code></pre></div>
 </div><div id="data-description-language" class="slide section level2">
-<h1>Data description language</h1>
+<h2>Data description language</h2>
 <ul>
 <li>We have component hierarchies which can be serialized as XML, binary etc.</li>
 <li>XML is not human write friendly</li>
@@ -699,18 +699,18 @@ match <span class="ot">{</span> <span class="ot">{</span> <span class="st">'o'</
 <li>Still have full power of <em>Lua</em> where needed</li>
 </ul>
 <div class="sourceCode"><pre class="sourceCode stretch lua"><code class="sourceCode lua">fli_data<span class="ot">.</span>ScopeModelCreate<span class="ot">()</span>
-<span class="kw">local</span> DoNotRegister <span class="ot">=</span> <span class="kw">true</span>  <span class="co">-- Do not register with fli::data::CManager</span>
+<span class="kw">local</span> DoNotRegister <span class="ot">=</span> <span class="kw">true</span>  <span class="do">-- Do not register with fli::data::CManager</span>
 
-<span class="co">-----------------------------------------------------</span>
-<span class="co">-- Scenario world</span>
-<span class="co">-----------------------------------------------------</span>
-<span class="co">-- Define the whole world for the scenario defining which extensions the world has as well as all the entities which are</span>
-<span class="co">-- present in the world. </span>
+<span class="do">-----------------------------------------------------</span>
+<span class="do">-- Scenario world</span>
+<span class="do">-----------------------------------------------------</span>
+<span class="do">-- Define the whole world for the scenario defining which extensions the world has as well as all the entities which are</span>
+<span class="do">-- present in the world. </span>
 <span class="kw">return</span> Root<span class="ot">(</span>fli__ent__DWorld<span class="ot">(</span><span class="st">&quot;World&quot;</span><span class="ot">),</span> DoNotRegister<span class="ot">)</span>
 <span class="ot">{</span>
     Extensions <span class="ot">=</span>
     <span class="ot">{</span>
-        <span class="co">-- Extension that defines information related to the scenario but not a specific entity</span>
+        <span class="do">-- Extension that defines information related to the scenario but not a specific entity</span>
         fli__ent__DScenarioInfo
         <span class="ot">{</span>
             Name <span class="ot">=</span> <span class="st">&quot;Tutorial_03_SimpleVehicle&quot;</span><span class="ot">;</span>     
