@@ -158,10 +158,55 @@ fst (<span class="dv">0</span>, square (<span class="dv">5</span> <span class="f
 <section><section id="the-good-the-bad-and-the-smugly" class="titleslide slide level1"><h1>The Good, The Bad and The Smugly</h1></section><section id="the-good-and-bad" class="slide level2">
 <h2>The Good and Bad</h2>
 <div style="width: 50%;float: left;">
-<p>### Pros * More efficient ? * This is a red herring. * It could be or it couldn’t. * Modularity! * This is the real reason * John Hughes - <a href="http://www.cs.kent.ac.uk/people/staff/dat/miranda/whyfp90.pdf" title="Why Functional Programming Matters">Why Functional Programming Matters</a> * Glue allowing composition of functional programs * Efficient tricks for pure languages. * Again ? Contradiction ? Nope. * Memoization preserving purity and abstraction. * Caching preserving purity and abstraction.</p>
+<h3>
+Pros
+</h3>
+<ul>
+<li>More efficient ?
+<ul>
+<li>This is a red herring.</li>
+<li>It could be or it couldn’t.</li>
+</ul></li>
+<li>Modularity!
+<ul>
+<li>This is the real reason</li>
+<li>John Hughes - <a href="http://www.cs.kent.ac.uk/people/staff/dat/miranda/whyfp90.pdf" title="Why Functional Programming Matters">Why Functional Programming Matters</a></li>
+<li>Glue allowing composition of functional programs</li>
+</ul></li>
+<li>Efficient tricks for pure languages.
+<ul>
+<li>Again ? Contradiction ? Nope.</li>
+<li>Memoization preserving purity and abstraction.</li>
+<li>Caching preserving purity and abstraction.</li>
+</ul></li>
+</ul>
 </div>
 <div style="width: 50%;float: right;">
-<p>### Cons * Difficult to reason about time and space usage. * Time ? Not sold. * Lazy O(n) &lt;= Eager O(n) * When is the cost? Latency is a concern. * Space ? * Unfortunately yes. * The dreaded space leak. * Parallel unfriendly * Doing work in parallel means doing the work in parallel. * Have to force work to be done. * Only an issue if you believe in automagic parallelization. * See <a href="httP://http://community.haskell.org/~simonmar/pcph/" title="Parallel and Concurrent Programming in Haskell: Techniques for Multicore and Multithreaded Programming">Parallel and Concurrent Programming in Haskell</a></p>
+<h3>
+Cons
+</h3>
+<ul>
+<li>Difficult to reason about time and space usage.
+<ul>
+<li>Time ? Not sold.
+<ul>
+<li>Lazy O(n) &lt;= Eager O(n)</li>
+<li>When is the cost? Latency is a concern.</li>
+</ul></li>
+<li>Space ?
+<ul>
+<li>Unfortunately yes.</li>
+<li>The dreaded space leak.</li>
+</ul></li>
+</ul></li>
+<li>Parallel unfriendly
+<ul>
+<li>Doing work in parallel means doing the work in parallel.</li>
+<li>Have to force work to be done.</li>
+<li>Only an issue if you believe in automagic parallelization.</li>
+<li>See <a href="httP://http://community.haskell.org/~simonmar/pcph/" title="Parallel and Concurrent Programming in Haskell: Techniques for Multicore and Multithreaded Programming">Parallel and Concurrent Programming in Haskell</a></li>
+</ul></li>
+</ul>
 </div>
 <aside class="notes">
 
