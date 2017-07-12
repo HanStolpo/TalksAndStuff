@@ -164,7 +164,9 @@ The Good and Bad
 -------------------------------------
 
 <div style="width: 50%;float: left;">
-### Pros
+
+<h3> Pros </h3>
+
 * More efficient ? 
     * This is a red herring.
     * It could be or it couldn't. 
@@ -179,7 +181,9 @@ The Good and Bad
 </div>
 
 <div style="width: 50%;float: right;">
-### Cons
+
+<h3> Cons </h3>
+
 * Difficult to reason about time and space usage.
     * Time ? Not sold.
         * Lazy O(n) <= Eager O(n)
