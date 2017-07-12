@@ -1,3 +1,5 @@
+#! /usr/bin/env nix-shell
+#! nix-shell -i runghc
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards   #-}
 import Prelude ()
