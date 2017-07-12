@@ -1,7 +1,7 @@
 ---
 title: Adventures with the purely functional OS NixOS
 author: Handré Stolp
-date: November 23, 2015
+date: July 10, 2017
 slideLevel: 1
 incremental: true
 slideVariant: RevealJsSlides
@@ -1208,6 +1208,42 @@ let
 in import ./default.nix {inherit (pkgs) stdenv fetchurl;}
 ```
 </section>
+
+
+How We Use It at Work
+=============
+<div>
+* we all run NixOS either natively or in a VM
+* We develop and deploy our Haskell code using Nix
+* We deploy to Heroku using Nix and Hydra
+* We setup our **Node.js** and **Elm** development environments using **Nix**
+</div>
+
+Final thoughts
+=============
+
+<section>
+<div>
+* There is much more, we have only scratched the surface
+* The documentation is good and getting better [https://nixos.org]()
+    * You can actually search configuration attributes
+    * You can search packages too
+    * **Arch Linux**'s Wiki is really helpful too.
+* Your are not limited to packages build from source, third party binaries are installable
+    * using `patchelf` or
+    * emulating `FHS`
+</div>
+</section>
+
+<section>
+<div>
+* It is really nice if you want a slightly unconventional setup (**XMonad**)
+* It makes it easier to experiment with new hardware like  I'll supported laptops.
+    * Easily iterate configurations tills something works without worrying about bricking it
+* When your laptop gets stolen its really nice to get back up and running quickly
+</div>
+</section>
+
 
 <div class="notes">
 [an-alternative-explaination-of-nix]: http://sandervanderburg.blogspot.co.za/2012/11/an-alternative-explaination-of-nix.html
