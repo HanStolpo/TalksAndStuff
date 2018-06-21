@@ -1,0 +1,1566 @@
+<!doctype html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+
+    <title>Adventures with the purely functional OS NixOS</title>
+
+    <!-- reveal js -->
+    <link rel="stylesheet" href="../css/reveal.css">
+    
+    <link rel="stylesheet" href="../css/theme/night.css" id="theme">
+    
+
+    <!-- Code syntax highlighting -->
+    <link rel="stylesheet" type="text/css" href="../css/highlighting.css" />
+
+    <!--[if lt IE 9]>
+    <script src="../lib/js/html5shiv.js"></script>
+    <![endif]-->
+
+  </head>
+
+  <body>
+    <div class="reveal">
+      <div class="slides">
+<style>
+  .customize-slides h1{
+    text-transform:initial;
+    font-size: 200%;
+  }
+  section.move-up>div:nth-child(2){
+    margin-top: -100px;
+  }
+  section.move-up-sub>div:first-child{
+    margin-top: -50px;
+  }
+  .reveal section img.transparent-background{
+    background:transparent;
+    border:none;
+    box-shadow:none;
+  }
+
+  div.sourceCode>pre.sourceCode{
+    /*background:rgba(00, 00, 00, 0.5);*/
+  }
+
+  code{
+    background:rgba(00, 00, 00, 0.5);
+  }
+
+  /*section.indent-body-2{
+    padding-left: 50px;
+    padding-right: 50px;
+  }*/
+  /*
+  .smaller-list li{
+    font-size:smaller;
+  }
+  .smaller-list p{
+    font-size:smaller;
+  }*/
+  section.smaller-list div{
+    font-size:smaller;
+  }
+  section.smaller-list-items div{
+    font-size:smaller;
+  }
+</style>
+<style>
+  /* .reveal section {
+    font-size: 0.65em;
+  } */
+  .reveal section.smaller-header h1
+  {
+    font-size: 1.5em;
+    margin-top: -30px;
+  }
+  .reveal section.smaller-header h2
+  {
+    font-size: 1.5em;
+    margin-top: -30px;
+  }
+</style>
+<section data-background-color="#424284" data-background-image="../images/nix-wallpaper-mosaic-blue.png" data-background-size="110% 110%">
+<div>
+<h1 style="text-transform:initial;font-size:200%">
+Adventures with the purely functional OS
+</h1>
+</div>
+<div>
+<image class="transparent-background" src="../images/nixos.svg"></image>
+</div>
+</section>
+<section id="nixos-ecology-tersely" class="level1 move-up" data-state="customize-slides" data-background-size="110% 110%" data-background-image="../images/nix-wallpaper-mosaic-blue.png" data-background-color="#424284">
+<h1>NixOS Ecology <span style="font-variant:small-caps;font-size:70%;line-height:0.1;vertical-align:text-top"> <br /> tersely </span></h1>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p><strong>NixOS</strong> is a Linux distribution based on the Nix package manager</p>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p><strong>Nix</strong> supports Linux, OS X and FreeBSD</p>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p><strong>Nix</strong> uses the purely functional <strong>Nix Expression</strong> language to define packages</p>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p><strong>NixOps</strong> uses <strong>Nix</strong> to deploy <strong>NixOS</strong> based infrastructure to Amazon Web Services, Google Cloud Platform, VirtualBox, Hetzner and NixOS containers</p>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p><strong>DisNix</strong> uses <strong>Nix</strong> to deploy distributed services</p>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p><strong>Hydra</strong> is a continuous integration and build cache server for <strong>Nix</strong></p>
+</div>
+</section>
+<section id="if-i-told-you-with-nixos" class="level1" data-state="customize-slides" data-background-size="110% 110%" data-background-image="../images/nix-wallpaper-mosaic-blue.png" data-background-color="#424284">
+<h1>If I told you with NixOS</h1>
+<section>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p>For those that come from <em>Windows</em>, there are no software installers</p>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p>For those from <em>OS X</em>, there is no <em>App Store</em></p>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p>For those from <em>Linux</em>, it is not <em>FHS</em> compliant <br /> no <code>/sbin</code> <code>/lib</code> <code>/lib64</code> <code>/usr/local</code> <code>/usr/lib</code> … <br /> <code>/etc</code> off limits <br /> only <code>/bin/sh</code> and <code>/usr/bin/env</code></p>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p>In general you can’t install arbitrary applications or libraries from the internet</p>
+</div>
+</section>
+<section>
+<div>
+<p>You have to learn the <em>Nix Expression</em> language</p>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p>You may have to learn a little bit about purely functional programming</p>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p>If you get stuck you can’t just get the answer on <em>AskUbuntu</em></p>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p>You may have to add packages to the package manager</p>
+</div>
+</section>
+</section>
+<section id="you-might-ask" class="level1" data-background-size="110% 110%" data-background-image="../images/nix-wallpaper-mosaic-blue.png" data-background-color="#424284" data-state="&quot;&quot;">
+<h1>You might ask</h1>
+<div>
+<p><img src="../images/you-mad.gif" title="You mad gif" /></p>
+</div>
+</section>
+<section id="the-answer-is" class="level1" data-state="customize-slides" data-background-size="110% 110%" data-background-image="../images/nix-wallpaper-mosaic-blue.png" data-background-color="#424284">
+<h1>The answer is</h1>
+<div style="display: flex">
+<div>
+<p>We do these things not because they are easy, but because they are hard</p>
+</div>
+<div>
+<p><img src="../images/JFK.svg" title="JFK" class="transparent-background" width="500" /></p>
+</div>
+</div>
+<div class="fragment fade-in" style="display: flex">
+<div>
+<p><img src="../images/earthtothemoon-1922.svg" title="earthtothemoon-1922" class="transparent-background" style="position:absolute; top:40%; left:20%" width="250" /></p>
+</div>
+<div style="width:50%;margin-left:30%;">
+<p>and because it makes the impossibly difficult easily possible</p>
+</div>
+</div>
+</section>
+<section id="the-nix-package-manager" class="level1" data-state="customize-slides" data-background-size="110% 110%" data-background-image="../images/nix-wallpaper-mosaic-blue.png" data-background-color="#424284">
+<h1>The Nix Package Manager</h1>
+<section>
+</section>
+<section>
+<div>
+<p>There is an excellent explanation of what the <strong>Nix</strong> package manager is on <em>Sander van der Burg</em>’s blog <a href>http://sandervanderburg.blogspot.co.za/2012/11/an-alternative-explaination-of-nix.html</a></p>
+<p>and what follows is directly based on that</p>
+</div>
+</section>
+<section>
+<!--
+<div class="notes">
+
+[Directly from Sander's blog][an-alternative-explaination-of-nix]
+</div>
+-->
+<div>
+<p>Tools to automate <strong>installing</strong>, <strong>upgrading</strong>, <strong>configuring</strong>, and <strong>removing</strong> software packages</p>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<div class="line-block">It borrows concepts from<br />
+<strong>purely functional</strong> programming languages<br />
+to make <strong>deployment</strong><br />
+<strong>reliable</strong>, <strong>reproducible</strong> and <strong>efficient</strong></div>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p>Was initiated by <strong>Eelco Dolstra</strong> as part of his <em>PhD</em> research</p>
+</div>
+</section>
+<section>
+<div style="margin-top:-40px">
+<h4 style="font-variant:small-caps;">
+Purely functional programming languages
+</h4>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p>Functions are found in many programming languages</p>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p>But they are usually not the same as functions in mathematics</p>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<div class="line-block">Leibnz’ principal<br />
+<code>𝑥 ＝ 𝑦 ⇒ ⨍⟮𝑥⟯ ＝ ⨍⟮𝑦⟯</code><br />
+if two function arguments are identical<br />
+then two function applications are too</div>
+</div>
+</section>
+<section>
+<div style="margin-top:-40px">
+<h4 style="font-variant:small-caps;">
+Purely functional programming languages are not
+</h4>
+</div>
+<div style="display:flex;flex-direction:row;align-items:center;">
+<div style="width:55%;text-align:left">
+<p>This <code>C</code> code</p>
+<div class="sourceCode" id="cb1" data-background-color="#424284"><pre class="sourceCode c"><code class="sourceCode c"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="dt">int</span> v = <span class="dv">0</span>;</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="dt">int</span> add(<span class="dt">int</span> a)</a>
+<a class="sourceLine" id="cb1-4" data-line-number="4">{</a>
+<a class="sourceLine" id="cb1-5" data-line-number="5">    v = v + a;</a>
+<a class="sourceLine" id="cb1-6" data-line-number="6">    <span class="cf">return</span> v;</a>
+<a class="sourceLine" id="cb1-7" data-line-number="7">}</a>
+<a class="sourceLine" id="cb1-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb1-9" data-line-number="9"><span class="dt">int</span> main()</a>
+<a class="sourceLine" id="cb1-10" data-line-number="10">{</a>
+<a class="sourceLine" id="cb1-11" data-line-number="11">    <span class="dt">int</span> p = add(<span class="dv">1</span>); <span class="co">/*1*/</span></a>
+<a class="sourceLine" id="cb1-12" data-line-number="12">    <span class="dt">int</span> q = add(<span class="dv">1</span>); <span class="co">/*2*/</span></a>
+<a class="sourceLine" id="cb1-13" data-line-number="13">}</a></code></pre></div>
+</div>
+<div>
+<p class="fragment fade-in fade-bottom" style="text-align:left">
+does not obey the Leibnz’ principal
+</p>
+<p class="fragment fade-in fade-bottom" style="text-align:left">
+because it allows side-effects to be programmed
+</p>
+<p class="fragment fade-in fade-bottom" style="text-align:left">
+meaning it lacks referential transparency
+</p>
+<p class="fragment fade-in fade-bottom" style="text-align:left">
+so function application cannot be replaced by its result
+</p>
+</div>
+</div>
+</section>
+<section class="indent-body-2">
+<div style="margin-top:-40px">
+<h4 style="font-variant:small-caps;">
+Purely functional programming languages
+</h4>
+</div>
+<div style="text-align:left">
+Obey the Leibnz’ principal
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<div class="line-block">The result of function <strong>application</strong><br />
+depends only on its <strong>definition</strong><br />
+and its <strong>arguments</strong></div>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p>Side-effects are not allowed to be programmed (they are pure)</p>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p>No variables, only identifiers to immutable objects</p>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p>This all means they are referential transparent</p>
+</div>
+</section>
+<section class="indent-body-2">
+<div style="margin-top:-40px">
+<h4 style="font-variant:small-caps;">
+Purely functional programming languages
+</h4>
+</div>
+<div style="text-align:left">
+Are often <strong>lazy</strong>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p>So expression only get evaluated when needed</p>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p>Allows <strong>tying the knot</strong>, used for cyclic data structures while retaining purity</p>
+</div>
+</section>
+<section class="indent-body-2">
+<div style="margin-top:-40px">
+<h4 style="font-variant:small-caps;">
+Purely functional programming languages which are lazy
+</h4>
+</div>
+<div style="text-align:left">
+Have <strong>benefits</strong>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p>Results of <strong>evaluation</strong> can be <strong>cached</strong></p>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p><strong>Evaluation</strong> only happens <strong>when</strong> the result is <strong>required</strong></p>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p>Referential transparency gives determinism allowing <strong>parallel evaluation</strong></p>
+</div>
+</section>
+<section>
+<div style="margin-top:-40px">
+<h4 style="font-variant:small-caps;">
+Purely functional package management
+</h4>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p>Treat deployment of packages as a function in a programming language</p>
+</div>
+</section>
+<section class="indent-body-2">
+<div style="margin-top:-40px">
+<h4 style="font-variant:small-caps;">
+Conventional package management
+</h4>
+</div>
+<div style="text-align:left">
+In conventional package mangers
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p>A <em>“function”</em> is representative of imperative languages like <em>C</em></p>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p>Execution can destructively modify other packages</p>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<div class="line-block">Files <strong>installed</strong> in <strong>global locations</strong> (like <code>/usr/lib</code>),<br />
+so <strong>dependencies</strong> could be found <strong>without being declared</strong> and<br />
+its <strong>difficult</strong> for <strong>multiple version</strong> of a package to <strong>co-exist</strong></div>
+</div>
+</section>
+<section class="indent-body-2">
+<div style="margin-top:-40px">
+<h4 style="font-variant:small-caps;">
+Purely functional package management
+</h4>
+</div>
+<div style="text-align:left">
+In Nix
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<div class="line-block">A <strong>build recipe</strong> / <strong>derivation</strong> is<br />
+a <strong>function</strong> that describes <strong>how to build</strong> an artefact<br />
+being invoked with its <strong>required dependencies as arguments</strong></div>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<div class="line-block"><strong>Build recipes</strong> defined with the <strong>Nix Expression DSL</strong><br />
+(which is a lazy purely functional language)</div>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p><strong>Build recipes</strong> are run in <strong>isolated environments limiting</strong> chances of <strong>side effects</strong></p>
+</div>
+</section>
+<section class="indent-body-2">
+<div style="margin-top:-40px">
+<h4 style="font-variant:small-caps;">
+Purely functional package management
+</h4>
+</div>
+<div style="text-align:left">
+In Nix
+</div>
+<div>
+<p>The <strong>result</strong> of each build is <strong>stored</strong> in a <strong>unique separate location</strong></p>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p>The <strong>storage</strong> locations are <strong>immutable</strong></p>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<div class="line-block">The storage <strong>identity</strong> is a <strong>cryptographic hash</strong><br />
+derived from all the <strong>inputs of the function</strong></div>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p><strong>Unique locations</strong> give better <strong>guarantees against implicit dependencies</strong> sneaking through</p>
+</div>
+</section>
+<section class="indent-body2">
+<div style="margin-top:-40px">
+<h4 style="font-variant:small-caps;">
+Purely functional package management
+</h4>
+</div>
+<div style="text-align:left;">
+This means in Nix
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p>You get <strong>determinism</strong>, the same package is the same where or when ever you install it</p>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p>You can have <strong>multiple versions</strong> of packages <strong>co-existing</strong></p>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p>You can <strong>safely upgrade</strong> any package and <strong>always rollback</strong> an upgrade</p>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p>You can <strong>in-place upgrade</strong> packages</p>
+</div>
+</section>
+</section>
+<section id="nixos" class="level1" data-state="customize-slides" data-background-size="110% 110%" data-background-image="../images/nix-wallpaper-mosaic-blue.png" data-background-color="#424284">
+<h1>NixOS</h1>
+<section>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p><strong>NixOS</strong> is a GNU/Linux distribution built around the <strong>Nix</strong> package manager</p>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p>It builds on <strong>Nix</strong> using the <strong>Nix Expression</strong> DSL to <strong>declaratively define</strong> every component including the <strong>kernel</strong> and <strong>configuration files</strong></p>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p>It uses <strong>systemd</strong> for services which are declaratively defined using the <strong>Nix Expression</strong> DSL.</p>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<div class="line-block">It uses a <strong>source based</strong> model <strong>with binaries</strong>,<br />
+that is cached binaries are used instead of building from source when possible</div>
+</div>
+</section>
+<section>
+<div>
+<div class="line-block"><strong>NixOS</strong> gives you determinism;<br />
+the same configuration builds the same machine no matter when or where</div>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p><strong>NixOS</strong> is gives you <strong>relaible atomic upgrades</strong></p>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p><strong>NixOS</strong> allows you to always <strong>rollback</strong> any changes</p>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p><strong>NixOS</strong> allows you to <strong>safely live upgrade</strong> your system</p>
+</div>
+</section>
+</section>
+<section id="nix-expression-language" class="level1" data-state="customize-slides" data-background-size="110% 110%" data-background-image="../images/nix-wallpaper-mosaic-blue.png" data-background-color="#424284">
+<h1>Nix Expression Language</h1>
+<section>
+<div style="margin-top:-40px">
+<h4 style="font-variant:small-caps;">
+It is a pure, lazy, functional language
+</h4>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p>Purity means no side-effects (e.g. no variable assignment)</p>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p>Laziness means function arguments are only evaluated when needed</p>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p>Functional means functions are first class and can be passed around and manipulated</p>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p>The language is not full-featured and general purpose</p>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p>Its aim is describing packages, compositions of packages and variability within packages</p>
+</div>
+</section>
+<section>
+<div style="margin-top:-40px">
+<h4 style="font-variant:small-caps;">
+Comments
+</h4>
+</div>
+<div>
+<div class="line-block">Comments can be<br />
+single-line, started with a <code>#</code> character, or<br />
+inline/multi-line, enclosed within <code>/* ... */</code></div>
+<div class="sourceCode" id="cb2" data-background-color="#424284"><pre class="sourceCode nix"><code class="sourceCode bash"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="co"># this is a line comment</span></a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="ex">/*</span> this</a>
+<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="ex">is</span> a multiline comment */</a></code></pre></div>
+</div>
+</section>
+<section>
+<div style="margin-top:-40px">
+<h4 style="font-variant:small-caps;">
+Simple Values
+</h4>
+</div>
+<div style="margin-top:-30px">
+<ul class="incremental">
+<li>The null value <code>null</code></li>
+<li>Integers <code>1234</code></li>
+<li>Booleans <code>true</code> and <code>false</code></li>
+<li>Strings</li>
+</ul>
+<div class="sourceCode" id="cb3" data-background-color="#424284"><pre class="sourceCode nix"><code class="sourceCode bash"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="st">&quot;single line string&quot;</span></a>
+<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="st">''</span></a>
+<a class="sourceLine" id="cb3-3" data-line-number="3">  <span class="ex">First</span> line of a multiline string.</a>
+<a class="sourceLine" id="cb3-4" data-line-number="4">  <span class="ex">Second</span> line</a>
+<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="st">''</span></a>
+<a class="sourceLine" id="cb3-6" data-line-number="6"><span class="st">&quot;this is an </span><span class="va">${antiquote}</span><span class="st"> in a string&quot;</span></a></code></pre></div>
+<ul class="incremental">
+<li>as a convenience URIs don’t need quotes</li>
+</ul>
+<div class="sourceCode" id="cb4" data-background-color="#424284"><pre class="sourceCode nix"><code class="sourceCode bash"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="ex">http</span>://example.org/foo.tar.bz2</a></code></pre></div>
+<ul class="incremental">
+<li>Paths <code>/bin/sh</code> or <code>./builder.sh</code></li>
+</ul>
+</div>
+</section>
+<section>
+<div style="margin-top:-40px">
+<h4 style="font-variant:small-caps;">
+Lists
+</h4>
+</div>
+<div>
+<div class="sourceCode" id="cb5" data-background-color="#424284"><pre class="sourceCode nix"><code class="sourceCode bash"><a class="sourceLine" id="cb5-1" data-line-number="1">[<span class="ex">123</span> ./foo.nix <span class="st">&quot;abc&quot;</span> (f {x = y<span class="kw">;</span>}) ]</a></code></pre></div>
+<ul class="incremental">
+<li>heterogeneous list</li>
+<li>white space delimited list of values</li>
+<li>enclosed by square brackets</li>
+</ul>
+</div>
+</section>
+<section>
+<div style="margin-top:-40px">
+<h4 style="font-variant:small-caps;">
+Sets
+</h4>
+</div>
+<div>
+<div class="sourceCode" id="cb6" data-background-color="#424284"><pre class="sourceCode nix"><code class="sourceCode bash"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw">{</span> <span class="ex">x</span> = 123<span class="kw">;</span></a>
+<a class="sourceLine" id="cb6-2" data-line-number="2">  <span class="ex">text</span> = <span class="st">&quot;Hello&quot;</span><span class="kw">;</span></a>
+<a class="sourceLine" id="cb6-3" data-line-number="3">  <span class="ex">y</span> = f { bla = 456<span class="kw">;</span> <span class="kw">}</span>;</a>
+<a class="sourceLine" id="cb6-4" data-line-number="4">}</a></code></pre></div>
+<ul class="incremental">
+<li>heterogeneous dictionary</li>
+<li>list of name value pairs called attributes</li>
+<li>delimited by semicolon</li>
+<li>enclosed by curly brackets</li>
+<li>attributes selected using <code>.</code></li>
+</ul>
+<div class="sourceCode" id="cb7" data-background-color="#424284"><pre class="sourceCode nix"><code class="sourceCode bash"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw">{</span> <span class="ex">a</span> = <span class="st">&quot;Foo&quot;</span><span class="kw">;</span> <span class="ex">b</span> = <span class="st">&quot;Bar&quot;</span><span class="kw">;</span> <span class="kw">}</span><span class="ex">.a</span></a></code></pre></div>
+<ul class="incremental">
+<li>in recursive sets elements can refer to each other</li>
+</ul>
+<div class="sourceCode" id="cb8" data-background-color="#424284"><pre class="sourceCode nix"><code class="sourceCode bash"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="ex">rec</span> {x = y<span class="kw">;</span> <span class="ex">y</span> = 123<span class="kw">;</span>}<span class="ex">.x</span> == 123</a></code></pre></div>
+</div>
+</section>
+<section>
+<div style="margin-top:-40px">
+<h4 style="font-variant:small-caps;">
+Let-expressions
+</h4>
+</div>
+<div>
+<p>Allows you to introduce local variables for an expression</p>
+<div class="sourceCode" id="cb9" data-background-color="#424284"><pre class="sourceCode nix"><code class="sourceCode bash"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="bu">let</span></a>
+<a class="sourceLine" id="cb9-2" data-line-number="2">  <span class="ex">x</span> = <span class="st">&quot;foo&quot;</span><span class="kw">;</span></a>
+<a class="sourceLine" id="cb9-3" data-line-number="3">  <span class="ex">y</span> = <span class="st">&quot;bar&quot;</span><span class="kw">;</span></a>
+<a class="sourceLine" id="cb9-4" data-line-number="4"><span class="kw">in</span> <span class="ex">x</span> + y</a></code></pre></div>
+</div>
+</section>
+<section>
+<div style="margin-top:-40px">
+<h4 style="font-variant:small-caps;">
+Inheriting attributes
+</h4>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p>When defining sets its often convenient to copy variable from the surrounding scope</p>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<div class="sourceCode" id="cb10" data-background-color="#424284"><pre class="sourceCode nix"><code class="sourceCode bash"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="bu">let</span> x = 123<span class="kw">;</span> <span class="kw">in</span></a>
+<a class="sourceLine" id="cb10-2" data-line-number="2"><span class="kw">{</span> <span class="ex">inherit</span> x<span class="kw">;</span></a>
+<a class="sourceLine" id="cb10-3" data-line-number="3">  <span class="ex">y</span> = 456<span class="kw">;</span></a>
+<a class="sourceLine" id="cb10-4" data-line-number="4"><span class="kw">}</span></a></code></pre></div>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p>or from another set</p>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<div class="sourceCode" id="cb11" data-background-color="#424284"><pre class="sourceCode nix"><code class="sourceCode bash"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="bu">let</span> aset = {x = 123, q = 456}; <span class="kw">in</span></a>
+<a class="sourceLine" id="cb11-2" data-line-number="2"><span class="kw">{</span> <span class="ex">inherit</span> (aset) <span class="ex">x</span><span class="kw">;</span></a>
+<a class="sourceLine" id="cb11-3" data-line-number="3">  <span class="ex">y</span> = 456<span class="kw">;</span></a>
+<a class="sourceLine" id="cb11-4" data-line-number="4"><span class="kw">}</span></a></code></pre></div>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p>both evaluates to</p>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<div class="sourceCode" id="cb12" data-background-color="#424284"><pre class="sourceCode nix"><code class="sourceCode bash"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="kw">{</span> <span class="ex">x</span> = 123<span class="kw">;</span> <span class="ex">y</span> = 456<span class="kw">;</span> <span class="kw">}</span></a></code></pre></div>
+</div>
+</section>
+<section>
+<div style="margin-top:-40px">
+<h4 style="font-variant:small-caps;">
+With-expressions
+</h4>
+</div>
+<div>
+<div class="sourceCode" id="cb13" data-background-color="#424284"><pre class="sourceCode nix"><code class="sourceCode bash"><a class="sourceLine" id="cb13-1" data-line-number="1"><span class="ex">with</span> e1<span class="kw">;</span> <span class="ex">e2</span></a></code></pre></div>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p>introduces the set <code>e1</code> into the lexical scope of expression <code>e2</code></p>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<div class="sourceCode" id="cb14" data-background-color="#424284"><pre class="sourceCode nix"><code class="sourceCode bash"><a class="sourceLine" id="cb14-1" data-line-number="1"><span class="bu">let</span> as = { x = <span class="st">&quot;foo&quot;</span><span class="kw">;</span> <span class="ex">y</span> = <span class="st">&quot;bar&quot;</span><span class="kw">;</span> };</a>
+<a class="sourceLine" id="cb14-2" data-line-number="2"><span class="kw">in</span> <span class="ex">with</span> as<span class="kw">;</span> <span class="ex">x</span> + y</a></code></pre></div>
+</div>
+</section>
+<section>
+<div style="margin-top:-40px">
+<h4 style="font-variant:small-caps;">
+Functions
+</h4>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p>Functions take a single argument with multiple arguments supported through currying</p>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<div class="line-block">Its defined as an argument pattern followed by a body<br />
+<code>pattern: body</code></div>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<div class="line-block">Function application is white space<br />
+<code>f x</code></div>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<div class="sourceCode" id="cb15" data-background-color="#424284"><pre class="sourceCode nix"><code class="sourceCode bash"><a class="sourceLine" id="cb15-1" data-line-number="1"><span class="bu">let</span> negate = x: !x<span class="kw">;</span></a>
+<a class="sourceLine" id="cb15-2" data-line-number="2">    <span class="ex">concat</span> = x: y: x + y<span class="kw">;</span></a>
+<a class="sourceLine" id="cb15-3" data-line-number="3"><span class="kw">in</span> <span class="kw">if</span> <span class="ex">negate</span> true then concat <span class="st">&quot;foo&quot;</span> <span class="st">&quot;bar&quot;</span> else <span class="st">&quot;&quot;</span></a></code></pre></div>
+</div>
+</section>
+<section>
+<div style="margin-top:-40px">
+<h4 style="font-variant:small-caps;">
+Functions
+</h4>
+</div>
+<div>
+<p>set patterns are supported</p>
+<div class="sourceCode" id="cb16" data-background-color="#424284"><pre class="sourceCode nix"><code class="sourceCode bash"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="kw">{</span> <span class="ex">x</span>, y, z <span class="kw">}</span>: <span class="ex">z</span> + y + x</a></code></pre></div>
+</div>
+<div class="fragment fade-in fade-up">
+<p>including variable binding, default values for missing keys and partial matches</p>
+<div class="sourceCode" id="cb17" data-background-color="#424284"><pre class="sourceCode nix"><code class="sourceCode bash"><a class="sourceLine" id="cb17-1" data-line-number="1"><span class="ex">args@</span>{ x, y ? <span class="st">&quot;default&quot;</span>, z, ... }: <span class="ex">z</span> + y + x + args.a</a></code></pre></div>
+</div>
+</section>
+<section>
+<div style="margin-top:-40px">
+<h4 style="font-variant:small-caps;">
+Conditionals
+</h4>
+</div>
+<div>
+<p>Doesn’t really need explaining</p>
+<div class="sourceCode" id="cb18" data-background-color="#424284"><pre class="sourceCode nix"><code class="sourceCode bash"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="kw">if</span> <span class="ex">e1</span> then e2 else e3</a></code></pre></div>
+</div>
+</section>
+<section>
+<div style="margin-top:-40px">
+<h4 style="font-variant:small-caps;">
+Operators
+</h4>
+</div>
+<div>
+<div class="sourceCode" id="cb19" data-background-color="#424284"><pre class="sourceCode nix"><code class="sourceCode bash"><a class="sourceLine" id="cb19-1" data-line-number="1"><span class="ex">e.attrpath</span>    # select attribute</a>
+<a class="sourceLine" id="cb19-2" data-line-number="2"><span class="ex">e1</span> e2         # call function</a>
+<a class="sourceLine" id="cb19-3" data-line-number="3"><span class="ex">e</span> ? attrpath  # test attribute existance</a>
+<a class="sourceLine" id="cb19-4" data-line-number="4"><span class="ex">e1</span> ++ e2      # list concatenation</a>
+<a class="sourceLine" id="cb19-5" data-line-number="5"><span class="ex">e1</span> + e2       # list or path concatenation</a>
+<a class="sourceLine" id="cb19-6" data-line-number="6">!<span class="ex">e1</span>           # boolean negation</a>
+<a class="sourceLine" id="cb19-7" data-line-number="7"><span class="ex">e1</span> // e2      # set union</a>
+<a class="sourceLine" id="cb19-8" data-line-number="8"><span class="ex">e1</span> == e2      # equality</a>
+<a class="sourceLine" id="cb19-9" data-line-number="9"><span class="ex">e1</span> != e2      # inequality</a>
+<a class="sourceLine" id="cb19-10" data-line-number="10"><span class="ex">e1</span> <span class="kw">&amp;&amp;</span> <span class="ex">e2</span>      # logical AND</a>
+<a class="sourceLine" id="cb19-11" data-line-number="11"><span class="ex">e1</span> <span class="kw">||</span> <span class="ex">e2</span>      # logical OR</a>
+<a class="sourceLine" id="cb19-12" data-line-number="12"><span class="ex">e1</span> -<span class="op">&gt;</span> e2      # logical implication (!e1 <span class="kw">||</span> <span class="ex">e2</span>)</a></code></pre></div>
+</div>
+</section>
+<section>
+<div style="margin-top:-40px">
+<h4 style="font-variant:small-caps;">
+Default builtin functions
+</h4>
+</div>
+<div>
+<ul class="incremental">
+<li>There are some default builtin functions</li>
+<li>The most important being <code>import</code>
+<ul class="incremental">
+<li>which loads a Nix Expression from a file</li>
+<li>and if the expression is a function</li>
+<li>allows you to call it immediately</li>
+</ul></li>
+</ul>
+</div>
+</section>
+</section>
+<section id="nix-hello-world" class="level1" data-state="customize-slides" data-background-size="110% 110%" data-background-image="../images/nix-wallpaper-mosaic-blue.png" data-background-color="#424284">
+<h1>Nix Hello World</h1>
+<section>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p>Nix expressions that actually get built are <strong>derivations</strong></p>
+</div>
+<div class="fragment fade-in fade-up">
+<p>Here is the example derivation for building GNU Hello</p>
+<div class="sourceCode" id="cb20" data-background-color="#424284"><pre class="sourceCode nix"><code class="sourceCode bash"><a class="sourceLine" id="cb20-1" data-line-number="1">{<span class="ex">stdenv</span>, fetchurl}:</a>
+<a class="sourceLine" id="cb20-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb20-3" data-line-number="3"><span class="ex">stdenv.mkDerivation</span> {</a>
+<a class="sourceLine" id="cb20-4" data-line-number="4">  <span class="ex">name</span> = <span class="st">&quot;hello-2.6&quot;</span><span class="kw">;</span></a>
+<a class="sourceLine" id="cb20-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb20-6" data-line-number="6">  <span class="ex">src</span> = fetchurl {</a>
+<a class="sourceLine" id="cb20-7" data-line-number="7">    <span class="ex">url</span> = ftp://ftp.gnu.org/gnu/hello/hello-2.6.tar.gz<span class="kw">;</span></a>
+<a class="sourceLine" id="cb20-8" data-line-number="8">    <span class="ex">sha256</span> = <span class="st">&quot;1h6fjkkwr7kxv0rl5l61ya0b49imzfaspy7jk9jas1fil31sjykl&quot;</span><span class="kw">;</span></a>
+<a class="sourceLine" id="cb20-9" data-line-number="9">  };</a>
+<a class="sourceLine" id="cb20-10" data-line-number="10"></a>
+<a class="sourceLine" id="cb20-11" data-line-number="11">  <span class="ex">meta</span> = {</a>
+<a class="sourceLine" id="cb20-12" data-line-number="12">    <span class="ex">homepage</span> = http://www.gnu.org/software/hello/manual/<span class="kw">;</span></a>
+<a class="sourceLine" id="cb20-13" data-line-number="13">    <span class="ex">license</span> = <span class="st">&quot;GPLv3+&quot;</span><span class="kw">;</span></a>
+<a class="sourceLine" id="cb20-14" data-line-number="14">  };</a>
+<a class="sourceLine" id="cb20-15" data-line-number="15">}</a></code></pre></div>
+</div>
+</section>
+<section class="smaller-list">
+<div style="margin-top:-40px">
+<div class="sourceCode" id="cb21" data-background-color="#424284" style="font-size:larger"><pre class="sourceCode nix"><code class="sourceCode bash"><a class="sourceLine" id="cb21-1" data-line-number="1">{<span class="ex">stdenv</span>, fetchurl}:</a>
+<a class="sourceLine" id="cb21-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb21-3" data-line-number="3"><span class="ex">stdenv.mkDerivation</span> {</a>
+<a class="sourceLine" id="cb21-4" data-line-number="4">  <span class="ex">name</span> = <span class="st">&quot;hello-2.6&quot;</span><span class="kw">;</span></a>
+<a class="sourceLine" id="cb21-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb21-6" data-line-number="6">  <span class="ex">src</span> = fetchurl {</a>
+<a class="sourceLine" id="cb21-7" data-line-number="7">    <span class="ex">url</span> = ftp://ftp.gnu.org/gnu/hello/hello-2.6.tar.gz<span class="kw">;</span></a>
+<a class="sourceLine" id="cb21-8" data-line-number="8">    <span class="ex">sha256</span> = <span class="st">&quot;1h6fjkkwr7kxv0rl5l61ya0b49imzfaspy7jk9jas1fil31sjykl&quot;</span><span class="kw">;</span></a>
+<a class="sourceLine" id="cb21-9" data-line-number="9">  };</a>
+<a class="sourceLine" id="cb21-10" data-line-number="10"></a>
+<a class="sourceLine" id="cb21-11" data-line-number="11">  <span class="ex">meta</span> = {</a>
+<a class="sourceLine" id="cb21-12" data-line-number="12">    <span class="ex">homepage</span> = http://www.gnu.org/software/hello/manual/<span class="kw">;</span></a>
+<a class="sourceLine" id="cb21-13" data-line-number="13">    <span class="ex">license</span> = <span class="st">&quot;GPLv3+&quot;</span><span class="kw">;</span></a>
+<a class="sourceLine" id="cb21-14" data-line-number="14">  };</a>
+<a class="sourceLine" id="cb21-15" data-line-number="15">}</a></code></pre></div>
+</div>
+<div>
+<ul class="incremental">
+<li>function taking a set with attributes <code>stdenv</code> and <code>fetchurl</code></li>
+<li>returns a derivation
+<ul class="incremental">
+<li>specifying the package’s name, source and meta info</li>
+<li>not specifying build procedure so standard Autotools will be used <code>./configure; make; make install</code></li>
+</ul></li>
+</ul>
+</div>
+</section>
+<section class="smaller-list">
+<div style="margin-top:-40px">
+<p>to build <em>hello</em> we compose its function with its arguments</p>
+<div class="sourceCode" id="cb22" data-background-color="#424284" style="font-size:larger"><pre class="sourceCode nix"><code class="sourceCode bash"><a class="sourceLine" id="cb22-1" data-line-number="1"><span class="ex">rec</span> {</a>
+<a class="sourceLine" id="cb22-2" data-line-number="2">  <span class="ex">stdenv</span> = ...<span class="kw">;</span></a>
+<a class="sourceLine" id="cb22-3" data-line-number="3">  <span class="ex">fetchurl</span> = import ../build-support/fetchurl {</a>
+<a class="sourceLine" id="cb22-4" data-line-number="4">    <span class="ex">inherit</span> stdenv curl<span class="kw">;</span></a>
+<a class="sourceLine" id="cb22-5" data-line-number="5">  };</a>
+<a class="sourceLine" id="cb22-6" data-line-number="6">  <span class="ex">hello</span> = import ../applications/misc/hello {</a>
+<a class="sourceLine" id="cb22-7" data-line-number="7">    <span class="ex">inherit</span> stdenv fetchurl<span class="kw">;</span></a>
+<a class="sourceLine" id="cb22-8" data-line-number="8">  }</a>
+<a class="sourceLine" id="cb22-9" data-line-number="9">}</a></code></pre></div>
+</div>
+<div>
+<ul class="incremental">
+<li>The <code>hello</code> attribute is bound to the function defined earlier and invoked with its arguments</li>
+<li>The dependencies of the function are themselves defined in the set</li>
+<li>Essentially in <strong>Nix one recursive set defines all packages and dependencies</strong> in terms of each other</li>
+</ul>
+</div>
+</section>
+<section class="smaller-list">
+<div>
+<p>When you install <code>hello</code> the following paths will be added to the Nix store</p>
+<ul class="incremental">
+<li>The derivation that describes how to build <code>/nix/store/vh0mxra4c7jrdg2fi5yn83k5kwdflsbx-hello-2.6.drv</code></li>
+<li>The source code fetched that was fetched <code>/nix/store/agjbqxl2n6yhqwcarx9shdbsc13dgwk0-hello-2.6.tar.gz.drv</code></li>
+<li>The actual final binary <code>/nix/store/1gqj6zr1x0n812qxijy066fzrypgh3im-hello-2.6</code></li>
+</ul>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p>Everything is <strong>cached</strong> so they won’t be downloaded again or build again if something else requires it</p>
+</div>
+</section>
+</section>
+<section id="nix-profiles" class="level1" data-state="customize-slides" data-background-size="110% 110%" data-background-image="../images/nix-wallpaper-mosaic-blue.png" data-background-color="#424284">
+<h1>Nix Profiles</h1>
+<section>
+<div>
+So if all artefacts live the Nix store won’t it make using it difficult
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p>The answer is <strong>Nix profiles</strong> and again a very good explanation can be found on Sander’s blog <a href>http://sandervanderburg.blogspot.co.za/2013/09/managing-user-environments-with-nix.html</a></p>
+</div>
+</section>
+<section>
+<div>
+<p><strong>Nix profiles</strong> are user environments exposing a generation of installed packages to a user</p>
+<ul class="incremental">
+<li>Packages can be installed into profiles using <br /><code>nix-env</code> command line utility</li>
+</ul>
+<pre class="shell" data-background-color="#424284"><code>$ nix-env -i zip unzip</code></pre>
+<ul class="incremental">
+<li>Installed packages can be run as normal without specifying paths with hash codes</li>
+</ul>
+<pre class="shell" data-background-color="#424284"><code>$ zip --version
+Copyright (c) 1990-2008 Info-ZIP - Type 'zip &quot;-L&quot;' for software license.
+This is Zip 3.0 (July 5th 2008), by Info-ZIP.
+Currently maintained by E. Gordon.  Please send bug reports to
+the authors using the web page at www.info-zip.org; see README for details.</code></pre>
+</div>
+</section>
+<section>
+<div>
+<p>When you install packages a new profile is created</p>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p>A profile is a symlink tree synthesizing the contents of the currently installed packages</p>
+</div>
+</section>
+<section>
+<div style="margin-top:-40px">
+<p>A user environment / profile is also a Nix package residing in the store</p>
+<p><img src="../images/nix-profiles1.png" title="Nix profiles png" style="width:60%" /></p>
+</div>
+</section>
+<section class="smaller-list">
+<div style="display:flex;flex-direction:row;align-items:flex-start;">
+<div style="width:100%">
+<p><img src="../images/nix-profiles1.png" title="Nix profiles png" /></p>
+</div>
+<div>
+<ul class="incremental">
+<li>A generation symlink is generated (profile-1)</li>
+<li>There is a default symlink (profile) pointing to the currently active generation</li>
+<li>The default symlink is also referenced from the user’s home directory through <code>~/.nix-profile</code></li>
+<li>Paths are added to the user’s <code>PATH</code> by e.g. <code>export PATH=~/.nix-profile/bin:$PATH</code></li>
+</ul>
+</div>
+</div>
+</section>
+<section>
+<div>
+<p>Deployment actions are actually non destructive</p>
+<ul class="incremental">
+<li>if you install or remove packages with <code>nix-env</code> new profiles are created</li>
+<li>you can always revert to a previous profile using <code>nix-env --rollback</code></li>
+<li>to actually remove old profiles <br /><code>nix-env --delete-generations old</code></li>
+<li>and to actually physically remove files from the store <code>nix-collect-garbage</code></li>
+</ul>
+</div>
+</section>
+</section>
+<section id="a-minimal-nixos-machine" class="level1 smaller-header" data-state="customize-slides" data-background-size="110% 110%" data-background-image="../images/nix-wallpaper-mosaic-blue.png" data-background-color="#424284">
+<h1>A minimal NixOS machine</h1>
+<section>
+<div style="font-size:50%;margin-top:-40px">
+<div class="sourceCode" id="cb25" data-background-color="#424284"><pre class="sourceCode nix stretch"><code class="sourceCode bash"><a class="sourceLine" id="cb25-1" data-line-number="1"><span class="kw">{</span> <span class="ex">config</span>, pkgs, ... <span class="kw">}</span>:</a>
+<a class="sourceLine" id="cb25-2" data-line-number="2"><span class="kw">{</span></a>
+<a class="sourceLine" id="cb25-3" data-line-number="3">  <span class="ex">imports</span> =</a>
+<a class="sourceLine" id="cb25-4" data-line-number="4">    [ <span class="co"># Include the results of the hardware scan.</span></a>
+<a class="sourceLine" id="cb25-5" data-line-number="5">      <span class="ex">./hardware-configuration.nix</span></a>
+<a class="sourceLine" id="cb25-6" data-line-number="6">    ];</a>
+<a class="sourceLine" id="cb25-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb25-8" data-line-number="8">  <span class="co"># Use the GRUB 2 boot loader.</span></a>
+<a class="sourceLine" id="cb25-9" data-line-number="9">  <span class="ex">boot.loader.grub.enable</span> = true<span class="kw">;</span></a>
+<a class="sourceLine" id="cb25-10" data-line-number="10">  <span class="ex">boot.loader.grub.version</span> = 2<span class="kw">;</span></a>
+<a class="sourceLine" id="cb25-11" data-line-number="11">  <span class="ex">boot.loader.grub.device</span> = <span class="st">&quot;/dev/sda&quot;</span><span class="kw">;</span></a>
+<a class="sourceLine" id="cb25-12" data-line-number="12"></a>
+<a class="sourceLine" id="cb25-13" data-line-number="13">  <span class="ex">networking.hostName</span> = <span class="st">&quot;example-machine&quot;</span><span class="kw">;</span></a>
+<a class="sourceLine" id="cb25-14" data-line-number="14"></a>
+<a class="sourceLine" id="cb25-15" data-line-number="15">  <span class="co"># List packages installed in system profile</span></a>
+<a class="sourceLine" id="cb25-16" data-line-number="16">  <span class="ex">environment.systemPackages</span> = with pkgs<span class="kw">;</span><span class="bu"> [</span></a>
+<a class="sourceLine" id="cb25-17" data-line-number="17">    wget</a>
+<a class="sourceLine" id="cb25-18" data-line-number="18">    termite</a>
+<a class="sourceLine" id="cb25-19" data-line-number="19">    nvim</a>
+<a class="sourceLine" id="cb25-20" data-line-number="20">  ];</a>
+<a class="sourceLine" id="cb25-21" data-line-number="21"></a>
+<a class="sourceLine" id="cb25-22" data-line-number="22">  <span class="co"># List services that you want to enable:</span></a>
+<a class="sourceLine" id="cb25-23" data-line-number="23">  services.openssh.enable <span class="ot">=</span> true;</a>
+<a class="sourceLine" id="cb25-24" data-line-number="24">  networking.firewall.enable <span class="ot">=</span> false;</a>
+<a class="sourceLine" id="cb25-25" data-line-number="25"></a>
+<a class="sourceLine" id="cb25-26" data-line-number="26">  <span class="co"># Enable the X11 windowing system.</span></a>
+<a class="sourceLine" id="cb25-27" data-line-number="27">  services.xserver.enable <span class="ot">=</span> true;</a>
+<a class="sourceLine" id="cb25-28" data-line-number="28">  services.xserver.layout <span class="ot">=</span> <span class="st">&quot;us&quot;</span>;</a>
+<a class="sourceLine" id="cb25-29" data-line-number="29"></a>
+<a class="sourceLine" id="cb25-30" data-line-number="30">  <span class="co"># Enable the KDE Desktop Environment.</span></a>
+<a class="sourceLine" id="cb25-31" data-line-number="31">  services.xserver.displayManager.sddm.enable <span class="ot">=</span> true;</a>
+<a class="sourceLine" id="cb25-32" data-line-number="32">  services.xserver.desktopManager.plasma5.enable <span class="ot">=</span> true;</a>
+<a class="sourceLine" id="cb25-33" data-line-number="33"></a>
+<a class="sourceLine" id="cb25-34" data-line-number="34">  <span class="co"># Define a user account. Don't forget to set a password with ‘passwd’.</span></a>
+<a class="sourceLine" id="cb25-35" data-line-number="35">  users.extraUsers.a_user <span class="ot">=</span> {</a>
+<a class="sourceLine" id="cb25-36" data-line-number="36">    isNormalUser <span class="ot">=</span> true;</a>
+<a class="sourceLine" id="cb25-37" data-line-number="37">    uid <span class="ot">=</span> 1000;</a>
+<a class="sourceLine" id="cb25-38" data-line-number="38">    home <span class="ot">=</span> <span class="st">&quot;/home/a_user&quot;</span>;</a>
+<a class="sourceLine" id="cb25-39" data-line-number="39">    extraGroups <span class="ot">=</span> [<span class="st">&quot;wheel&quot;</span> <span class="st">&quot;audio&quot;</span> <span class="st">&quot;video&quot;</span> <span class="st">&quot;networkmanager&quot;</span> <span class="st">&quot;postgres&quot;</span> <span class="st">&quot;vboxusers&quot;</span>];</a>
+<a class="sourceLine" id="cb25-40" data-line-number="40">    initialPassword <span class="ot">=</span> <span class="st">&quot;a_user&quot;</span>;</a>
+<a class="sourceLine" id="cb25-41" data-line-number="41">  };</a>
+<a class="sourceLine" id="cb25-42" data-line-number="42"></a>
+<a class="sourceLine" id="cb25-43" data-line-number="43">  <span class="co"># The NixOS release to be compatible with for stateful data such as databases.</span></a>
+<a class="sourceLine" id="cb25-44" data-line-number="44">  system.stateVersion <span class="ot">=</span> <span class="st">&quot;17.09&quot;</span>;</a>
+<a class="sourceLine" id="cb25-45" data-line-number="45"></a>
+<a class="sourceLine" id="cb25-46" data-line-number="46">  <span class="co"># virtual box related</span></a>
+<a class="sourceLine" id="cb25-47" data-line-number="47">  boot.initrd.checkJournalingFS <span class="ot">=</span> false;</a>
+<a class="sourceLine" id="cb25-48" data-line-number="48">  virtualisation.virtualbox.guest.enable <span class="ot">=</span> true;</a>
+<a class="sourceLine" id="cb25-49" data-line-number="49">}</a></code></pre></div>
+</div>
+</section>
+<section>
+<div>
+<div class="sourceCode" id="cb26" data-background-color="#424284"><pre class="sourceCode nix"><code class="sourceCode bash"><a class="sourceLine" id="cb26-1" data-line-number="1"><span class="kw">{</span> <span class="ex">config</span>, pkgs, ... <span class="kw">}</span>:</a>
+<a class="sourceLine" id="cb26-2" data-line-number="2"><span class="kw">{</span></a>
+<a class="sourceLine" id="cb26-3" data-line-number="3">  <span class="ex">imports</span> =</a>
+<a class="sourceLine" id="cb26-4" data-line-number="4">    [ <span class="co"># Include the results of the hardware scan.</span></a>
+<a class="sourceLine" id="cb26-5" data-line-number="5">      <span class="ex">./hardware-configuration.nix</span></a>
+<a class="sourceLine" id="cb26-6" data-line-number="6">    ];</a></code></pre></div>
+<ul class="incremental">
+<li>The configuration is a function that lives in <code>/etc/nixos/configuration.nix</code></li>
+<li>It imports the auto generated <code>hardware-configuration.nix</code></li>
+</ul>
+</div>
+</section>
+<section>
+<div>
+<div class="sourceCode" id="cb27" data-background-color="#424284"><pre class="sourceCode nix"><code class="sourceCode bash"><a class="sourceLine" id="cb27-1" data-line-number="1">  <span class="co"># Use the GRUB 2 boot loader.</span></a>
+<a class="sourceLine" id="cb27-2" data-line-number="2">  <span class="ex">boot.loader.grub.enable</span> = true<span class="kw">;</span></a>
+<a class="sourceLine" id="cb27-3" data-line-number="3">  <span class="ex">boot.loader.grub.version</span> = 2<span class="kw">;</span></a>
+<a class="sourceLine" id="cb27-4" data-line-number="4">  <span class="ex">boot.loader.grub.device</span> = <span class="st">&quot;/dev/sda&quot;</span><span class="kw">;</span></a>
+<a class="sourceLine" id="cb27-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb27-6" data-line-number="6">  <span class="ex">networking.hostName</span> = <span class="st">&quot;example-machine&quot;</span><span class="kw">;</span></a>
+<a class="sourceLine" id="cb27-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb27-8" data-line-number="8">  <span class="co"># List packages installed in system profile</span></a>
+<a class="sourceLine" id="cb27-9" data-line-number="9">  <span class="ex">environment.systemPackages</span> = with pkgs<span class="kw">;</span><span class="bu"> [</span></a>
+<a class="sourceLine" id="cb27-10" data-line-number="10">    wget</a>
+<a class="sourceLine" id="cb27-11" data-line-number="11">    termite</a>
+<a class="sourceLine" id="cb27-12" data-line-number="12">    neovim</a>
+<a class="sourceLine" id="cb27-13" data-line-number="13">  ];</a></code></pre></div>
+<ul class="incremental">
+<li>some boot options</li>
+<li>the machine name</li>
+<li>some packages to be installed in the root profile</li>
+</ul>
+</div>
+</section>
+<section>
+<div>
+<div class="sourceCode" id="cb28" data-background-color="#424284"><pre class="sourceCode nix"><code class="sourceCode bash"><a class="sourceLine" id="cb28-1" data-line-number="1">  <span class="co"># List services that you want to enable:</span></a>
+<a class="sourceLine" id="cb28-2" data-line-number="2">  <span class="ex">services.openssh.enable</span> = true<span class="kw">;</span></a>
+<a class="sourceLine" id="cb28-3" data-line-number="3">  <span class="ex">networking.firewall.enable</span> = false<span class="kw">;</span></a>
+<a class="sourceLine" id="cb28-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb28-5" data-line-number="5">  <span class="co"># Enable the X11 windowing system.</span></a>
+<a class="sourceLine" id="cb28-6" data-line-number="6">  <span class="ex">services.xserver.enable</span> = true<span class="kw">;</span></a>
+<a class="sourceLine" id="cb28-7" data-line-number="7">  <span class="ex">services.xserver.layout</span> = <span class="st">&quot;us&quot;</span><span class="kw">;</span></a>
+<a class="sourceLine" id="cb28-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb28-9" data-line-number="9">  <span class="co"># Enable the KDE Desktop Environment.</span></a>
+<a class="sourceLine" id="cb28-10" data-line-number="10">  <span class="ex">services.xserver.displayManager.sddm.enable</span> = true<span class="kw">;</span></a>
+<a class="sourceLine" id="cb28-11" data-line-number="11">  <span class="ex">services.xserver.desktopManager.plasma5.enable</span> = true<span class="kw">;</span></a></code></pre></div>
+<ul class="incremental">
+<li>list some services to have enabled</li>
+<li>specify the desktop environment</li>
+</ul>
+</div>
+</section>
+<section>
+<div>
+<div class="sourceCode" id="cb29" data-background-color="#424284"><pre class="sourceCode nix"><code class="sourceCode bash"><a class="sourceLine" id="cb29-1" data-line-number="1">  <span class="co"># Define a user account. Don't forget to set a password with ‘passwd’.</span></a>
+<a class="sourceLine" id="cb29-2" data-line-number="2">  <span class="ex">users.extraUsers.a_user</span> = {</a>
+<a class="sourceLine" id="cb29-3" data-line-number="3">    <span class="ex">isNormalUser</span> = true<span class="kw">;</span></a>
+<a class="sourceLine" id="cb29-4" data-line-number="4">    <span class="ex">uid</span> = 1000<span class="kw">;</span></a>
+<a class="sourceLine" id="cb29-5" data-line-number="5">    <span class="ex">home</span> = <span class="st">&quot;/home/a_user&quot;</span><span class="kw">;</span></a>
+<a class="sourceLine" id="cb29-6" data-line-number="6">    <span class="ex">extraGroups</span> = [<span class="st">&quot;wheel&quot;</span> <span class="st">&quot;audio&quot;</span> <span class="st">&quot;video&quot;</span> <span class="st">&quot;networkmanager&quot;</span> <span class="st">&quot;postgres&quot;</span> <span class="st">&quot;vboxusers&quot;</span>]<span class="kw">;</span></a>
+<a class="sourceLine" id="cb29-7" data-line-number="7">    <span class="ex">initialPassword</span> = <span class="st">&quot;a_user&quot;</span><span class="kw">;</span></a>
+<a class="sourceLine" id="cb29-8" data-line-number="8">  };</a></code></pre></div>
+<p>Define the users of the system</p>
+</div>
+</section>
+<section class="smaller-list">
+<div style="display:flex;flex-direction:row;align-items:center;">
+<div style="width:150%">
+<p><img src="../images/nixos-grub-menu.png" title="nixos-grub-menu" /></p>
+</div>
+<div>
+<ul class="incremental">
+<li>If you want to try out changes without making it permenant <br /><code>sudo nixos-rebuild test</code></li>
+<li>If you are happy and want to switch to the new configuration <br /><code>sudo nixos-rebuild switch</code></li>
+<li>If you want to rollback changes <br /><code>sudo nixos-rebuild rollback</code></li>
+<li>If you accidentally make your system non-bootable you can still boot into any previous config from the grub menu.</li>
+</ul>
+</div>
+</div>
+</section>
+</section>
+<section id="developing-with-nix" class="level1" data-state="customize-slides" data-background-size="110% 110%" data-background-image="../images/nix-wallpaper-mosaic-blue.png" data-background-color="#424284">
+<h1>Developing with Nix</h1>
+<section>
+<div>
+When developing software you want environments setup with all your development dependencies present
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p>If you work on different sets of software you don’t want the dependencies to interact</p>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+In Nix you use the <code>nix-shell</code> command to enter a development environment with all your dependencies setup.
+</div>
+</section>
+<section>
+<div>
+Usually a software package like <em>hello</em> are defined by a <code>default.nix</code> in a folder named after it
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p>This file defines a function though that needs to be invoked with its environment</p>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p>This is where the <code>shell.nix</code> file comes in which <code>nix-shell</code> uses by default</p>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p>The <code>shell.nix</code> file sets up the environment and then calls the <code>default.nix</code> file</p>
+</div>
+</section>
+<section class="smaller-list">
+<div>
+<div class="sourceCode" id="cb30" data-background-color="#424284" style="font-size:larger"><pre class="sourceCode nix"><code class="sourceCode bash"><a class="sourceLine" id="cb30-1" data-line-number="1"><span class="co"># default.nix</span></a>
+<a class="sourceLine" id="cb30-2" data-line-number="2">{<span class="ex">stdenv</span>, fetchurl}:</a>
+<a class="sourceLine" id="cb30-3" data-line-number="3"><span class="ex">stdenv.mkDerivation</span> {</a>
+<a class="sourceLine" id="cb30-4" data-line-number="4">  <span class="ex">name</span> = <span class="st">&quot;hello-2.6&quot;</span><span class="kw">;</span></a>
+<a class="sourceLine" id="cb30-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb30-6" data-line-number="6">  <span class="ex">src</span> = fetchurl {</a>
+<a class="sourceLine" id="cb30-7" data-line-number="7">    <span class="ex">url</span> = ftp://ftp.gnu.org/gnu/hello/hello-2.6.tar.gz<span class="kw">;</span></a>
+<a class="sourceLine" id="cb30-8" data-line-number="8">    <span class="ex">sha256</span> = <span class="st">&quot;1h6fjkkwr7kxv0rl5l61ya0b49imzfaspy7jk9jas1fil31sjykl&quot;</span><span class="kw">;</span></a>
+<a class="sourceLine" id="cb30-9" data-line-number="9">  };</a>
+<a class="sourceLine" id="cb30-10" data-line-number="10"></a>
+<a class="sourceLine" id="cb30-11" data-line-number="11">  <span class="ex">meta</span> = {</a>
+<a class="sourceLine" id="cb30-12" data-line-number="12">    <span class="ex">homepage</span> = http://www.gnu.org/software/hello/manual/<span class="kw">;</span></a>
+<a class="sourceLine" id="cb30-13" data-line-number="13">    <span class="ex">license</span> = <span class="st">&quot;GPLv3+&quot;</span><span class="kw">;</span></a>
+<a class="sourceLine" id="cb30-14" data-line-number="14">  };</a>
+<a class="sourceLine" id="cb30-15" data-line-number="15">}</a></code></pre></div>
+<div class="sourceCode" id="cb31" data-background-color="#424284" style="font-size:larger"><pre class="sourceCode nix"><code class="sourceCode bash"><a class="sourceLine" id="cb31-1" data-line-number="1"><span class="co"># shell.nix</span></a>
+<a class="sourceLine" id="cb31-2" data-line-number="2"><span class="bu">let</span></a>
+<a class="sourceLine" id="cb31-3" data-line-number="3">  <span class="ex">pkgs</span> = import <span class="op">&lt;</span>nixpkgs<span class="op">&gt;</span> <span class="dt">{}</span><span class="kw">;</span></a>
+<a class="sourceLine" id="cb31-4" data-line-number="4"><span class="kw">in</span> <span class="ex">import</span> ./default.nix {inherit (pkgs) <span class="ex">stdenv</span> fetchurl<span class="kw">;</span>}</a></code></pre></div>
+</div>
+</section>
+<section>
+<div>
+<div class="sourceCode" id="cb32" data-background-color="#424284"><pre class="sourceCode nix"><code class="sourceCode bash"><a class="sourceLine" id="cb32-1" data-line-number="1"><span class="bu">let</span></a>
+<a class="sourceLine" id="cb32-2" data-line-number="2">  <span class="ex">pkgs</span> = import <span class="op">&lt;</span>nixpkgs<span class="op">&gt;</span> <span class="dt">{}</span><span class="kw">;</span></a>
+<a class="sourceLine" id="cb32-3" data-line-number="3"><span class="kw">in</span> <span class="ex">import</span> ./default.nix {inherit (pkgs) <span class="ex">stdenv</span> fetchurl<span class="kw">;</span>}</a></code></pre></div>
+<ul class="incremental">
+<li>import the top level nix packages expression</li>
+<li>import <code>./default.nix</code></li>
+<li>call the function passing in <code>stdenv</code> and <code>fetchurl</code> from the top level nix expression</li>
+</ul>
+</div>
+</section>
+<section>
+<div>
+<p>In the <code>hello</code> directory run <code>nix-shell</code></p>
+<ul class="incremental">
+<li>This drops you in a development shell</li>
+<li>All your build dependencies are present</li>
+<li>to unpack the fetched source run <code>unpackPhase</code></li>
+<li>then cd into the source directory and run <code>./configure</code> and <code>./make</code></li>
+</ul>
+</div>
+</section>
+</section>
+<section id="adhoc-build-environments" class="level1" data-state="customize-slides" data-background-size="110% 110%" data-background-image="../images/nix-wallpaper-mosaic-blue.png" data-background-color="#424284">
+<h1>Adhoc Build Environments</h1>
+<section>
+<div>
+Sometimes you just want adhoc build environments in which to experiment
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+You can easily do this by creating “fake” build recipes and using <code>nix-shell</code> to setup your environments
+</div>
+</section>
+<section>
+<div style="margin-top:-40px">
+<h4 style="font-variant:small-caps;">
+Haskell Hakyl Environment
+</h4>
+</div>
+<div>
+<div class="sourceCode" id="cb33" data-background-color="#424284" style="font-size:85%"><pre class="sourceCode nix stretch"><code class="sourceCode bash"><a class="sourceLine" id="cb33-1" data-line-number="1"><span class="bu">let</span></a>
+<a class="sourceLine" id="cb33-2" data-line-number="2">  <span class="ex">pkgs</span> = import <span class="op">&lt;</span>nixpkgs<span class="op">&gt;</span> <span class="dt">{}</span><span class="kw">;</span></a>
+<a class="sourceLine" id="cb33-3" data-line-number="3">  <span class="ex">haskellPackages</span> = pkgs.haskellPackages.override {</a>
+<a class="sourceLine" id="cb33-4" data-line-number="4">    <span class="ex">overrides</span> = self: super: with pkgs.haskell.lib<span class="kw">;{</span></a>
+<a class="sourceLine" id="cb33-5" data-line-number="5">      <span class="ex">ghc-syb-utils</span> = dontCheck super.ghc-syb-utils<span class="kw">;</span></a>
+<a class="sourceLine" id="cb33-6" data-line-number="6">  <span class="kw">}</span>;};</a>
+<a class="sourceLine" id="cb33-7" data-line-number="7">  <span class="ex">ghcWithPackages</span> =</a>
+<a class="sourceLine" id="cb33-8" data-line-number="8">    <span class="ex">haskellPackages.ghcWithHoogle</span> (g: with g<span class="kw">;</span></a>
+<a class="sourceLine" id="cb33-9" data-line-number="9">    [<span class="ex">classy-prelude</span> hakyll hakyll-favicon hakyll-filestore</a>
+<a class="sourceLine" id="cb33-10" data-line-number="10">     <span class="ex">hakyll-ogmarkup</span> hakyll-series base pandoc pandoc-types</a>
+<a class="sourceLine" id="cb33-11" data-line-number="11">    ]);</a>
+<a class="sourceLine" id="cb33-12" data-line-number="12"><span class="kw">in</span> <span class="ex">with</span> pkgs<span class="kw">;</span></a>
+<a class="sourceLine" id="cb33-13" data-line-number="13">  <span class="ex">runCommand</span> <span class="st">&quot;hakyll-env&quot;</span></a>
+<a class="sourceLine" id="cb33-14" data-line-number="14">    <span class="kw">(</span><span class="ex">with</span> ghcWithPackages.haskellPackages<span class="kw">;</span></a>
+<a class="sourceLine" id="cb33-15" data-line-number="15">      <span class="ex">rec</span></a>
+<a class="sourceLine" id="cb33-16" data-line-number="16">        <span class="kw">{</span> <span class="ex">ghc</span> = ghcWithPackages<span class="kw">;</span></a>
+<a class="sourceLine" id="cb33-17" data-line-number="17">          <span class="ex">shellHook</span> = <span class="st">&quot;eval </span><span class="va">$(</span><span class="fu">egrep</span> ^export <span class="va">${ghc}</span>/bin/ghc<span class="va">)</span><span class="st">&quot;</span><span class="kw">;</span></a>
+<a class="sourceLine" id="cb33-18" data-line-number="18">          <span class="ex">buildInputs</span> =</a>
+<a class="sourceLine" id="cb33-19" data-line-number="19">            [ <span class="ex">ghcWithPackages</span> zsh ghc-mod hindent cabal-helper</a>
+<a class="sourceLine" id="cb33-20" data-line-number="20">              <span class="ex">cabal-install</span> codex stylish-haskell hoogle hlint</a>
+<a class="sourceLine" id="cb33-21" data-line-number="21">              <span class="ex">align</span> netcat-openbsd hdevtools]<span class="kw">;})</span></a>
+<a class="sourceLine" id="cb33-22" data-line-number="22">  <span class="st">&quot;echo success &gt; </span><span class="va">$out</span><span class="st">&quot;</span></a></code></pre></div>
+</div>
+</section>
+<section>
+<div style="margin-top:-40px">
+<h4 style="font-variant:small-caps;">
+Haskell Hakyl Environment
+</h4>
+</div>
+<div>
+<div class="sourceCode" id="cb34" data-background-color="#424284"><pre class="sourceCode nix stretch"><code class="sourceCode bash"><a class="sourceLine" id="cb34-1" data-line-number="1"><span class="bu">let</span></a>
+<a class="sourceLine" id="cb34-2" data-line-number="2">  <span class="ex">pkgs</span> = import <span class="op">&lt;</span>nixpkgs<span class="op">&gt;</span> <span class="dt">{}</span><span class="kw">;</span></a>
+<a class="sourceLine" id="cb34-3" data-line-number="3">  <span class="ex">haskellPackages</span> = pkgs.haskellPackages.override {</a>
+<a class="sourceLine" id="cb34-4" data-line-number="4">    <span class="ex">overrides</span> = self: super: with pkgs.haskell.lib<span class="kw">;{</span></a>
+<a class="sourceLine" id="cb34-5" data-line-number="5">      <span class="ex">ghc-syb-utils</span> = dontCheck super.ghc-syb-utils<span class="kw">;</span></a>
+<a class="sourceLine" id="cb34-6" data-line-number="6">  <span class="kw">}</span>;};</a>
+<a class="sourceLine" id="cb34-7" data-line-number="7"><span class="ex">...</span></a></code></pre></div>
+<ul class="incremental">
+<li>we import the top level nix expression</li>
+<li>we then override the <code>ghc-syb-utils</code> package skipping its test suite</li>
+</ul>
+</div>
+</section>
+<section>
+<div style="margin-top:-40px">
+<h4 style="font-variant:small-caps;">
+Haskell Hakyl Environment
+</h4>
+</div>
+<div>
+<div class="sourceCode" id="cb35" data-background-color="#424284"><pre class="sourceCode nix stretch"><code class="sourceCode bash"><a class="sourceLine" id="cb35-1" data-line-number="1">  <span class="ex">ghcWithPackages</span> =</a>
+<a class="sourceLine" id="cb35-2" data-line-number="2">    <span class="ex">haskellPackages.ghcWithHoogle</span> (g: with g<span class="kw">;</span></a>
+<a class="sourceLine" id="cb35-3" data-line-number="3">    [<span class="ex">classy-prelude</span> hakyll hakyll-favicon hakyll-filestore</a>
+<a class="sourceLine" id="cb35-4" data-line-number="4">     <span class="ex">hakyll-ogmarkup</span> hakyll-series base pandoc pandoc-types</a>
+<a class="sourceLine" id="cb35-5" data-line-number="5">    ]);</a></code></pre></div>
+<p>Then we create a special <strong>GHC</strong> that has the specified libraries available along with a custom <strong>Hoogle</strong> and documentation</p>
+</div>
+</section>
+<section class="smaller-list">
+<div style="margin-top:-40px">
+<h4 style="font-variant:small-caps;">
+Haskell Hakyl Environment
+</h4>
+</div>
+<div>
+<div class="sourceCode" id="cb36" data-background-color="#424284" style="font-size:larger"><pre class="sourceCode nix stretch"><code class="sourceCode bash"><a class="sourceLine" id="cb36-1" data-line-number="1"><span class="kw">in</span> <span class="ex">with</span> pkgs<span class="kw">;</span></a>
+<a class="sourceLine" id="cb36-2" data-line-number="2">  <span class="ex">runCommand</span> <span class="st">&quot;hakyll-env&quot;</span></a>
+<a class="sourceLine" id="cb36-3" data-line-number="3">    <span class="kw">(</span><span class="ex">with</span> ghcWithPackages.haskellPackages<span class="kw">;</span></a>
+<a class="sourceLine" id="cb36-4" data-line-number="4">      <span class="ex">rec</span></a>
+<a class="sourceLine" id="cb36-5" data-line-number="5">        <span class="kw">{</span> <span class="ex">ghc</span> = ghcWithPackages<span class="kw">;</span></a>
+<a class="sourceLine" id="cb36-6" data-line-number="6">          <span class="ex">shellHook</span> = <span class="st">&quot;eval </span><span class="va">$(</span><span class="fu">egrep</span> ^export <span class="va">${ghc}</span>/bin/ghc<span class="va">)</span><span class="st">&quot;</span><span class="kw">;</span></a>
+<a class="sourceLine" id="cb36-7" data-line-number="7">          <span class="ex">buildInputs</span> =</a>
+<a class="sourceLine" id="cb36-8" data-line-number="8">            [ <span class="ex">ghcWithPackages</span> zsh ghc-mod hindent cabal-helper</a>
+<a class="sourceLine" id="cb36-9" data-line-number="9">              <span class="ex">cabal-install</span> codex stylish-haskell hoogle hlint</a>
+<a class="sourceLine" id="cb36-10" data-line-number="10">              <span class="ex">align</span> netcat-openbsd hdevtools]<span class="kw">;})</span></a>
+<a class="sourceLine" id="cb36-11" data-line-number="11">  <span class="st">&quot;echo success &gt; </span><span class="va">$out</span><span class="st">&quot;</span></a></code></pre></div>
+<ul class="incremental">
+<li>we specify our “fake” derivation</li>
+<li>we setup some environment variables for <strong>GHC</strong> on shell entry in <code>shellHook</code></li>
+<li>we list all the tools we want in our <code>buildInputs</code> attribute</li>
+</ul>
+</div>
+</section>
+<section class="smaller-list">
+<div style="margin-top:-40px">
+<h4 style="font-variant:small-caps;">
+Clang Environment
+</h4>
+</div>
+<div>
+<div class="sourceCode" id="cb37" data-background-color="#424284" style="font-size:105%"><pre class="sourceCode nix stretch"><code class="sourceCode bash"><a class="sourceLine" id="cb37-1" data-line-number="1"><span class="bu">let</span></a>
+<a class="sourceLine" id="cb37-2" data-line-number="2">  <span class="ex">pkgs</span> = import <span class="op">&lt;</span>nixpkgs<span class="op">&gt;</span> <span class="dt">{}</span><span class="kw">;</span></a>
+<a class="sourceLine" id="cb37-3" data-line-number="3"><span class="kw">in</span> <span class="ex">with</span> pkgs<span class="kw">;</span></a>
+<a class="sourceLine" id="cb37-4" data-line-number="4"><span class="ex">clangStdenv.mkDerivation</span> rec</a>
+<a class="sourceLine" id="cb37-5" data-line-number="5"><span class="kw">{</span> <span class="ex">name</span> = <span class="st">&quot;cpp-play-</span><span class="va">${version}</span><span class="st">&quot;</span><span class="kw">;</span></a>
+<a class="sourceLine" id="cb37-6" data-line-number="6">  <span class="ex">version</span> = <span class="st">&quot;0.0.0&quot;</span><span class="kw">;</span></a>
+<a class="sourceLine" id="cb37-7" data-line-number="7">  <span class="ex">buildInputs</span> =</a>
+<a class="sourceLine" id="cb37-8" data-line-number="8">    [<span class="ex">clang</span> clang-tools llvmPackages.libcxx llvmPackages.libcxxabi glibc gdb]<span class="kw">;</span></a>
+<a class="sourceLine" id="cb37-9" data-line-number="9">  <span class="ex">CPLUS_INCLUDE_PATH</span> =</a>
+<a class="sourceLine" id="cb37-10" data-line-number="10">    <span class="st">&quot;</span><span class="va">${llvmPackages</span><span class="er">.libcxx</span><span class="va">}</span><span class="st">/include/c++/v1:</span><span class="va">${clangStdenv</span><span class="er">.cc.libc_dev</span><span class="va">}</span><span class="st">/include&quot;</span>;</a>
+<a class="sourceLine" id="cb37-11" data-line-number="11">  <span class="ex">C_INCLUDE_PATH</span> = <span class="st">&quot;</span><span class="va">${clangStdenv</span><span class="er">.cc.libc_dev</span><span class="va">}</span><span class="st">/include&quot;</span><span class="kw">;</span></a>
+<a class="sourceLine" id="cb37-12" data-line-number="12">  <span class="ex">LD_FLAGS</span> =</a>
+<a class="sourceLine" id="cb37-13" data-line-number="13">    <span class="st">&quot;-L</span><span class="va">${llvmPackages</span><span class="er">.libcxx</span><span class="va">}</span><span class="st">/lib -L</span><span class="va">${llvmPackages</span><span class="er">.libcxxabi</span><span class="va">}</span><span class="st">/lib&quot;</span>;</a>
+<a class="sourceLine" id="cb37-14" data-line-number="14"><span class="kw">}</span></a></code></pre></div>
+<p>all attributes are defined as environment variables in the shell</p>
+<p>antiquoting a package results in its final stored location</p>
+</div>
+</section>
+</section>
+<section id="pegging-build-environment" class="level1" data-state="customize-slides" data-background-size="110% 110%" data-background-image="../images/nix-wallpaper-mosaic-blue.png" data-background-color="#424284">
+<h1>Pegging Build Environment</h1>
+<section>
+<div>
+For production development you want to ensure that all developers use the same top level nix expression
+</div>
+</section>
+<section class="smaller-list">
+<div style="margin-top:-40px">
+<p>Given file <code>hello/pegged-nix.nix</code></p>
+<div class="sourceCode" id="cb38" data-background-color="#424284"><pre class="sourceCode nix"><code class="sourceCode bash"><a class="sourceLine" id="cb38-1" data-line-number="1"><span class="co"># helper to fetch nix-expression</span></a>
+<a class="sourceLine" id="cb38-2" data-line-number="2"><span class="bu">let</span> fetchFromGitHub = (import <span class="op">&lt;</span>nixpkgs<span class="op">&gt;</span> <span class="dt">{}</span>)<span class="ex">.fetchFromGitHub</span><span class="kw">;</span></a>
+<a class="sourceLine" id="cb38-3" data-line-number="3"><span class="co"># fetch the nix expression from github at the specified revision</span></a>
+<a class="sourceLine" id="cb38-4" data-line-number="4"><span class="kw">in</span> <span class="ex">import</span></a>
+<a class="sourceLine" id="cb38-5" data-line-number="5">    <span class="kw">(</span> <span class="ex">fetchFromGitHub</span></a>
+<a class="sourceLine" id="cb38-6" data-line-number="6">      <span class="kw">{</span></a>
+<a class="sourceLine" id="cb38-7" data-line-number="7">        <span class="ex">owner</span> = <span class="st">&quot;NixOS&quot;</span><span class="kw">;</span></a>
+<a class="sourceLine" id="cb38-8" data-line-number="8">        <span class="ex">repo</span> = <span class="st">&quot;nixpkgs&quot;</span><span class="kw">;</span></a>
+<a class="sourceLine" id="cb38-9" data-line-number="9">        <span class="fu">rev</span> = <span class="st">&quot;2839b101f927be5daab7948421de00a6f6c084ae&quot;</span><span class="kw">;</span></a>
+<a class="sourceLine" id="cb38-10" data-line-number="10">        <span class="ex">sha256</span> =</a>
+<a class="sourceLine" id="cb38-11" data-line-number="11">          <span class="st">&quot;0a863cc5462gn1vws87d4qn45zk22m64ri1ip67w0b1a9bmymqdh&quot;</span>;</a>
+<a class="sourceLine" id="cb38-12" data-line-number="12">      <span class="kw">}</span></a>
+<a class="sourceLine" id="cb38-13" data-line-number="13">    <span class="kw">)</span> <span class="dt">{}</span></a></code></pre></div>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<p>Then hello can be called in <code>hello/shell.nix</code> using the pegged nix packages</p>
+</div>
+<div class="fragment fade-in fade-left " data-custom-paragraph-class="true">
+<div class="sourceCode" id="cb39" data-background-color="#424284"><pre class="sourceCode nix"><code class="sourceCode bash"><a class="sourceLine" id="cb39-1" data-line-number="1"><span class="bu">let</span></a>
+<a class="sourceLine" id="cb39-2" data-line-number="2">  <span class="ex">pkgs</span> = import ./pegged-nix.nix <span class="kw">;</span></a>
+<a class="sourceLine" id="cb39-3" data-line-number="3"><span class="kw">in</span> <span class="ex">import</span> ./default.nix {inherit (pkgs) <span class="ex">stdenv</span> fetchurl<span class="kw">;</span>}</a></code></pre></div>
+</div>
+</section>
+</section>
+<section id="deploying-with-nixops" class="level1 smaller-header" data-state="customize-slides" data-background-size="110% 110%" data-background-image="../images/nix-wallpaper-mosaic-blue.png" data-background-color="#424284">
+<h1>Deploying with NixOps</h1>
+<section>
+<!--<div class="fragment fade-up">-->
+<div>
+<p>NixOps is a <strong><em>cloud deployment</em></strong> tool extending NixOS’s <strong><em>declerative</em></strong> approach to <strong><em>networking</em></strong> and <strong><em>provisioning</em></strong>.</p>
+</div>
+</section>
+<section class="smaller-header">
+<div>
+<h2>
+Simple Virtual Box Web Server
+</h2>
+<div class="sourceCode" id="cb40" data-background-color="#424284"><pre class="sourceCode nix"><code class="sourceCode bash"><a class="sourceLine" id="cb40-1" data-line-number="1"><span class="kw">{</span> <span class="co"># valgrind-docs.nix</span></a>
+<a class="sourceLine" id="cb40-2" data-line-number="2">  <span class="ex">webserver</span> =</a>
+<a class="sourceLine" id="cb40-3" data-line-number="3">    <span class="kw">{</span> <span class="ex">config</span>, pkgs, ... <span class="kw">}</span>:</a>
+<a class="sourceLine" id="cb40-4" data-line-number="4">    <span class="kw">{</span> <span class="ex">services.httpd.enable</span> = true<span class="kw">;</span></a>
+<a class="sourceLine" id="cb40-5" data-line-number="5">      <span class="ex">services.httpd.adminAddr</span> = <span class="st">&quot;alice@example.org&quot;</span><span class="kw">;</span></a>
+<a class="sourceLine" id="cb40-6" data-line-number="6">      <span class="ex">services.httpd.documentRoot</span> =</a>
+<a class="sourceLine" id="cb40-7" data-line-number="7">        <span class="st">&quot;</span><span class="va">${pkgs</span><span class="er">.valgrind.doc</span><span class="va">}</span><span class="st">/share/doc/valgrind/html&quot;</span>;</a>
+<a class="sourceLine" id="cb40-8" data-line-number="8">      <span class="ex">networking.firewall.allowedTCPPorts</span> = [ 80 ]<span class="kw">;</span></a>
+<a class="sourceLine" id="cb40-9" data-line-number="9">    <span class="kw">}</span>;</a>
+<a class="sourceLine" id="cb40-10" data-line-number="10"><span class="kw">}</span></a></code></pre></div>
+<div class="sourceCode" id="cb41" data-background-color="#424284"><pre class="sourceCode nix"><code class="sourceCode bash"><a class="sourceLine" id="cb41-1" data-line-number="1"><span class="kw">{</span> <span class="co"># single-vbox.nix</span></a>
+<a class="sourceLine" id="cb41-2" data-line-number="2">  <span class="ex">network.description</span> =</a>
+<a class="sourceLine" id="cb41-3" data-line-number="3">    <span class="st">&quot;Single web server serving valgrind docs&quot;</span>;</a>
+<a class="sourceLine" id="cb41-4" data-line-number="4">  <span class="ex">webserver</span> =</a>
+<a class="sourceLine" id="cb41-5" data-line-number="5">    <span class="kw">{</span> <span class="ex">config</span>, pkgs, ... <span class="kw">}</span>:</a>
+<a class="sourceLine" id="cb41-6" data-line-number="6">    <span class="kw">{</span> <span class="ex">deployment.targetEnv</span> = <span class="st">&quot;virtualbox&quot;</span><span class="kw">;</span></a>
+<a class="sourceLine" id="cb41-7" data-line-number="7">      <span class="ex">deployment.virtualbox.memorySize</span> = 1024<span class="kw">;</span> <span class="co"># megabytes</span></a>
+<a class="sourceLine" id="cb41-8" data-line-number="8">      <span class="ex">deployment.virtualbox.vcpu</span> = 2<span class="kw">;</span> <span class="co"># number of cpus</span></a>
+<a class="sourceLine" id="cb41-9" data-line-number="9">    <span class="kw">}</span>;</a>
+<a class="sourceLine" id="cb41-10" data-line-number="10"><span class="kw">}</span></a></code></pre></div>
+</div>
+</section>
+<section>
+<div>
+<h2>
+Simple Virtual Box Web Server
+</h2>
+<p>Create a new deployment, then deploy it to Virtual Box and then display info about the deployment.</p>
+<pre data-background-color="#424284"><code>nixops create ./valgrind-docs.nix ./single-vbox.nix -d single-vbox
+nixops deploy -d single-vbox --force-reboot
+nixops info -d single-vbox</code></pre>
+<pre data-background-color="#424284" style="font-size:50%"><code>Network name: single-vbox
+Network UUID: 650dbdee-752c-11e8-9eec-0242c2d31dbe
+Network description: Single web server serving valgrind docs
+Nix expressions: ./valgrind-docs.nix ./single-vbox.nix
+
++-----------+-----------------+------------+-------------+----------------+
+| Name      |      Status     | Type       | Resource Id | IP address     |
++-----------+-----------------+------------+-------------+----------------+
+| webserver | Up / Up-to-date | virtualbox | ........... | 192.168.56.101 |
++-----------+-----------------+------------+-------------+----------------+</code></pre>
+<p>Valgrind’s documentation is served up at <code>http://192.168.56.101</code></p>
+</div>
+</section>
+<section class="smaller-header">
+<div>
+<h2>
+Load Balanced LibVirt Web Server
+</h2>
+<div class="sourceCode" id="cb44" data-background-color="#424284" style="font-size:60%"><pre class="sourceCode nix"><code class="sourceCode bash"><a class="sourceLine" id="cb44-1" data-line-number="1"><span class="bu">let</span> <span class="co"># load-balanced.nix</span></a>
+<a class="sourceLine" id="cb44-2" data-line-number="2">  <span class="ex">backend</span> = (import ./valgrind-docs.nix)<span class="ex">.webserver</span><span class="kw">;</span></a>
+<a class="sourceLine" id="cb44-3" data-line-number="3"><span class="kw">in</span></a>
+<a class="sourceLine" id="cb44-4" data-line-number="4"><span class="kw">{</span></a>
+<a class="sourceLine" id="cb44-5" data-line-number="5">  <span class="ex">network.description</span> = <span class="st">&quot;Load balancing network&quot;</span><span class="kw">;</span></a>
+<a class="sourceLine" id="cb44-6" data-line-number="6">  <span class="ex">proxy</span> =</a>
+<a class="sourceLine" id="cb44-7" data-line-number="7">    <span class="kw">{</span> <span class="ex">config</span>, pkgs, nodes, ... <span class="kw">}</span>:</a>
+<a class="sourceLine" id="cb44-8" data-line-number="8">    <span class="kw">{</span> <span class="ex">services.httpd.enable</span> = true<span class="kw">;</span></a>
+<a class="sourceLine" id="cb44-9" data-line-number="9">      <span class="ex">services.httpd.adminAddr</span> = <span class="st">&quot;bob@example.org&quot;</span><span class="kw">;</span></a>
+<a class="sourceLine" id="cb44-10" data-line-number="10">      <span class="ex">services.httpd.extraModules</span> = [<span class="st">&quot;proxy_balancer&quot;</span> <span class="st">&quot;lbmethod_byrequests&quot;</span>]<span class="kw">;</span></a>
+<a class="sourceLine" id="cb44-11" data-line-number="11">      <span class="ex">services.httpd.extraConfig</span> =</a>
+<a class="sourceLine" id="cb44-12" data-line-number="12">        <span class="st">''</span></a>
+<a class="sourceLine" id="cb44-13" data-line-number="13">          <span class="op">&lt;</span><span class="ex">Proxy</span> balancer://cluster<span class="op">&gt;</span></a>
+<a class="sourceLine" id="cb44-14" data-line-number="14">            <span class="ex">Allow</span> from all</a>
+<a class="sourceLine" id="cb44-15" data-line-number="15">            <span class="ex">BalancerMember</span> http://backend1 retry=0</a>
+<a class="sourceLine" id="cb44-16" data-line-number="16">            <span class="ex">BalancerMember</span> http://backend2 retry=0</a>
+<a class="sourceLine" id="cb44-17" data-line-number="17">          <span class="op">&lt;</span>/<span class="ex">Proxy</span><span class="op">&gt;</span></a>
+<a class="sourceLine" id="cb44-18" data-line-number="18">          <span class="ex">ProxyPass</span>         /    balancer://cluster/</a>
+<a class="sourceLine" id="cb44-19" data-line-number="19">          <span class="ex">ProxyPassReverse</span>  /    balancer://cluster/</a>
+<a class="sourceLine" id="cb44-20" data-line-number="20">        <span class="st">''</span>;</a>
+<a class="sourceLine" id="cb44-21" data-line-number="21">      <span class="ex">networking.firewall.allowedTCPPorts</span> = [ 80 ]<span class="kw">;</span></a>
+<a class="sourceLine" id="cb44-22" data-line-number="22">    <span class="kw">}</span>;</a>
+<a class="sourceLine" id="cb44-23" data-line-number="23">  <span class="ex">backend1</span> = backend<span class="kw">;</span></a>
+<a class="sourceLine" id="cb44-24" data-line-number="24">  <span class="ex">backend2</span> = backend<span class="kw">;</span></a>
+<a class="sourceLine" id="cb44-25" data-line-number="25"><span class="kw">}</span></a></code></pre></div>
+<div class="sourceCode" id="cb45" data-background-color="#424284" style="font-size:60%"><pre class="sourceCode nix"><code class="sourceCode bash"><a class="sourceLine" id="cb45-1" data-line-number="1"><span class="bu">let</span> <span class="co"># load-balanced-libvirt.nix</span></a>
+<a class="sourceLine" id="cb45-2" data-line-number="2">  <span class="ex">vbox</span> = { deployment.targetEnv = <span class="st">&quot;libvirtd&quot;</span><span class="kw">;</span> };</a>
+<a class="sourceLine" id="cb45-3" data-line-number="3"><span class="kw">in</span></a>
+<a class="sourceLine" id="cb45-4" data-line-number="4"><span class="kw">{</span> <span class="ex">proxy</span>    = vbox<span class="kw">;</span></a>
+<a class="sourceLine" id="cb45-5" data-line-number="5">  <span class="ex">backend1</span> = vbox<span class="kw">;</span></a>
+<a class="sourceLine" id="cb45-6" data-line-number="6">  <span class="ex">backend2</span> = vbox<span class="kw">;</span></a>
+<a class="sourceLine" id="cb45-7" data-line-number="7"><span class="kw">}</span></a></code></pre></div>
+</div>
+</section>
+<section>
+<div>
+<h2>
+Load Balanced LibVirt Web Server
+</h2>
+<p>Create a new deployment, then deploy it to libvirt and then display info about the deployment.</p>
+<pre data-background-color="#424284"><code>nixops create ./load-balanced.nix ./load-balanced-libvirt.nix -d load-balanced-libvirt
+nixops deploy -d load-balanced-libvirt
+nixops info -d load-balanced-libvirt</code></pre>
+<pre data-background-color="#424284" style="font-size:45%"><code>Network name: load-balanced-libvirt
+Network UUID: d4e37f45-7531-11e8-823f-0242c2d31dbe
+Network description: Load balancing network
+Nix expressions: /home/handre/dev/load-balanced.nix /home/handre/dev/load-balanced-libvirt.nix
+
++----------+-----------------+----------+-------------+-----------------+
+| Name     |      Status     | Type     | Resource Id | IP address      |
++----------+-----------------+----------+-------------+-----------------+
+| backend1 | Up / Up-to-date | libvirtd |             | 192.168.122.14  |
+| backend2 | Up / Up-to-date | libvirtd |             | 192.168.122.25  |
+| proxy    | Up / Up-to-date | libvirtd |             | 192.168.122.227 |
++----------+-----------------+----------+-------------+-----------------+</code></pre>
+<p>Valgrind’s documentation is served up at <code>http://192.168.122.227</code></p>
+</div>
+</section>
+</section>
+<section id="how-we-use-it-at-work" class="level1" data-state="customize-slides" data-background-size="110% 110%" data-background-image="../images/nix-wallpaper-mosaic-blue.png" data-background-color="#424284">
+<h1>How We Use It at Work</h1>
+<div>
+<ul class="incremental">
+<li>We all run NixOS either natively or in a VM</li>
+<li>We use Hydra as our CI server</li>
+<li>Using NixOps we
+<ul class="incremental">
+<li>deploy to AWS</li>
+<li>deploy to physical machines in the factory</li>
+<li>update our personnel’s VMs</li>
+</ul></li>
+</ul>
+</div>
+</section>
+<section id="final-thoughts" class="level1" data-state="customize-slides" data-background-size="110% 110%" data-background-image="../images/nix-wallpaper-mosaic-blue.png" data-background-color="#424284">
+<h1>Final thoughts</h1>
+<section>
+<div>
+<ul class="incremental">
+<li>There is much more, we have only scratched the surface</li>
+<li>The documentation is good and getting better <a href>https://nixos.org</a>
+<ul class="incremental">
+<li>You can actually search configuration attributes</li>
+<li>You can search packages too</li>
+<li><strong>Arch Linux</strong>’s Wiki is really helpful.</li>
+</ul></li>
+<li>Your are not limited to packages build from source, third party binaries are installable
+<ul class="incremental">
+<li>using <code>patchelf</code> or</li>
+<li>emulating <code>FHS</code></li>
+</ul></li>
+</ul>
+</div>
+</section>
+<section>
+<div>
+<ul class="incremental">
+<li>It is really nice if you want a slightly unconventional setup (<strong>XMonad</strong>)</li>
+<li>It makes it easier to experiment with new hardware like ill supported laptops.
+<ul class="incremental">
+<li>Easily iterate configurations untill something works without worrying about bricking it</li>
+</ul></li>
+<li>When your laptop gets stolen its really nice to get back up and running quickly</li>
+</ul>
+</div>
+</section>
+<div class="notes">
+
+</div>
+</section>
+      </div>
+    </div>
+    
+    <div style="position:fixed;bottom:5px;left:5px;width:20%;height:10%;">
+      <img src="../images/nixos-custom.svg" style="height:100%;max-width:150%;position:absolute;bottom:0px;left:0px;z-index:1;"> <img />
+    </div>
+    
+
+    <script src="../lib/js/head.min.js"></script>
+    <script src="../js/reveal.js"></script>
+
+    <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+
+        // // The "normal" size of the presentation, aspect ratio will be preserved
+        // // when the presentation is scaled to fit different resolutions. Can be
+        // // specified using percentage units.
+        // width: 960,
+        // height: 700,
+
+        // // Factor of the display size that should remain empty around the content
+        // margin: 0.0,
+
+        // // Bounds for smallest/largest possible scale to apply to content
+        // minScale: 0.1,
+        // maxScale: 2.5,
+
+        // with sizing
+        width: 1024, height: 768, margin: 0.1, minScale: 0.1, maxScale: 3,
+
+        // no sizing
+        // width: "100%", height: "100%", margin: 0, minScale: 1, maxScale: 1,
+
+        // Display controls in the bottom right corner
+        
+        controls: false,
+        
+
+
+        // Display a presentation progress bar
+        
+        progress: true,
+        
+
+        // Set default timing of 2 minutes per slide
+        defaultTiming: 120,
+
+        // Display the page number of the current slide
+        slideNumber: false,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: true,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autolaying embedded media (video/audio/iframe)
+        // - null: Media will only autoplay if data-autoplay is present
+        // - true: All media will autoplay, regardless of individual setting
+        // - false: No media will autoplay, regardless of individual setting
+        autoPlayMedia: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: Reveal.navigateNext,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // Hides the address bar on mobile devices
+        hideAddressBar: true,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style
+        transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+        // Transition speed
+        transitionSpeed: 'default', // default/fast/slow
+
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'fade', // none/fade/slide/convex/concave/zoom
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Parallax background image
+        parallaxBackgroundImage: '', // e.g. "'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg'"
+
+        // Parallax background size
+        parallaxBackgroundSize: '', // CSS syntax, e.g. "2100px 900px"
+
+        // Number of pixels to move the parallax background per slide
+        // - Calculated automatically unless specified
+        // - Set to 0 to disable movement along an axis
+        parallaxBackgroundHorizontal: null,
+        parallaxBackgroundVertical: null,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Optional reveal.js plugins
+        dependencies: [
+          { src: '../lib/js/classList.js', condition: function() { return !document.body.classList; } },
+          { src: '../plugin/notes/notes.js', async: true }
+        ]
+      });
+
+    </script>
+
+  </body>
+</html>
